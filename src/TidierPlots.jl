@@ -5,24 +5,11 @@ using CairoMakie
 using AlgebraOfGraphics
 using DataFrames
 
+include("structs.jl")
+include("geoms.jl")
+
 export draw_ggplot, @ggplot
 export @geom_point, @geom_smooth
-  
-struct geom
-    visual::Any
-    aes::Dict
-    args::Dict
-    analysis::Any
-    data::Any
-    required_aes::AbstractArray
-end
-
-struct ggplot
-    geoms::AbstractArray
-    default_aes::Dict
-    data::Any
-    axis::NamedTuple
-end
 
 function Base.:+(x::ggplot, y...)::ggplot
     result = ggplot(vcat(x.geoms, [i for i in y]), 
@@ -82,42 +69,6 @@ function check_aes(required_aes, aes_dict)
             error("missing required aesthetic: $aes")
         end
     end
-end
-
-macro geom_point(exprs...)
-    geom_visual = Makie.Scatter
-    aes_dict, args_dict = extract_aes(:($(exprs)))
-    analysis = nothing
-    required_aes = ["x", "y"]
-
-    haskey(args_dict, "data") ? 
-        plot_data = AlgebraOfGraphics.data(Base.eval(Main, args_dict["data"])) :
-        plot_data = nothing
-
-    check_aes(required_aes, aes_dict)
-    
-    return geom(geom_visual, aes_dict, args_dict, analysis, plot_data, required_aes)
-end
-
-macro geom_smooth(exprs...)
-    geom_visual = nothing
-    aes_dict, args_dict = extract_aes(:($(exprs)))
-    analysis = AlgebraOfGraphics.smooth
-    required_aes = ["x", "y"]
-
-    haskey(args_dict, "data") ? 
-        plot_data = AlgebraOfGraphics.data(Base.eval(Main, args_dict["data"])) :
-        plot_data = nothing
-
-    if haskey(args_dict, "method")
-        if args_dict["method"] == "lm"
-            analysis = AlgebraOfGraphics.linear
-        end
-    end
-
-    check_aes(required_aes, aes_dict)
-
-    return geom(geom_visual, aes_dict, args_dict,  analysis, plot_data, required_aes)
 end
 
 function geom_to_layer(geom)

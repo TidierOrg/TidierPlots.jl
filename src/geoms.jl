@@ -1,12 +1,16 @@
 macro geom_point(exprs...)
-    geom_visual = :Scatter
+    geom_visual = Makie.Scatter
     aes_dict, args_dict = extract_aes(:($(exprs)))
     analysis = nothing
     required_aes = ["x", "y"]
 
+    haskey(args_dict, "data") ? 
+        plot_data = AlgebraOfGraphics.data(Base.eval(Main, args_dict["data"])) :
+        plot_data = nothing
+
     check_aes(required_aes, aes_dict)
     
-    return geom(geom_visual, aes_dict, args_dict, nothing, required_aes)
+    return geom(geom_visual, aes_dict, args_dict, analysis, plot_data, required_aes)
 end
 
 macro geom_smooth(exprs...)
@@ -14,6 +18,10 @@ macro geom_smooth(exprs...)
     aes_dict, args_dict = extract_aes(:($(exprs)))
     analysis = AlgebraOfGraphics.smooth
     required_aes = ["x", "y"]
+
+    haskey(args_dict, "data") ? 
+        plot_data = AlgebraOfGraphics.data(Base.eval(Main, args_dict["data"])) :
+        plot_data = nothing
 
     if haskey(args_dict, "method")
         if args_dict["method"] == "lm"
@@ -23,7 +31,7 @@ macro geom_smooth(exprs...)
 
     check_aes(required_aes, aes_dict)
 
-    return geom(geom_visual, aes_dict, args_dict, analysis, required_aes)
+    return geom(geom_visual, aes_dict, args_dict,  analysis, plot_data, required_aes)
 end
 
 # geom_abline

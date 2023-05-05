@@ -40,10 +40,11 @@ TidierPlots.jl currently supports the following top-level macros:
 - `@ggplot()`
 - `@geom_point()`
 - `@geom_smooth()`
+- `@geom_col()`
 
 ## Example
 
-Let's make a plot using the Palmer Penguins data from `PalmerPenguins.jl`:
+Let's make some plots using the Palmer Penguins data from `PalmerPenguins.jl`:
 
 ```julia
 using TidierPlots
@@ -52,11 +53,21 @@ using PalmerPenguins
 
 penguins = dropmissing(DataFrame(PalmerPenguins.load()))
 
-test_plot = @ggplot(data = penguins, aes(color = species)) + 
+@ggplot(data = penguins) + @geom_col(aes(x = species))
+```
+![](assets/example_col.png)
+
+
+```julia
+@ggplot(data = penguins) + @geom_col(aes(x = species, color = island))
+```
+![](assets/example_col_color.png)
+
+
+```julia
+@ggplot(data = penguins, aes(color = species)) + 
     @geom_point(aes(x = bill_length_mm, y = bill_depth_mm)) + 
     @geom_smooth(aes(x = bill_length_mm, y = bill_depth_mm), method = "lm")
-
-draw_ggplot(test_plot)
 ```
 
-![](assets/example.png)
+![](assets/example_point_smooth.png)

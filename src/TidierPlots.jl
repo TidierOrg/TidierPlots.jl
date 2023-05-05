@@ -9,7 +9,7 @@ include("structs.jl")
 include("geoms.jl")
 
 export draw_ggplot, @ggplot
-export @geom_point, @geom_smooth
+export @geom_point, @geom_smooth, @geom_col
 
 const autoplot = Ref{Bool}(true)
 
@@ -28,7 +28,7 @@ function Base.:+(x::ggplot, y...)::ggplot
         x.axis)
 
     # don't tell the julia police
-    if autoplot
+    if autoplot[]
         display(draw_ggplot(result))
     end
 
@@ -122,11 +122,7 @@ function draw_ggplot(plot::ggplot)
         end
     end
 
-    layers = []
-
-    for geom in plot.geoms
-        push!(layers, geom_to_layer(geom))
-    end
+    layers = [geom_to_layer(geom) for geom in plot.geoms]
 
     if length(layers) == 0
         error("No geoms supplied")

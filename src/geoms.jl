@@ -34,6 +34,20 @@ macro geom_smooth(exprs...)
     return geom(geom_visual, aes_dict, args_dict,  analysis, plot_data, required_aes)
 end
 
+macro geom_col(exprs...)
+    geom_visual = nothing
+    aes_dict, args_dict = extract_aes(:($(exprs)))
+    analysis = AlgebraOfGraphics.frequency
+    required_aes = ["x"]
+
+    haskey(args_dict, "data") ? 
+        plot_data = AlgebraOfGraphics.data(Base.eval(Main, args_dict["data"])) :
+        plot_data = nothing
+
+    check_aes(required_aes, aes_dict)
+
+    return geom(geom_visual, aes_dict, args_dict,  analysis, plot_data, required_aes)
+end
 # geom_abline
 
 # geom_hline
@@ -41,8 +55,6 @@ end
 # geom_vline
 
 # geom_bar
-
-# geom_col
 
 # geom_histogram
 

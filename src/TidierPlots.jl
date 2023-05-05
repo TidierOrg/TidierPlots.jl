@@ -11,12 +11,27 @@ include("geoms.jl")
 export draw_ggplot, @ggplot
 export @geom_point, @geom_smooth
 
+const autoplot = Ref{Bool}(true)
+
+function TidierPlots_set(option::AbstractString, value::Bool)
+    if option == "autoplot"
+       autoplot[] = value
+    else
+      throw("That is not a valid option.")
+    end
+end
+
 function Base.:+(x::ggplot, y...)::ggplot
     result = ggplot(vcat(x.geoms, [i for i in y]), 
         x.default_aes, 
         x.data, 
         x.axis)
-    
+
+    # don't tell the julia police
+    if autoplot
+        display(draw_ggplot(result))
+    end
+
     return result
 end
 

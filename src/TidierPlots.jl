@@ -124,7 +124,7 @@ function geom_to_layer(geom, data)
     end
 
     if !isnothing(geom.visual)
-        layer = layer * visual(geom.visual)
+        layer = layer * geom.visual
     end
 
     return layer

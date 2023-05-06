@@ -24,13 +24,27 @@ macro geom_point(exprs...)
     # in AoG? 
 
     optional_aes = Dict("color" => "color",
-                        "colour" => "color")
+                        "colour" => "color",
+                        "size" => "markersize")
 
     # 3. If the plot requires a call to AoG's visual() function, geom_visual should
-    # contain the Makie function that visual expects as its first argument. If
-    # a visual call is not required, this should be set to nothing
+    # contain the AoG function visual, the Makie function that visual expects as its 
+    # first argument, and any required settings. If a visual call 
+    # is not required, this should be set to nothing
+    
+    optional_visual_args = Dict("size" => "markersize")
 
-    geom_visual = Makie.Scatter
+    args_given = intersect(
+        keys(optional_visual_args),
+        keys(args_dict)
+    )
+
+    if length(args_given) != 0
+        visual_args = Dict(Symbol(optional_visual_args[a]) => args_dict[a] for a in args_given)
+        geom_visual = AlgebraOfGraphics.visual(Makie.Scatter; visual_args...)
+    else
+        geom_visual = AlgebraOfGraphics.visual(Makie.Scatter)
+    end 
 
     # 4. If the plot requires a AoG analysis function, that function should be assigned 
     # here. If an AoG analysis is not required, set this to nothing
@@ -73,8 +87,9 @@ macro geom_smooth(exprs...)
                         "colour" => "color")
 
     # 3. If the plot requires a call to AoG's visual() function, geom_visual should
-    # contain the Makie function that visual expects as its first argument. If
-    # a visual call is not required, this should be set to nothing
+    # contain the AoG function visual, the Makie function that visual expects as its 
+    # first argument, and any required settings. If a visual call 
+    # is not required, this should be set to nothing
 
     geom_visual = nothing
 
@@ -125,8 +140,9 @@ macro geom_bar(exprs...)
                         "colour" => "color")
 
     # 3. If the plot requires a call to AoG's visual() function, geom_visual should
-    # contain the Makie function that visual expects as its first argument. If
-    # a visual call is not required, this should be set to nothing
+    # contain the AoG function visual, the Makie function that visual expects as its 
+    # first argument, and any required settings. If a visual call 
+    # is not required, this should be set to nothing
 
     geom_visual = nothing
 

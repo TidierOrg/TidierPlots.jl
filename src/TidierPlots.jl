@@ -9,7 +9,7 @@ include("structs.jl")
 include("geoms.jl")
 
 export draw_ggplot, @ggplot
-export @geom_point, @geom_smooth, @geom_col
+export @geom_point, @geom_smooth, @geom_bar
 
 const autoplot = Ref{Bool}(true)
 

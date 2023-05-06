@@ -34,7 +34,7 @@ macro geom_smooth(exprs...)
     return geom(geom_visual, aes_dict, args_dict,  analysis, plot_data, required_aes)
 end
 
-macro geom_col(exprs...)
+macro geom_bar(exprs...)
     geom_visual = nothing
     aes_dict, args_dict = extract_aes(:($(exprs)))
     analysis = AlgebraOfGraphics.frequency

@@ -5,6 +5,7 @@ struct geom
     analysis::Any
     data::Any
     required_aes::AbstractArray
+    optional_aes::Dict
 end
 
 struct ggplot

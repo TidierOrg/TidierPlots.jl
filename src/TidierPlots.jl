@@ -8,7 +8,7 @@ using DataFrames
 include("structs.jl")
 include("geoms.jl")
 
-export draw_ggplot, @ggplot
+export draw_ggplot, geom_to_layer, ggplot_to_layers, @ggplot
 export @geom_point, @geom_smooth, @geom_bar
 
 const autoplot = Ref{Bool}(true)
@@ -22,7 +22,7 @@ function TidierPlots_set(option::AbstractString, value::Bool)
 end
 
 function Base.:+(x::ggplot, y...)::ggplot
-    result = ggplot(vcat(x.geoms, [i for i in y]), 
+    result = ggplot(vcat(x.geoms, [i for i in y if i isa geom]), 
         x.default_aes, 
         x.data, 
         x.axis)
@@ -87,10 +87,37 @@ function check_aes(required_aes, aes_dict)
 end
 
 function geom_to_layer(geom)
-    mapping_args = (geom.aes[key] for key in geom.required_aes)
+    if isnothing(geom.data)
+        error("no data available for geom")
+    else
+        return geom_to_layer(geom, geom.data)
+    end
+end 
+
+function geom_to_layer(geom, data)
     
-    layer = geom.args["data"] *
-        mapping(mapping_args...)
+    check_aes(geom.required_aes, geom.aes)
+
+    mapping_args = (geom.aes[key] for key in geom.required_aes)
+
+    # check which supported optional aesthetics are available
+
+    available_optional_aes = intersect(
+        keys(geom.aes),
+        keys(geom.optional_aes)
+    )
+
+    # if any are available, multiply them in to the layer 
+    # geom.optional_aes[a] gets the expected AoG arg name
+    # geom_aes[a] gets the variable that was assigned to the aesthetic
+    # if none are available, just use the required aes
+
+    if length(available_optional_aes) != 0
+        optional_mapping_args = Dict(Symbol(geom.optional_aes[a]) => geom.aes[a] for a in available_optional_aes)
+        layer = data * mapping(mapping_args...; optional_mapping_args...)
+    else
+        layer = data * mapping(mapping_args...)
+    end    
 
     if !isnothing(geom.analysis)
         layer = layer * (geom.analysis)()
@@ -100,18 +127,18 @@ function geom_to_layer(geom)
         layer = layer * visual(geom.visual)
     end
 
-    if haskey(geom.aes, "color")
-        layer = layer * mapping(color = geom.aes["color"])
-    end
-
     return layer
 end
 
 function draw_ggplot(plot::ggplot)
+    layers = []
+    
     for geom in plot.geoms
         # if data is not specified at the geom level, use the ggplot default
-        if !haskey(geom.args, data)
-            geom.args["data"] = plot.data
+        if isnothing(geom.data)
+            data = plot.data
+        else 
+            data = geom.data
         end
 
         # if an aes isn't given in the geom, use the ggplot aes
@@ -120,9 +147,9 @@ function draw_ggplot(plot::ggplot)
                 geom.aes[aes] = plot.default_aes[aes]
             end
         end
-    end
 
-    layers = [geom_to_layer(geom) for geom in plot.geoms]
+        push!(layers, geom_to_layer(geom, data))
+    end
 
     if length(layers) == 0
         error("No geoms supplied")

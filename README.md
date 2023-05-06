@@ -4,12 +4,10 @@
 
 ## What is TidierPlots.jl?
 
-Tidier.jl is a 100% Julia implementation of the R package ggplot in Julia. Powered by the AlgebraOfGraphics.jl, Makie.jl, and Julia’s
-extensive meta-programming capabilities, TidierPlots.jl is an R user’s love
+TidierPlots.jl is a 100% Julia implementation of the R package ggplot in Julia. Powered by the AlgebraOfGraphics.jl, Makie.jl, and Julia’s extensive meta-programming capabilities, TidierPlots.jl is an R user’s love
 letter to data visualization in Julia.
 
-`TidierPlots.jl` has three goals, which differentiate it from other data analysis
-meta-packages in Julia:
+`TidierPlots.jl` has two goals, which differentiate it from other plotting packages in Julia:
 
 1.  **Stick as closely to tidyverse syntax as possible:** Whereas other
     meta-packages introduce Julia-centric idioms for working with
@@ -18,9 +16,11 @@ meta-packages in Julia:
     to idiomatic Julia expressions. An example of a tidy expression is
     `a = mean(b)`.
 
-2.  
-
-3.  
+2.  **Stay as compatible as possible with AlgebraOfGraphics.jl** This package is meant
+    to be a thin wrapper around AoG's syntax to help introduce R users to plotting in 
+    Julia. `geom`s declared in TidierPlots.jl can be easily converted to AoG `Layer`
+    objects using `geom_to_layer()`, and `ggplot`s can be converted to AoG `Layers` objects
+    using `ggplot_to_layers()`.
 
 ## Installation
 

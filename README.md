@@ -71,3 +71,13 @@ penguins = dropmissing(DataFrame(PalmerPenguins.load()))
 ```
 
 ![](assets/example_point_smooth.png)
+
+```julia
+ @ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + 
+    @geom_point(shape = diamond, 
+                size = 20, 
+                stroke = 1, 
+                strokecolour = "black",
+                alpha = 0.8)
+```
+![](assets/geom_point_customize.png)

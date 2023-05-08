@@ -65,12 +65,20 @@ function extract_aes(geom)
             if section.args[1] == :aes
                 for aes_ex in section.args
                     if aes_ex isa Expr
-                        aes_dict[String(aes_ex.args[1])] = aes_ex.args[2]
+                        if aes_ex.args[2] isa QuoteNode
+                            aes_dict[String(aes_ex.args[1])] = aes_ex.args[2].value
+                        else
+                            aes_dict[String(aes_ex.args[1])] = aes_ex.args[2] 
+                        end
                     end
                 end
             # if not, its a generic argument
             else
-                args_dict[String(section.args[1])] = section.args[2]
+                if section.args[2] isa QuoteNode
+                    args_dict[String(section.args[1])] = section.args[2].value
+                else 
+                    args_dict[String(section.args[1])] = section.args[2]
+                end
             end
         elseif section isa Symbol
             # if the section is a symbol, assume it is meant to be the data argument

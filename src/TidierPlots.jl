@@ -72,6 +72,9 @@ function extract_aes(geom)
             else
                 args_dict[String(section.args[1])] = section.args[2]
             end
+        elseif section isa Symbol
+            # if the section is a symbol, assume it is meant to be the data argument
+            args_dict["data"] = section
         end
     end
 

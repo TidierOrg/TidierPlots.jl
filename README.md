@@ -65,9 +65,9 @@ penguins = dropmissing(DataFrame(PalmerPenguins.load()))
 
 
 ```julia
-@ggplot(data = penguins, aes(color = species)) + 
-    @geom_point(aes(x = bill_length_mm, y = bill_depth_mm)) + 
-    @geom_smooth(aes(x = bill_length_mm, y = bill_depth_mm), method = "lm")
+@ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + 
+    @geom_point() + 
+    @geom_smooth(method = "lm")
 ```
 
 ![](assets/example_point_smooth.png)

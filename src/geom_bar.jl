@@ -29,15 +29,7 @@ macro geom_bar(exprs...)
                         "dodge" => "dodge")
 
     if haskey(args_dict, "position")
-        if args_dict["position"] == "stack"
-            if haskey(aes_dict, "group")
-                aes_dict["stack"] = aes_dict["group"]
-            elseif haskey(aes_dict, "colour")
-                aes_dict["stack"] = aes_dict["colour"]
-            elseif haskey(aes_dict, "color")
-                aes_dict["stack"] = aes_dict["color"]
-            end
-        elseif args_dict["position"] != "none"
+        if args_dict["position"] == "dodge"
             if haskey(aes_dict, "group")
                 aes_dict["dodge"] = aes_dict["group"]
             elseif haskey(aes_dict, "colour")
@@ -45,14 +37,22 @@ macro geom_bar(exprs...)
             elseif haskey(aes_dict, "color")
                 aes_dict["dodge"] = aes_dict["color"]
             end
+        elseif args_dict["position"] != "none"
+            if haskey(aes_dict, "group")
+                aes_dict["stack"] = aes_dict["group"]
+            elseif haskey(aes_dict, "colour")
+                aes_dict["stack"] = aes_dict["colour"]
+            elseif haskey(aes_dict, "color")
+                aes_dict["stack"] = aes_dict["color"]
+            end
         end
     else
         if haskey(aes_dict, "group")
-            aes_dict["dodge"] = aes_dict["group"]
+            aes_dict["stack"] = aes_dict["group"]
         elseif haskey(aes_dict, "colour")
-            aes_dict["dodge"] = aes_dict["colour"]
+            aes_dict["stack"] = aes_dict["colour"]
         elseif haskey(aes_dict, "color")
-            aes_dict["dodge"] = aes_dict["color"]
+            aes_dict["stack"] = aes_dict["color"]
         end
     end
 

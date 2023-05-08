@@ -63,6 +63,11 @@ penguins = dropmissing(DataFrame(PalmerPenguins.load()))
 ```
 ![](assets/example_col_color.png)
 
+```julia
+@ggplot(data = penguins) + @geom_bar(aes(x = species, color = island), position = "stack")
+```
+![](assets/example_col_stack.png)
+
 
 ```julia
 @ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + 

@@ -24,7 +24,37 @@ macro geom_bar(exprs...)
     # in AoG? 
 
     optional_aes = Dict("color" => "color",
-                        "colour" => "color")
+                        "colour" => "color",
+                        "stack" => "stack",
+                        "dodge" => "dodge")
+
+    if haskey(args_dict, "position")
+        if args_dict["position"] == "stack"
+            if haskey(aes_dict, "group")
+                aes_dict["stack"] = aes_dict["group"]
+            elseif haskey(aes_dict, "colour")
+                aes_dict["stack"] = aes_dict["colour"]
+            elseif haskey(aes_dict, "color")
+                aes_dict["stack"] = aes_dict["color"]
+            end
+        elseif args_dict["position"] != "none"
+            if haskey(aes_dict, "group")
+                aes_dict["dodge"] = aes_dict["group"]
+            elseif haskey(aes_dict, "colour")
+                aes_dict["dodge"] = aes_dict["colour"]
+            elseif haskey(aes_dict, "color")
+                aes_dict["dodge"] = aes_dict["color"]
+            end
+        end
+    else
+        if haskey(aes_dict, "group")
+            aes_dict["dodge"] = aes_dict["group"]
+        elseif haskey(aes_dict, "colour")
+            aes_dict["dodge"] = aes_dict["colour"]
+        elseif haskey(aes_dict, "color")
+            aes_dict["dodge"] = aes_dict["color"]
+        end
+    end
 
     # 3. If the plot requires a call to AoG's visual() function, geom_visual should
     # contain the AoG function visual, the Makie function that visual expects as its 

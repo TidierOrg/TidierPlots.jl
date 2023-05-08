@@ -6,7 +6,9 @@ using AlgebraOfGraphics
 using DataFrames
 
 include("structs.jl")
-include("geoms.jl")
+include("geom_bar.jl")
+include("geom_point.jl")
+include("geom_smooth.jl")
 
 export draw_ggplot, geom_to_layer, ggplot_to_layers, @ggplot
 export @geom_point, @geom_smooth, @geom_bar

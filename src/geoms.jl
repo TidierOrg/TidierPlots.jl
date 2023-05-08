@@ -25,14 +25,22 @@ macro geom_point(exprs...)
 
     optional_aes = Dict("color" => "color",
                         "colour" => "color",
-                        "size" => "markersize")
+                        "shape" => "marker",
+                        "size" => "markersize",
+                        "stroke" => "strokewidth",
+                        "strokecolor" => "strokecolor",
+                        "strokecolour" => "strokecolor",
+                        "glow" => "glowwidth",
+                        "glowcolor" => "glowcolor",
+                        "glowcolour" => "glowcolor",
+                        "alpha" => "alpha")
 
     # 3. If the plot requires a call to AoG's visual() function, geom_visual should
     # contain the AoG function visual, the Makie function that visual expects as its 
     # first argument, and any required settings. If a visual call 
     # is not required, this should be set to nothing
     
-    optional_visual_args = Dict("size" => "markersize")
+    optional_visual_args = optional_aes
 
     args_given = intersect(
         keys(optional_visual_args),

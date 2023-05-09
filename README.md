@@ -53,18 +53,24 @@ using PalmerPenguins
 
 penguins = dropmissing(DataFrame(PalmerPenguins.load()))
 
-@ggplot(data = penguins) + @geom_bar(aes(x = species))
+@ggplot(data = penguins) + 
+    @geom_bar(aes(x = species)) +
+    @labs(x = "Species")
 ```
 ![](assets/example_col.png)
 
 
 ```julia
-@ggplot(data = penguins) + @geom_bar(aes(x = species, color = island), position = "dodge")
+@ggplot(data = penguins) + 
+    @geom_bar(aes(x = species, color = island), position = "dodge") +
+    @labs(x = "Species")
 ```
 ![](assets/example_col_color.png)
 
 ```julia
-@ggplot(data = penguins) + @geom_bar(aes(x = species, color = island), position = "stack")
+@ggplot(data = penguins) + 
+    @geom_bar(aes(x = species, color = island), position = "stack") +
+    @labs(x = "Species")
 ```
 ![](assets/example_col_stack.png)
 
@@ -72,7 +78,8 @@ penguins = dropmissing(DataFrame(PalmerPenguins.load()))
 ```julia
 @ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + 
     @geom_point() + 
-    @geom_smooth(method = "lm")
+    @geom_smooth(method = "lm") +
+    @labs(x = "Bill Length (mm)", y = "Bill Width (mm)")
 ```
 
 ![](assets/example_point_smooth.png)
@@ -83,6 +90,7 @@ penguins = dropmissing(DataFrame(PalmerPenguins.load()))
                 size = 20, 
                 stroke = 1, 
                 strokecolour = "black",
-                alpha = 0.8)
+                alpha = 0.8) +
+    @labs(x = "Bill Length (mm)", y = "Bill Width (mm)")
 ```
 ![](assets/geom_point_customize.png)

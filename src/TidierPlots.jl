@@ -9,9 +9,11 @@ include("structs.jl")
 include("geom_bar.jl")
 include("geom_point.jl")
 include("geom_smooth.jl")
+include("labs.jl")
 
 export draw_ggplot, geom_to_layer, ggplot_to_layers, @ggplot
 export @geom_point, @geom_smooth, @geom_bar
+export @labs, labs
 
 const autoplot = Ref{Bool}(true)
 
@@ -26,7 +28,8 @@ end
 function Base.:+(x::ggplot, y...)::ggplot
     result = ggplot(vcat(x.geoms, [i for i in y if i isa geom]), 
         x.default_aes, 
-        x.data, 
+        x.data,
+        labs(merge(x.labs.values, [l.values for l in y if l isa labs]...)), 
         x.axis)
 
     # don't tell the julia police
@@ -54,6 +57,7 @@ macro ggplot(exprs...)
     
     ggplot([], aes_dict, 
             AlgebraOfGraphics.data(Base.eval(Main, plot_data)),
+            labs(Dict()), 
             (height = height, width = width)) 
 end
 
@@ -103,15 +107,27 @@ function geom_to_layer(geom)
     if isnothing(geom.data)
         error("no data available for geom")
     else
-        return geom_to_layer(geom, geom.data)
+        return geom_to_layer(geom, geom.data, Dict())
     end
 end 
 
-function geom_to_layer(geom, data)
+function geom_to_layer(geom, data, labs)
     
     check_aes(geom.required_aes, geom.aes)
 
-    mapping_args = (geom.aes[key] for key in geom.required_aes)
+    mapping_args_array = []
+
+    # rename required aes if labs are given
+
+    for key in geom.required_aes
+        if !haskey(labs.values, key)
+            push!(mapping_args_array, Symbol(geom.aes[key]))
+        else 
+            push!(mapping_args_array, Symbol(geom.aes[key]) => labs.values[key])
+        end
+    end
+    
+    mapping_args = Tuple(mapping_args_array)
 
     # check which supported optional aesthetics are available
 
@@ -161,11 +177,11 @@ function draw_ggplot(plot::ggplot)
             end
         end
 
-        push!(layers, geom_to_layer(geom, data))
+        push!(layers, geom_to_layer(geom, data, plot.labs))
     end
 
     if length(layers) == 0
-        error("No geoms supplied")
+        println("Warning: No geoms supplied")
     elseif length(layers) == 1
         draw(layers[1]; axis = plot.axis)
     else 

@@ -1,3 +1,7 @@
+struct labs
+    values::Dict 
+end
+
 struct geom
     visual::Any
     aes::Dict
@@ -12,8 +16,11 @@ struct ggplot
     geoms::AbstractArray
     default_aes::Dict
     data::Any
+    labs::labs
     axis::NamedTuple
 end
+
+
 
 # to be added?
 

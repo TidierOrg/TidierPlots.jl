@@ -79,7 +79,9 @@ penguins = dropmissing(DataFrame(PalmerPenguins.load()))
 @ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + 
     @geom_point() + 
     @geom_smooth(method = "lm") +
-    @labs(x = "Bill Length (mm)", y = "Bill Width (mm)")
+    @labs(x = "Bill Length (mm)", y = "Bill Width (mm)", 
+        title = "Bill Length vs. Bill Width", 
+        subtitle = "Using geom_point and geom_smooth")
 ```
 
 ![](assets/example_point_smooth.png)

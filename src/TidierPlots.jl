@@ -107,7 +107,7 @@ function geom_to_layer(geom)
     if isnothing(geom.data)
         error("no data available for geom")
     else
-        return geom_to_layer(geom, geom.data, Dict())
+        return geom_to_layer(geom, geom.data, labs(Dict()))
     end
 end 
 
@@ -180,12 +180,25 @@ function draw_ggplot(plot::ggplot)
         push!(layers, geom_to_layer(geom, data, plot.labs))
     end
 
+    supported_label_options = Dict("title" => "title",
+                                   "subtitle" => "subtitle",
+                                   "y" => "ylabel",
+                                   "x" => "xlabel")
+
+    provided_label_options = intersect(
+        keys(supported_label_options),
+        keys(plot.labs.values)
+    )
+
+    # this creates a named tuple
+    label_options = (;[Symbol(supported_label_options[key]) => plot.labs.values[key] for key in provided_label_options]...)
+
     if length(layers) == 0
         println("Warning: No geoms supplied")
     elseif length(layers) == 1
-        draw(layers[1]; axis = plot.axis)
-    else 
-        draw((+)(layers...); axis = plot.axis)
+        draw(layers[1]; axis = merge(plot.axis, label_options))
+    else
+        draw((+)(layers...); axis = merge(plot.axis, label_options))
     end
 end
 

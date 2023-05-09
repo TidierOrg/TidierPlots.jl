@@ -35,7 +35,7 @@ Pkg.add(url="https://github.com/TidierOrg/TidierPlots.jl")
 
 To support R-style programming, TidierPlots.jl is implemented using macros.
 
-TidierPlots.jl currently supports the top-level macros `@ggplot()`, plus:
+TidierPlots.jl currently supports the top-level macro `@ggplot()`, plus:
 
 Geoms:
 
@@ -45,7 +45,7 @@ Geoms:
 
 Additional Elements:
 
-- `labs()`
+- `@labs()`
 
 ## Example
 

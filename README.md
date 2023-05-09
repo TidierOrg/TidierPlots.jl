@@ -35,12 +35,17 @@ Pkg.add(url="https://github.com/TidierOrg/TidierPlots.jl")
 
 To support R-style programming, TidierPlots.jl is implemented using macros.
 
-TidierPlots.jl currently supports the following top-level macros:
+TidierPlots.jl currently supports the top-level macros `@ggplot()`, plus:
 
-- `@ggplot()`
+Geoms:
+
 - `@geom_point()`
 - `@geom_smooth()`
 - `@geom_bar()`
+
+Additional Elements:
+
+- `labs()`
 
 ## Example
 
@@ -63,7 +68,7 @@ penguins = dropmissing(DataFrame(PalmerPenguins.load()))
 ```julia
 @ggplot(data = penguins) + 
     @geom_bar(aes(x = species, color = island), position = "dodge") +
-    @labs(x = "Species")
+    @labs(x = "Species", y = "Count")
 ```
 ![](assets/example_col_color.png)
 

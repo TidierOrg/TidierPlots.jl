@@ -2,6 +2,10 @@ struct labs
     values::Dict 
 end
 
+struct theme
+    values::Dict
+end
+
 struct geom
     visual::Any
     aes::Dict
@@ -20,11 +24,7 @@ struct ggplot
     axis::NamedTuple
 end
 
-
-
 # to be added?
-
-# struct theme
 
 # struct scale
 

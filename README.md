@@ -52,6 +52,7 @@ Geoms:
 Additional Elements:
 
 - `@labs()`
+- `@lims()`
 
 ## Example
 
@@ -104,6 +105,7 @@ penguins = dropmissing(DataFrame(PalmerPenguins.load()))
                 stroke = 1, 
                 strokecolour = "black",
                 alpha = 0.8) +
-    @labs(x = "Bill Length (mm)", y = "Bill Width (mm)")
+    @labs(x = "Bill Length (mm)", y = "Bill Width (mm)") +
+    @lims(x = c(40, 60), y = c(15, 20))
 ```
 ![](assets/geom_point_customize.png)

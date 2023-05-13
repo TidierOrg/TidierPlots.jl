@@ -13,7 +13,7 @@ include("labs.jl")
 
 export draw_ggplot, geom_to_layer, ggplot_to_layers, @ggplot
 export @geom_point, @geom_smooth, @geom_bar
-export @labs, labs
+export @labs, @lims, labs
 
 const autoplot = Ref{Bool}(true)
 
@@ -117,7 +117,11 @@ function geom_to_layer(geom, data, labs)
 
     mapping_args_array = []
 
-    # rename optional aes if labs are given
+    # rename required aes if labs are given
+    # this section is possibly not required with the current geoms
+    # as x and y will be renamed elsewhere
+    # it is retained in case geoms with required aes other than ["x", "y"]
+    # are implemented 
 
     for key in geom.required_aes
         if !haskey(labs.values, key)
@@ -130,6 +134,7 @@ function geom_to_layer(geom, data, labs)
     mapping_args = Tuple(mapping_args_array)
 
     # check which supported optional aesthetics are available
+    # and which ones have labels assigned to them
 
     available_optional_aes = intersect(
         keys(geom.aes),
@@ -141,11 +146,15 @@ function geom_to_layer(geom, data, labs)
         available_optional_aes
     )
 
-    unlabelled_optional_aes = symdiff(labelled_optional_aes, available_optional_aes)
+    unlabelled_optional_aes = symdiff(
+        labelled_optional_aes, 
+        available_optional_aes
+    )
 
     # if any are available, multiply them in to the layer 
     # geom.optional_aes[a] gets the expected AoG arg name
     # geom_aes[a] gets the variable that was assigned to the aesthetic
+    # if applicable, labs.values[a] gets the label that was assigned to the aes
     # if none are available, just use the required aes
 
     if length(available_optional_aes) != 0
@@ -156,7 +165,7 @@ function geom_to_layer(geom, data, labs)
         )
 
         layer = data * mapping(mapping_args...; optional_mapping_args...)
-        
+
     else
         layer = data * mapping(mapping_args...)
     end    
@@ -196,7 +205,8 @@ function draw_ggplot(plot::ggplot)
     supported_label_options = Dict("title" => "title",
                                    "subtitle" => "subtitle",
                                    "y" => "ylabel",
-                                   "x" => "xlabel")
+                                   "x" => "xlabel",
+                                   "limits" => "limits")
 
     provided_label_options = intersect(
         keys(supported_label_options),

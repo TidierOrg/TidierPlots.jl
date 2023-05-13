@@ -2,8 +2,9 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/TidierOrg/Tidier.jl/blob/main/LICENSE)
 
-## What is TidierPlots.jl?
+<img src="/assets/logo.png" align="right" style="padding-left:10px;" width="150"/>
 
+## What is TidierPlots.jl?
 TidierPlots.jl is a 100% Julia implementation of the R package ggplot in Julia. Powered by the AlgebraOfGraphics.jl, Makie.jl, and Julia’s extensive meta-programming capabilities, TidierPlots.jl is an R user’s love
 letter to data visualization in Julia.
 

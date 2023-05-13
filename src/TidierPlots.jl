@@ -117,7 +117,7 @@ function geom_to_layer(geom, data, labs)
 
     mapping_args_array = []
 
-    # rename required aes if labs are given
+    # rename optional aes if labs are given
 
     for key in geom.required_aes
         if !haskey(labs.values, key)
@@ -136,14 +136,27 @@ function geom_to_layer(geom, data, labs)
         keys(geom.optional_aes)
     )
 
+    labelled_optional_aes = intersect(
+        keys(labs.values),
+        available_optional_aes
+    )
+
+    unlabelled_optional_aes = symdiff(labelled_optional_aes, available_optional_aes)
+
     # if any are available, multiply them in to the layer 
     # geom.optional_aes[a] gets the expected AoG arg name
     # geom_aes[a] gets the variable that was assigned to the aesthetic
     # if none are available, just use the required aes
 
     if length(available_optional_aes) != 0
-        optional_mapping_args = Dict(Symbol(geom.optional_aes[a]) => geom.aes[a] for a in available_optional_aes)
+
+        optional_mapping_args = merge(
+            Dict(Symbol(geom.optional_aes[a]) => geom.aes[a] for a in unlabelled_optional_aes),
+            Dict(Symbol(geom.optional_aes[a]) => geom.aes[a] => labs.values[a] for a in labelled_optional_aes)
+        )
+
         layer = data * mapping(mapping_args...; optional_mapping_args...)
+        
     else
         layer = data * mapping(mapping_args...)
     end    

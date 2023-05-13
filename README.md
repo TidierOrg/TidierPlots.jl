@@ -66,9 +66,9 @@ penguins = dropmissing(DataFrame(PalmerPenguins.load()))
 
 
 ```julia
-@ggplot(data = penguins) + 
-    @geom_bar(aes(x = species, color = island), position = "dodge") +
-    @labs(x = "Species", y = "Count")
+@ggplot(data = penguins) +
+           @geom_bar(aes(x = species, color = island), position = "dodge") +
+           @labs(x = "Species", y = "Count", color = "Island of Origin")
 ```
 ![](assets/example_col_color.png)
 

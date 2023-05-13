@@ -4,12 +4,15 @@ using Makie
 using CairoMakie
 using AlgebraOfGraphics
 using DataFrames
+using Reexport
 
 include("structs.jl")
 include("geom_bar.jl")
 include("geom_point.jl")
 include("geom_smooth.jl")
 include("labs.jl")
+
+@reexport using Makie: theme_black, theme_dark, theme_ggplot2, theme_light, theme_minimal
 
 export draw_ggplot, geom_to_layer, ggplot_to_layers, @ggplot
 export @geom_point, @geom_smooth, @geom_bar
@@ -32,9 +35,19 @@ function Base.:+(x::ggplot, y...)::ggplot
         labs(merge(x.labs.values, [l.values for l in y if l isa labs]...)), 
         x.axis)
 
+    theme = [t for t in y if t isa Attributes]
+
+    if length(theme) == 0
+        theme = Makie.theme_ggplot2()
+    else
+        theme = theme[end]
+    end
+
     # don't tell the julia police
     if autoplot[]
-        display(draw_ggplot(result))
+        with_theme(theme) do
+            display(draw_ggplot(result))
+        end
     end
 
     return result

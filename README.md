@@ -49,6 +49,13 @@ Geoms:
 - `@geom_smooth()`
 - `@geom_bar()`
 
+Makie Themes (Note that these are **not macros**):
+
+- `theme_dark()`
+- `theme_black()`
+- `theme_white()`
+- `theme_minimal()`
+
 Additional Elements:
 
 - `@labs()`
@@ -93,7 +100,8 @@ penguins = dropmissing(DataFrame(PalmerPenguins.load()))
     @geom_smooth(method = "lm") +
     @labs(x = "Bill Length (mm)", y = "Bill Width (mm)", 
         title = "Bill Length vs. Bill Width", 
-        subtitle = "Using geom_point and geom_smooth")
+        subtitle = "Using geom_point and geom_smooth") +
+    theme_dark()
 ```
 
 ![](assets/example_point_smooth.png)
@@ -106,6 +114,7 @@ penguins = dropmissing(DataFrame(PalmerPenguins.load()))
                 strokecolour = "black",
                 alpha = 0.8) +
     @labs(x = "Bill Length (mm)", y = "Bill Width (mm)") +
-    @lims(x = c(40, 60), y = c(15, 20))
+    @lims(x = c(40, 60), y = c(15, 20)) +
+    theme_minimal()
 ```
 ![](assets/geom_point_customize.png)

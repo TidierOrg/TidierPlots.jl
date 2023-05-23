@@ -18,8 +18,11 @@ include("scales.jl")
 export draw_ggplot, geom_to_layer, ggplot_to_layers, layer_equal, @ggplot
 export @geom_point, @geom_smooth, @geom_bar
 export @labs, @lims
-export @scale_x_continuous, @scale_y_continuous, @scale_x_log10, @scale_y_log10
+export @scale_x_continuous, @scale_y_continuous
+export @scale_x_log10, @scale_y_log10, @scale_x_log2, @scale_y_log2, @scale_x_log, @scale_y_log  
+export @scale_x_logit, @scale_y_logit, @scale_x_pseudolog10, @scale_y_pseudolog10, @scale_x_Symlog10, @scale_y_Symlog10 
 export @scale_x_reverse, @scale_y_reverse, @scale_x_sqrt, @scale_y_sqrt
+
 
 const autoplot = Ref{Bool}(true)
 

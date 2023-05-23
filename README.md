@@ -59,7 +59,7 @@ Makie Themes (Note that these are **not macros**):
 
 Additional Elements:
 
-- `@scale_[x|y]_[continuous|log10|sqrt|reverse]`
+- `@scale_[x|y]_[continuous|log[ |2|10]|logit|pseudolog10|sqrt|reverse]`
 - `@labs()`
 - `@lims()`
 

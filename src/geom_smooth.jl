@@ -9,7 +9,7 @@ macro geom_smooth(exprs...)
 
     haskey(args_dict, "data") ? 
         plot_data = AlgebraOfGraphics.data(Base.eval(Main, args_dict["data"])) :
-        plot_data = nothing
+        plot_data = mapping()
 
     ##### This section is where the geoms are different ####
 
@@ -31,7 +31,7 @@ macro geom_smooth(exprs...)
     # first argument, and any required settings. If a visual call 
     # is not required, this should be set to nothing
 
-    geom_visual = nothing
+    geom_visual = mapping()
 
     # 4. If the plot requires a AoG analysis function, that function should be assigned 
     # here. If an AoG analysis is not required, set this to nothing
@@ -40,13 +40,13 @@ macro geom_smooth(exprs...)
 
     if haskey(args_dict, "method")
         if args_dict["method"] == "lm"
-            analysis = AlgebraOfGraphics.linear
+            analysis = AlgebraOfGraphics.linear()
         end
     end
 
     #### This return statement should not be edited ####
 
-    return geom(geom_visual, aes_dict, args_dict,
-        analysis, plot_data,
-        required_aes, optional_aes)
+    return Geom(aes_dict, args_dict,
+                plot_data, geom_visual, analysis,
+                required_aes, optional_aes)
 end

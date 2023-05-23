@@ -51,6 +51,7 @@ Geoms:
 
 Makie Themes (Note that these are **not macros**):
 
+- `theme_ggplot2()` (the default)
 - `theme_dark()`
 - `theme_black()`
 - `theme_white()`

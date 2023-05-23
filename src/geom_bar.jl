@@ -9,7 +9,7 @@ macro geom_bar(exprs...)
 
     haskey(args_dict, "data") ? 
         plot_data = AlgebraOfGraphics.data(Base.eval(Main, args_dict["data"])) :
-        plot_data = nothing
+        plot_data = mapping()
 
     ##### This section is where the geoms are different ####
 
@@ -66,11 +66,11 @@ macro geom_bar(exprs...)
     # 4. If the plot requires a AoG analysis function, that function should be assigned 
     # here. If an AoG analysis is not required, set this to nothing
 
-    analysis = AlgebraOfGraphics.frequency
+    analysis = AlgebraOfGraphics.frequency()
     
     #### This return statement should not be edited ####
 
-    return geom(geom_visual, aes_dict, args_dict,
-                analysis, plot_data,
+    return Geom(aes_dict, args_dict,
+                plot_data, geom_visual, analysis,
                 required_aes, optional_aes)
 end

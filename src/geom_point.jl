@@ -9,7 +9,7 @@ macro geom_point(exprs...)
 
     haskey(args_dict, "data") ? 
         plot_data = AlgebraOfGraphics.data(Base.eval(Main, args_dict["data"])) :
-        plot_data = nothing
+        plot_data = mapping()
 
     ##### This section is where the geoms are different ####
 
@@ -38,7 +38,7 @@ macro geom_point(exprs...)
     # 3. If the plot requires a call to AoG's visual() function, geom_visual should
     # contain the AoG function visual, the Makie function that visual expects as its 
     # first argument, and any required settings. If a visual call 
-    # is not required, this should be set to nothing
+    # is not required, this should be set to mapping()
     
     optional_visual_args = optional_aes
 
@@ -55,13 +55,13 @@ macro geom_point(exprs...)
     end 
 
     # 4. If the plot requires a AoG analysis function, that function should be assigned 
-    # here. If an AoG analysis is not required, set this to nothing
+    # here. If an AoG analysis is not required, set this to mapping(), the neutral muliplier in AoG
 
-    analysis = nothing
+    analysis = mapping()
    
     #### This return statement should not be edited ####
 
-    return geom(geom_visual, aes_dict, args_dict,
-        analysis, plot_data,
-        required_aes, optional_aes)
+    return Geom(aes_dict, args_dict,
+                plot_data, geom_visual, analysis,
+                required_aes, optional_aes)
 end

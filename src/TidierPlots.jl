@@ -14,9 +14,9 @@ include("labs.jl")
 
 @reexport using Makie: theme_black, theme_dark, theme_ggplot2, theme_light, theme_minimal
 
-export draw_ggplot, geom_to_layer, ggplot_to_layers, @ggplot
+export draw_ggplot, geom_to_layer, ggplot_to_layers, layer_equal, @ggplot
 export @geom_point, @geom_smooth, @geom_bar
-export @labs, @lims, labs
+export @labs, @lims
 
 const autoplot = Ref{Bool}(true)
 
@@ -28,11 +28,11 @@ function TidierPlots_set(option::AbstractString, value::Bool)
     end
 end
 
-function Base.:+(x::ggplot, y...)::ggplot
-    result = ggplot(vcat(x.geoms, [i for i in y if i isa geom]), 
+function Base.:+(x::GGPlot, y...)::GGPlot
+    result = GGPlot(vcat(x.geoms, [i for i in y if i isa Geom]), 
         x.default_aes, 
         x.data,
-        labs(merge(x.labs.values, [l.values for l in y if l isa labs]...)), 
+        GGOptions(merge(x.labs.values, [l.values for l in y if l isa GGOptions]...)), 
         x.axis)
 
     theme = [t for t in y if t isa Attributes]
@@ -65,12 +65,12 @@ macro ggplot(exprs...)
         width = 600
 
     haskey(args_dict, "data") ? 
-        plot_data = args_dict["data"] :
-        plot_data = nothing
+        plot_data = AlgebraOfGraphics.data(Base.eval(Main, args_dict["data"])) :
+        plot_data = mapping()
     
-    ggplot([], aes_dict, 
-            AlgebraOfGraphics.data(Base.eval(Main, plot_data)),
-            labs(Dict()), 
+    GGPlot([], aes_dict, 
+            plot_data,
+            GGOptions(Dict()), 
             (height = height, width = width)) 
 end
 
@@ -116,13 +116,19 @@ function check_aes(required_aes, aes_dict)
     end
 end
 
-function geom_to_layer(geom)
-    if isnothing(geom.data)
-        error("no data available for geom")
+function layer_equal(L1::Layer, L2::Layer)
+    if L1.transformation != L2.transformation
+        return false
+    elseif L1.data != L2.data
+        return false
+    elseif L1.named != L2.named
+        return false
+    elseif L1.positional != L2.positional
+        return false
     else
-        return geom_to_layer(geom, geom.data, labs(Dict()))
+        return true
     end
-end 
+end
 
 function geom_to_layer(geom, data, labs)
     
@@ -177,29 +183,22 @@ function geom_to_layer(geom, data, labs)
             Dict(Symbol(geom.optional_aes[a]) => geom.aes[a] => labs.values[a] for a in labelled_optional_aes)
         )
 
-        layer = data * mapping(mapping_args...; optional_mapping_args...)
+        layer = data * geom.analysis * geom.visual * mapping(mapping_args...; optional_mapping_args...)
 
     else
-        layer = data * mapping(mapping_args...)
+        layer = data * geom.analysis * geom.visual * mapping(mapping_args...)
     end    
-
-    if !isnothing(geom.analysis)
-        layer = layer * (geom.analysis)()
-    end
-
-    if !isnothing(geom.visual)
-        layer = layer * geom.visual
-    end
 
     return layer
 end
 
-function draw_ggplot(plot::ggplot)
+function draw_ggplot(plot::GGPlot)
     layers = []
+    empty_layer = mapping()
     
     for geom in plot.geoms
         # if data is not specified at the geom level, use the ggplot default
-        if isnothing(geom.data)
+        if layer_equal(geom.data, empty_layer)
             data = plot.data
         else 
             data = geom.data

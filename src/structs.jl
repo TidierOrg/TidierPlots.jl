@@ -1,28 +1,26 @@
-struct labs
-    values::Dict 
-end
-
-struct theme
-    values::Dict
-end
-
-struct geom
-    visual::Any
+struct Geom
     aes::Dict
     args::Dict
-    analysis::Any
-    data::Any
+    data::Layer
+    visual::Layer
+    analysis::Layer
     required_aes::AbstractArray
     optional_aes::Dict
 end
 
-struct ggplot
+struct GGOptions
+    values::Dict 
+end
+
+struct GGPlot
     geoms::AbstractArray
     default_aes::Dict
-    data::Any
-    labs::labs
+    data::Layer
+    labs::GGOptions
     axis::NamedTuple
 end
+
+
 
 # to be added?
 

@@ -59,6 +59,7 @@ Makie Themes (Note that these are **not macros**):
 
 Additional Elements:
 
+- `@scale_[x|y]_[continuous|log10|sqrt|reverse]`
 - `@labs()`
 - `@lims()`
 
@@ -119,3 +120,12 @@ penguins = dropmissing(DataFrame(PalmerPenguins.load()))
     theme_minimal()
 ```
 ![](assets/geom_point_customize.png)
+
+```julia
+@ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + 
+    @geom_point() + 
+    @geom_smooth(method = "lm") +
+    @scale_x_log10(name = "Log10 Scaled Bill Length") + 
+    @scale_y_reverse(name = "Reversed Bill Width")
+```
+![](assets/scales.png)

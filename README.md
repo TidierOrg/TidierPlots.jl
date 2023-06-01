@@ -129,3 +129,16 @@ penguins = dropmissing(DataFrame(PalmerPenguins.load()))
     @scale_y_reverse(name = "Reversed Bill Width")
 ```
 ![](assets/scales.png)
+
+```julia
+using MarketData
+AAPL = DataFrame(yahoo(:AAPL))
+SPX = DataFrame(yahoo("^GSPC"))
+
+@ggplot(data = AAPL, aes(x = timestamp, y = Open)) + 
+    @geom_path(colour = "blue") + 
+    @geom_path(data = SPX, colour = "orange") + 
+    @labs(x = "Date", title = "Historical AAPL and S&P Prices at Open") +
+    theme_minimal()
+```
+![](assets/example_path.png)

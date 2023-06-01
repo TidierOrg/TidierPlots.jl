@@ -10,18 +10,20 @@ include("structs.jl")
 include("geom_bar.jl")
 include("geom_point.jl")
 include("geom_smooth.jl")
+include("geom_path.jl")
 include("labs.jl")
 include("scales.jl")
 
 @reexport using Makie: theme_black, theme_dark, theme_ggplot2, theme_light, theme_minimal
 
 export draw_ggplot, geom_to_layer, ggplot_to_layers, layer_equal, @ggplot
-export @geom_point, @geom_smooth, @geom_bar
+export @geom_point, @geom_smooth, @geom_bar, @geom_path
 export @labs, @lims
 export @scale_x_continuous, @scale_y_continuous
 export @scale_x_log10, @scale_y_log10, @scale_x_log2, @scale_y_log2, @scale_x_log, @scale_y_log  
 export @scale_x_logit, @scale_y_logit, @scale_x_pseudolog10, @scale_y_pseudolog10, @scale_x_Symlog10, @scale_y_Symlog10 
 export @scale_x_reverse, @scale_y_reverse, @scale_x_sqrt, @scale_y_sqrt
+export @scale_colour_continuous, @scale_colour_continuous
 
 
 const autoplot = Ref{Bool}(true)
@@ -140,6 +142,12 @@ function geom_to_layer(geom, data, labs)
     
     check_aes(geom.required_aes, geom.aes)
 
+    visual_layer = geom.visual
+
+    if haskey(labs.values, "palette")
+        visual_layer = geom.visual * AlgebraOfGraphics.visual(colormap = labs.values["palette"])
+    end
+
     mapping_args_array = []
 
     # rename required aes if labs are given
@@ -189,10 +197,10 @@ function geom_to_layer(geom, data, labs)
             Dict(Symbol(geom.optional_aes[a]) => geom.aes[a] => labs.values[a] for a in labelled_optional_aes)
         )
 
-        layer = data * geom.analysis * geom.visual * mapping(mapping_args...; optional_mapping_args...)
+        layer = data * geom.analysis * visual_layer * mapping(mapping_args...; optional_mapping_args...)
 
     else
-        layer = data * geom.analysis * geom.visual * mapping(mapping_args...)
+        layer = data * geom.analysis * visual_layer * mapping(mapping_args...)
     end    
 
     return layer

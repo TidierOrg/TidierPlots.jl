@@ -48,6 +48,7 @@ Geoms:
 - `@geom_point()`
 - `@geom_smooth()`
 - `@geom_errorbar()`
+- `@geom_path()`
 - `@geom_bar()`, `@geom_col()`, and `@geom_histogram()`
 - `@geom_boxplot` and `@geom_violin`
 - `@geom_contour` and `@geom_tile`

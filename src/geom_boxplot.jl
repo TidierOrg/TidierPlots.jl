@@ -1,4 +1,4 @@
-macro geom_bar(exprs...)
+macro geom_boxplot(exprs...)
     aes_dict, args_dict = extract_aes(:($(exprs)))
     
     return build_geom(aes_dict, args_dict, 

@@ -45,11 +45,11 @@ TidierPlots.jl currently supports the top-level macro `@ggplot()`, plus:
 
 Geoms:
 
-- `@geom_point()`
-- `@geom_smooth()`
-- `@geom_errorbar()`
-- `@geom_path()`
-- `@geom_bar()`, `@geom_col()`, and `@geom_histogram()`
+- `@geom_point`
+- `@geom_smooth`
+- `@geom_errorbar`
+- `@geom_path`
+- `@geom_bar`, `@geom_col`, and `@geom_histogram`
 - `@geom_boxplot` and `@geom_violin`
 - `@geom_contour` and `@geom_tile`
 - `@geom_text` and `@geom_label`
@@ -65,8 +65,8 @@ Makie Themes (Note that these are **not macros**):
 Additional Elements:
 
 - `@scale_[x|y]_[continuous|log[ |2|10]|logit|pseudolog10|sqrt|reverse]`
-- `@labs()`
-- `@lims()`
+- `@labs`
+- `@lims`
 
 ## Example
 

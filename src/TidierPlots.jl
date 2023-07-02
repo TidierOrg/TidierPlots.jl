@@ -7,17 +7,30 @@ using DataFrames
 using Reexport
 
 include("structs.jl")
-include("geom_bar.jl")
-include("geom_point.jl")
-include("geom_smooth.jl")
-include("geom_path.jl")
+include("geom.jl")
 include("labs.jl")
 include("scales.jl")
+
+include("geom_bar.jl")
+include("geom_boxplot.jl")
+include("geom_contour.jl")
+include("geom_errorbar.jl")
+include("geom_path.jl")
+include("geom_point.jl")
+include("geom_smooth.jl")
+include("geom_text.jl")
+include("geom_violin.jl")
 
 @reexport using Makie: theme_black, theme_dark, theme_ggplot2, theme_light, theme_minimal
 
 export draw_ggplot, geom_to_layer, ggplot_to_layers, layer_equal, @ggplot
-export @geom_point, @geom_smooth, @geom_bar, @geom_path
+export @geom_point, @geom_smooth 
+export @geom_bar, @geom_col, @geom_histogram
+export @geom_errorbar, @geom_errorbarh
+export @geom_path
+export @geom_violin, @geom_boxplot
+export @geom_contour, @geom_tile
+export @geom_text, @geom_label
 export @labs, @lims
 export @scale_x_continuous, @scale_y_continuous
 export @scale_x_log10, @scale_y_log10, @scale_x_log2, @scale_y_log2, @scale_x_log, @scale_y_log  

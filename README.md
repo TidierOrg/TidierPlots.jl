@@ -47,7 +47,11 @@ Geoms:
 
 - `@geom_point()`
 - `@geom_smooth()`
-- `@geom_bar()`
+- `@geom_errorbar()`
+- `@geom_bar()`, `@geom_col()`, and `@geom_histogram()`
+- `@geom_boxplot` and `@geom_violin`
+- `@geom_contour` and `@geom_tile`
+- `@geom_text` and `@geom_label`
 
 Makie Themes (Note that these are **not macros**):
 
@@ -142,3 +146,20 @@ SPX = DataFrame(yahoo("^GSPC"))
     theme_minimal()
 ```
 ![](assets/example_path.png)
+
+```julia
+df = DataFrame(
+         trt = ["1", "1", "2", "2"],
+         resp = [1, 5, 3, 4],
+         group = ["1", "2", "1", "2"],
+         upper = [1.1, 5.3, 3.3, 4.2],
+         lower = [0.8, 4.6, 2.4, 3.6]
+       )
+
+p = @ggplot(data = df, aes(x = trt, y = resp, colour = group))
+
+p + @geom_errorbar(aes(ymin = lower, ymax = upper)) + 
+    @geom_point(aes(x = trt, y = resp, colour = group))
+```
+![](assets/errorbars.png)
+

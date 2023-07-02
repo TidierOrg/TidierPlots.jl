@@ -1,0 +1,21 @@
+macro geom_errorbar(exprs...)
+    aes_dict, args_dict = extract_aes(:($(exprs)))
+    
+    return build_geom(aes_dict, args_dict, 
+        ["x", "ymin", "ymax"], # required aesthetics
+        Makie.Rangebars, # function for visual layer
+        AlgebraOfGraphics.mapping()) # function for analysis layer
+
+end
+
+macro geom_errorbarh(exprs...)
+    aes_dict, args_dict = extract_aes(:($(exprs)))
+    
+    args_dict["errorbar_direction"] = :x
+
+    return build_geom(aes_dict, args_dict, 
+        ["y", "xmin", "xmax"], # required aesthetics
+        Makie.Rangebars, # function for visual layer
+        AlgebraOfGraphics.mapping()) # function for analysis layer
+
+end

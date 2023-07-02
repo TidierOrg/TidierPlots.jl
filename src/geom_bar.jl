@@ -1,32 +1,38 @@
 macro geom_bar(exprs...)
-    ##### This section should be consistent across all geoms ####
-
-    # Extract arguments passed inside aes and outside aes into separate dictionaries 
     aes_dict, args_dict = extract_aes(:($(exprs)))
 
-    # If the geom has a data specification, store it in AoG format in geom.data
-    # Otherwise draw_ggplot will use the data specified in @ggplot()
+    aes_dict, args_dict = handle_position(aes_dict, args_dict)
+    
+    return build_geom(aes_dict, args_dict, 
+        ["x"], # required aesthetics
+        Makie.BarPlot, # function for visual layer
+        AlgebraOfGraphics.frequency()) # function for analysis layer
 
-    haskey(args_dict, "data") ? 
-        plot_data = AlgebraOfGraphics.data(Base.eval(Main, args_dict["data"])) :
-        plot_data = mapping()
+end
 
-    ##### This section is where the geoms are different ####
+macro geom_col(exprs...)
+    aes_dict, args_dict = extract_aes(:($(exprs)))
 
-    # 1. What are the required aes arguments? They be specified inside this geom
-    # or inherited from ggplot(), but if they are not given in either location,
-    # the code will error. The order should be the same as expected by AoG's 
-    # mapping() function for the plot that will be generated.
+    aes_dict, args_dict = handle_position(aes_dict, args_dict)
+    
+    return build_geom(aes_dict, args_dict, 
+        ["x"], # required aesthetics
+        Makie.BarPlot, # function for visual layer
+        mapping()) # function for analysis layer
+end
 
-    required_aes = ["x"]
+macro geom_histogram(exprs...)
+    aes_dict, args_dict = extract_aes(:($(exprs)))
 
-    # 2. What optional ggplot aes options are supported, and what is their name 
-    # in AoG? 
+    return build_geom(aes_dict, args_dict, 
+        ["x"], # required aesthetics
+        nothing, # function for visual layer
+        AlgebraOfGraphics.histogram()) # function for analysis layer
+end
 
-    optional_aes = Dict("color" => "color",
-                        "colour" => "color",
-                        "stack" => "stack",
-                        "dodge" => "dodge")
+function handle_position(aes_dict, args_dict)
+    
+    # handles defaults and grouping for geom_bar 
 
     if haskey(args_dict, "position")
         if args_dict["position"] == "dodge"
@@ -56,21 +62,5 @@ macro geom_bar(exprs...)
         end
     end
 
-    # 3. If the plot requires a call to AoG's visual() function, geom_visual should
-    # contain the AoG function visual, the Makie function that visual expects as its 
-    # first argument, and any required settings. If a visual call 
-    # is not required, this should be set to nothing
-
-    geom_visual = AlgebraOfGraphics.visual(Makie.BarPlot) 
-
-    # 4. If the plot requires a AoG analysis function, that function should be assigned 
-    # here. If an AoG analysis is not required, set this to nothing
-
-    analysis = AlgebraOfGraphics.frequency()
-    
-    #### This return statement should not be edited ####
-
-    return Geom(aes_dict, args_dict,
-                plot_data, geom_visual, analysis,
-                required_aes, optional_aes)
+    return (aes_dict, args_dict)
 end

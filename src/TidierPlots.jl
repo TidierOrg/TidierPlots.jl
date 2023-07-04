@@ -27,7 +27,7 @@ export draw_ggplot, geom_to_layer, ggplot_to_layers, layer_equal, @ggplot
 export @geom_point, @geom_smooth 
 export @geom_bar, @geom_col, @geom_histogram
 export @geom_errorbar, @geom_errorbarh
-export @geom_path, @geom_line
+export @geom_path, @geom_line, @geom_step
 export @geom_violin, @geom_boxplot
 export @geom_contour, @geom_tile
 export @geom_text, @geom_label

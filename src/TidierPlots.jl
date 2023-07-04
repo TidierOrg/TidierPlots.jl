@@ -34,10 +34,10 @@ export @geom_text, @geom_label
 export @labs, @lims
 export @scale_x_continuous, @scale_y_continuous
 export @scale_x_log10, @scale_y_log10, @scale_x_log2, @scale_y_log2, @scale_x_log, @scale_y_log  
-export @scale_x_logit, @scale_y_logit, @scale_x_pseudolog10, @scale_y_pseudolog10, @scale_x_Symlog10, @scale_y_Symlog10 
+export @scale_x_logit, @scale_y_logit 
+export @scale_x_pseudolog10, @scale_y_pseudolog10, @scale_x_Symlog10, @scale_y_Symlog10 
 export @scale_x_reverse, @scale_y_reverse, @scale_x_sqrt, @scale_y_sqrt
 export @scale_colour_continuous, @scale_colour_continuous
-
 
 const autoplot = Ref{Bool}(true)
 
@@ -129,11 +129,17 @@ function extract_aes(geom)
     return (aes_dict, args_dict)
 end
 
-function check_aes(required_aes, aes_dict)
+function check_aes(required_aes::AbstractArray, aes_dict::Dict, geom_name::AbstractString)
+    missing_aes = []
+    
     for aes in required_aes
         if !haskey(aes_dict, aes)
-            error("missing required aesthetic: $aes")
+            push!(missing_aes, aes)
         end
+    end
+
+    if length(missing_aes != 0)
+        error("$geom_name is missing required aesthetic(s): $missing_aes")
     end
 end
 
@@ -153,7 +159,7 @@ end
 
 function geom_to_layer(geom, data, labs)
     
-    check_aes(geom.required_aes, geom.aes)
+    check_aes(geom.required_aes, geom.aes, geom.args["geom_name"])
 
     visual_layer = geom.visual
 

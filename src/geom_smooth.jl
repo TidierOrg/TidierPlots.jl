@@ -1,5 +1,7 @@
 macro geom_smooth(exprs...)
     aes_dict, args_dict = extract_aes(:($(exprs)))
+
+    args_dict["geom_name"] = "geom_smooth"
     
     analysis = AlgebraOfGraphics.smooth()
 

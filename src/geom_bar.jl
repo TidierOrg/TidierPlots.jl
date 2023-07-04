@@ -2,6 +2,8 @@ macro geom_bar(exprs...)
     aes_dict, args_dict = extract_aes(:($(exprs)))
 
     aes_dict, args_dict = handle_position(aes_dict, args_dict)
+
+    args_dict["geom_name"] = "geom_bar"
     
     return build_geom(aes_dict, args_dict, 
         ["x"], # required aesthetics
@@ -14,6 +16,8 @@ macro geom_col(exprs...)
     aes_dict, args_dict = extract_aes(:($(exprs)))
 
     aes_dict, args_dict = handle_position(aes_dict, args_dict)
+
+    args_dict["geom_name"] = "geom_col"
     
     return build_geom(aes_dict, args_dict, 
         ["x"], # required aesthetics
@@ -23,6 +27,8 @@ end
 
 macro geom_histogram(exprs...)
     aes_dict, args_dict = extract_aes(:($(exprs)))
+
+    args_dict["geom_name"] = "geom_histogram"
 
     return build_geom(aes_dict, args_dict, 
         ["x"], # required aesthetics

@@ -27,7 +27,7 @@ export draw_ggplot, geom_to_layer, ggplot_to_layers, layer_equal, @ggplot
 export @geom_point, @geom_smooth 
 export @geom_bar, @geom_col, @geom_histogram
 export @geom_errorbar, @geom_errorbarh
-export @geom_path
+export @geom_path, @geom_line
 export @geom_violin, @geom_boxplot
 export @geom_contour, @geom_tile
 export @geom_text, @geom_label
@@ -129,16 +129,10 @@ function extract_aes(geom)
     return (aes_dict, args_dict)
 end
 
-function check_aes(required_aes::AbstractArray, aes_dict::Dict, geom_name::AbstractString)
-    missing_aes = []
-    
-    for aes in required_aes
-        if !haskey(aes_dict, aes)
-            push!(missing_aes, aes)
-        end
-    end
+function check_aes(required_aes, aes_dict, geom_name)
+    missing_aes = [aes for aes in required_aes if !haskey(aes_dict, aes)]
 
-    if length(missing_aes != 0)
+    if (length(missing_aes) != 0)
         error("$geom_name is missing required aesthetic(s): $missing_aes")
     end
 end

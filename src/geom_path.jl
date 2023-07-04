@@ -16,7 +16,7 @@ macro geom_line(exprs...)
 
     return build_geom(aes_dict, args_dict, 
                       ["x", "y"], # required aesthetics
-                      Makie.Series, # function for visual layer
+                      Makie.Lines, # function for visual layer
                       mapping()) # function for analysis layer    
 end
 

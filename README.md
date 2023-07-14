@@ -19,9 +19,8 @@ letter to data visualization in Julia.
 
 2.  **Stay as compatible as possible with AlgebraOfGraphics.jl** This package is meant
     to be a thin wrapper around AoG's syntax to help introduce R users to plotting in 
-    Julia. `geom`s declared in TidierPlots.jl can be easily converted to AoG `Layer`
-    objects using `geom_to_layer()`, and `ggplot`s can be converted to AoG `Layers` objects
-    using `ggplot_to_layers()`.
+    Julia. `Geom` objects declared in TidierPlots.jl can be easily converted to AoG `Layer`
+    objects using `Layer(Geom)`, and `GGPlot` objects can be converted to AoG `Layers` objects using `Layers(GGPlot)`.
 
 3. **To Extend ggplot using julia-specific features where appropriate** as long as this does
     not confict with the first two goals. The package aims to behave exactly like ggplot
@@ -48,7 +47,7 @@ Geoms:
 - `@geom_point`
 - `@geom_smooth`
 - `@geom_errorbar`
-- `@geom_path` and `@geom_line`
+- `@geom_path`, `@geom_line`, and `@geom_step`
 - `@geom_bar`, `@geom_col`, and `@geom_histogram`
 - `@geom_boxplot` and `@geom_violin`
 - `@geom_contour` and `@geom_tile`
@@ -137,7 +136,7 @@ penguins = dropmissing(DataFrame(PalmerPenguins.load()))
 
 ```julia
 using MarketData
-AAPL = DataFrame(yahoo(:AAPL))
+AAPL = DataFrame(yahoo("AAPL"))
 SPX = DataFrame(yahoo("^GSPC"))
 
 @ggplot(data = AAPL, aes(x = timestamp, y = Open)) + 
@@ -164,3 +163,8 @@ p + @geom_errorbar(aes(ymin = lower, ymax = upper)) +
 ```
 ![](assets/errorbars.png)
 
+```julia
+data(penguins) * Layer(@geom_point(aes(x = bill_length_mm, y = bill_depth_mm, color = species))) |> draw
+```
+
+![](assets/interop.png)

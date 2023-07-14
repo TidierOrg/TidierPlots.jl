@@ -6,25 +6,12 @@ struct Geom
     analysis::Layer
     required_aes::AbstractArray
     optional_aes::Dict
-end
-
-struct GGOptions
-    values::Dict 
+    axis_options::Dict
 end
 
 struct GGPlot
     geoms::AbstractArray
     default_aes::Dict
     data::Layer
-    labs::GGOptions
-    axis::NamedTuple
+    axis_options::Dict
 end
-
-
-
-# to be added?
-
-# struct scale
-
-# struct coords
-

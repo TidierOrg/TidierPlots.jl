@@ -2,7 +2,7 @@ macro labs(exprs...)
     # there should only be args 
     aes_dict, args_dict = extract_aes(:($(exprs)))
 
-    return GGOptions(args_dict)
+    return args_dict
 end
 
 macro lims(exprs...)
@@ -37,7 +37,6 @@ macro lims(exprs...)
         end
     end
 
-
-    return GGOptions(lims_dict)
+    return lims_dict
 end
 

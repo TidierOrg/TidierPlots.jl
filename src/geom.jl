@@ -1,4 +1,4 @@
-function build_geom(aes_dict, args_dict, required_aes, visual, analysis)
+function build_geom(aes_dict, args_dict, required_aes, visual, analysis; special_aes = nothing)
     
     # if data is specified, call a questionable eval to grab it as a layer
 
@@ -25,6 +25,10 @@ function build_geom(aes_dict, args_dict, required_aes, visual, analysis)
                         "text" => "text",
                         "label" => "text")
 
+    if !isnothing(special_aes)
+        optional_aes = merge(optional_aes, special_aes)
+    end
+
     # turn the visual function into a layer with the right args
 
     optional_visual_args = optional_aes
@@ -47,6 +51,6 @@ function build_geom(aes_dict, args_dict, required_aes, visual, analysis)
 
     return Geom(aes_dict, args_dict,
         plot_data, geom_visual, analysis,
-        required_aes, optional_aes)
+        required_aes, optional_aes, Dict())
 
 end

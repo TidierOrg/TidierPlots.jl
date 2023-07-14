@@ -10,6 +10,7 @@ include("structs.jl")
 include("geom.jl")
 include("labs.jl")
 include("scales.jl")
+include("interop.jl")
 
 include("geom_bar.jl")
 include("geom_boxplot.jl")
@@ -24,6 +25,7 @@ include("geom_violin.jl")
 @reexport using Makie: theme_black, theme_dark, theme_ggplot2, theme_light, theme_minimal
 
 export draw_ggplot, geom_to_layer, ggplot_to_layers, layer_equal, @ggplot
+export Layer, Layers
 export @geom_point, @geom_smooth 
 export @geom_bar, @geom_col, @geom_histogram
 export @geom_errorbar, @geom_errorbarh
@@ -50,11 +52,14 @@ function TidierPlots_set(option::AbstractString, value::Bool)
 end
 
 function Base.:+(x::GGPlot, y...)::GGPlot
-    result = GGPlot(vcat(x.geoms, [i for i in y if i isa Geom]), 
+    result = GGPlot(
+        vcat(x.geoms, [i for i in y if i isa Geom]), 
         x.default_aes, 
         x.data,
-        GGOptions(merge(x.labs.values, [l.values for l in y if l isa GGOptions]...)), 
-        x.axis)
+        merge(x.axis_options, 
+            [l.axis_options for l in y if l isa Geom]...,
+            [d for d in y if d isa Dict]...)
+    )
 
     theme = [t for t in y if t isa Attributes]
 
@@ -77,22 +82,22 @@ end
 macro ggplot(exprs...)
     aes_dict, args_dict = extract_aes(:($(exprs)))
 
-    haskey(args_dict, "height") ?
-        height = args_dict["height"] :
-        height = 400
-
-    haskey(args_dict, "width") ?
-        width = args_dict["width"] :
-        width = 600
+    if !haskey(args_dict, "height")
+        args_dict["height"] = 400
+    end
+    
+    if !haskey(args_dict, "width")
+        args_dict["width"] = 600
+    end
 
     haskey(args_dict, "data") ? 
         plot_data = AlgebraOfGraphics.data(Base.eval(Main, args_dict["data"])) :
         plot_data = mapping()
     
-    GGPlot([], aes_dict, 
-            plot_data,
-            GGOptions(Dict()), 
-            (height = height, width = width)) 
+    GGPlot([], 
+           aes_dict, 
+           plot_data,
+           args_dict) 
 end
 
 function extract_aes(geom)
@@ -157,8 +162,8 @@ function geom_to_layer(geom, data, labs)
 
     visual_layer = geom.visual
 
-    if haskey(labs.values, "palette")
-        visual_layer = geom.visual * AlgebraOfGraphics.visual(colormap = labs.values["palette"])
+    if haskey(labs, "palette")
+        visual_layer = geom.visual * AlgebraOfGraphics.visual(colormap = labs["palette"])
     end
 
     mapping_args_array = []
@@ -170,10 +175,10 @@ function geom_to_layer(geom, data, labs)
     # are implemented 
 
     for key in geom.required_aes
-        if !haskey(labs.values, key)
+        if !haskey(labs, key)
             push!(mapping_args_array, Symbol(geom.aes[key]))
         else 
-            push!(mapping_args_array, Symbol(geom.aes[key]) => labs.values[key])
+            push!(mapping_args_array, Symbol(geom.aes[key]) => labs[key])
         end
     end
     
@@ -188,7 +193,7 @@ function geom_to_layer(geom, data, labs)
     )
 
     labelled_optional_aes = intersect(
-        keys(labs.values),
+        keys(labs),
         available_optional_aes
     )
 
@@ -207,7 +212,7 @@ function geom_to_layer(geom, data, labs)
 
         optional_mapping_args = merge(
             Dict(Symbol(geom.optional_aes[a]) => geom.aes[a] for a in unlabelled_optional_aes),
-            Dict(Symbol(geom.optional_aes[a]) => geom.aes[a] => labs.values[a] for a in labelled_optional_aes)
+            Dict(Symbol(geom.optional_aes[a]) => geom.aes[a] => labs[a] for a in labelled_optional_aes)
         )
 
         layer = data * geom.analysis * visual_layer * mapping(mapping_args...; optional_mapping_args...)
@@ -220,31 +225,15 @@ function geom_to_layer(geom, data, labs)
 end
 
 function draw_ggplot(plot::GGPlot)
-    layers = []
-    empty_layer = mapping()
     
-    for geom in plot.geoms
-        # if data is not specified at the geom level, use the ggplot default
-        if layer_equal(geom.data, empty_layer)
-            data = plot.data
-        else 
-            data = geom.data
-        end
-
-        # if an aes isn't given in the geom, use the ggplot aes
-        for aes in keys(plot.default_aes)
-            if !haskey(geom.aes, aes)
-                geom.aes[aes] = plot.default_aes[aes]
-            end
-        end
-
-        push!(layers, geom_to_layer(geom, data, plot.labs))
-    end
+    layers = Layers(plot)
 
     supported_label_options = Dict("title" => "title",
                                    "subtitle" => "subtitle",
                                    "y" => "ylabel",
                                    "x" => "xlabel",
+                                   "height" => "height",
+                                   "width" => "width",
                                    "limits" => "limits",
                                    "xscale" => "xscale",
                                    "yscale" => "yscale",
@@ -253,19 +242,13 @@ function draw_ggplot(plot::GGPlot)
 
     provided_label_options = intersect(
         keys(supported_label_options),
-        keys(plot.labs.values)
+        keys(plot.axis_options)
     )
 
     # this creates a named tuple
-    label_options = (;[Symbol(supported_label_options[key]) => plot.labs.values[key] for key in provided_label_options]...)
+    label_options = (;[Symbol(supported_label_options[key]) => plot.axis_options[key] for key in provided_label_options]...)
 
-    if length(layers) == 0
-        println("Warning: No geoms supplied")
-    elseif length(layers) == 1
-        draw(layers[1]; axis = merge(plot.axis, label_options))
-    else
-        draw((+)(layers...); axis = merge(plot.axis, label_options))
-    end
+    draw(layers; axis = label_options)
 end
 
 end

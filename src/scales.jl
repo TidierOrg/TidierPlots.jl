@@ -14,7 +14,7 @@ function continuous_scale_to_ggoptions(args_dict::Dict)
         options_dict[args_dict["scale"] * "reversed"] = args_dict["reversed"]
     end
 
-    return(GGOptions(options_dict))
+    return(options_dict)
 
 end
 
@@ -25,8 +25,8 @@ function colour_scale_to_ggoptions(args_dict::Dict)
     if haskey(args_dict, "palette")
         options_dict["palette"] = Symbol(args_dict["palette"])
     end
-    
-    return(GGOptions(options_dict))
+
+    return(options_dict)
 
 end
 

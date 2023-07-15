@@ -15,6 +15,7 @@ function build_geom(aes_dict, args_dict, required_aes, visual, analysis; special
                         "stroke" => "strokewidth",
                         "strokecolor" => "strokecolor",
                         "strokecolour" => "strokecolor",
+                        "linetype" => "linestyle",
                         "glow" => "glowwidth",
                         "glowcolor" => "glowcolor",
                         "glowcolour" => "glowcolor",

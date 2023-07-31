@@ -1,4 +1,4 @@
-using TiderPlots
+using TidierPlots
 using Test
 
 @testset "geom_smooth" begin

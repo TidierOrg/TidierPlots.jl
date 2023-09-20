@@ -16,6 +16,7 @@ include("geom_bar.jl")
 include("geom_boxplot.jl")
 include("geom_contour.jl")
 include("geom_errorbar.jl")
+include("geom_density.jl")
 include("geom_path.jl")
 include("geom_point.jl")
 include("geom_smooth.jl")
@@ -33,6 +34,7 @@ export @geom_path, @geom_line, @geom_step
 export @geom_violin, @geom_boxplot
 export @geom_contour, @geom_tile
 export @geom_text, @geom_label
+export @geom_density
 export @labs, @lims
 export @scale_x_continuous, @scale_y_continuous
 export @scale_x_log10, @scale_y_log10, @scale_x_log2, @scale_y_log2, @scale_x_log, @scale_y_log  

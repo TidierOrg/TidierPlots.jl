@@ -282,6 +282,13 @@ function Base.show(io::IO, geom::Geom)
             printstyled(io, "$aes: not specified \n", color = :yellow)
         end
     end
+
+    for k in keys(geom.aes)
+        if !(k in geom.required_aes)
+            v = geom.aes[k]
+            println("$k: $v")
+        end
+    end 
 end
 
 function Base.show(io::IO, plot::GGPlot)

@@ -20,7 +20,7 @@ function Layers(plot::GGPlot)
         end
 
         data_with_na = DataFrame(data.data)
-        data_without_na = dropmissing(DataFrame(data.data), String.(values(geom.aes)))
+        data_without_na = dropmissing(DataFrame(data.data), unique(String.(values(geom.aes))))
 
         if nrow(data_with_na) != nrow(data_without_na)
             name = geom.args["geom_name"]

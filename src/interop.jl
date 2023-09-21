@@ -25,7 +25,7 @@ function Layers(plot::GGPlot)
         if nrow(data_with_na) != nrow(data_without_na)
             name = geom.args["geom_name"]
             number = nrow(data_with_na) - nrow(data_without_na)
-            @warn("$name dropped $number rows with missing values.")
+            @warn("$name will not plot $number rows with missing values.")
             data = AlgebraOfGraphics.data(data_without_na)
         end
 

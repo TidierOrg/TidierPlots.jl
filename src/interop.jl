@@ -5,6 +5,13 @@ function Layers(plot::GGPlot)
     empty_layer = mapping()
     
     for geom in plot.geoms
+        # if an aes isn't given in the geom, use the ggplot aes
+        for aes in keys(plot.default_aes)
+            if !haskey(geom.aes, aes)
+                geom.aes[aes] = plot.default_aes[aes]
+            end
+        end
+
         # if data is not specified at the geom level, use the ggplot default
         if layer_equal(geom.data, empty_layer)
             data = plot.data
@@ -12,11 +19,14 @@ function Layers(plot::GGPlot)
             data = geom.data
         end
 
-        # if an aes isn't given in the geom, use the ggplot aes
-        for aes in keys(plot.default_aes)
-            if !haskey(geom.aes, aes)
-                geom.aes[aes] = plot.default_aes[aes]
-            end
+        data_with_na = DataFrame(data.data)
+        data_without_na = dropmissing(DataFrame(data.data), String.(values(geom.aes)))
+
+        if nrow(data_with_na) != nrow(data_without_na)
+            name = geom.args["geom_name"]
+            number = nrow(data_with_na) - nrow(data_without_na)
+            @warn("$name dropped $number rows with missing values.")
+            data = AlgebraOfGraphics.data(data_without_na)
         end
 
         push!(layers, geom_to_layer(geom, data, plot.axis_options))

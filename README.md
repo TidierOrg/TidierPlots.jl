@@ -187,4 +187,4 @@ df = (x=rand(100), y=rand(100), z=rand(100))
     @scale_colour_continuous(palette = "batlowW100")
 ```
 
-![](assets/continuous.png)
+![](assets/continuous.png.png)

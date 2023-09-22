@@ -51,6 +51,7 @@ Geoms:
 - `@geom_bar`, `@geom_col`, and `@geom_histogram`
 - `@geom_boxplot` and `@geom_violin`
 - `@geom_contour` and `@geom_tile`
+- `@geom_density`
 - `@geom_text` and `@geom_label`
 
 Makie Themes (Note that these are **not macros**):
@@ -60,6 +61,11 @@ Makie Themes (Note that these are **not macros**):
 - `theme_black()`
 - `theme_white()`
 - `theme_minimal()`
+
+Colour Scales:
+
+- `@scale_colo[u]r_manual()` - give a list of hex values enclosed in `c()` to define a scale
+- `@scale_colo[u]r_[discrete|continuous]()` - give `palette =` one of the many Makie palettes [here]( https://docs.makie.org/stable/explanations/colors/index.html#colormaps). 
 
 Additional Elements:
 
@@ -87,15 +93,17 @@ penguins = dropmissing(DataFrame(PalmerPenguins.load()))
 
 ```julia
 @ggplot(data = penguins) +
-           @geom_bar(aes(x = species, color = island), position = "dodge") +
-           @labs(x = "Species", y = "Count", color = "Island of Origin")
+    @geom_bar(aes(x = species, color = island), position = "dodge") +
+    @labs(x = "Species", y = "Count", color = "Island of Origin") + 
+    @scale_colour_discrete(palette = "default")
 ```
 ![](assets/example_col_color.png)
 
 ```julia
 @ggplot(data = penguins) + 
     @geom_bar(aes(x = species, color = island), position = "stack") +
-    @labs(x = "Species")
+    @labs(x = "Species") + 
+    @scale_color_manual(values = c("red", "green", "blue"))
 ```
 ![](assets/example_col_stack.png)
 
@@ -113,7 +121,7 @@ penguins = dropmissing(DataFrame(PalmerPenguins.load()))
 ![](assets/example_point_smooth.png)
 
 ```julia
- @ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + 
+ @ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm, color = bill_depth_mm)) + 
     @geom_point(shape = diamond, 
                 size = 20, 
                 stroke = 1, 
@@ -122,6 +130,7 @@ penguins = dropmissing(DataFrame(PalmerPenguins.load()))
     @labs(x = "Bill Length (mm)", y = "Bill Width (mm)") +
     @lims(x = c(40, 60), y = c(15, 20)) +
     theme_minimal()
+
 ```
 ![](assets/geom_point_customize.png)
 
@@ -164,7 +173,18 @@ p + @geom_errorbar(aes(ymin = lower, ymax = upper)) +
 ![](assets/errorbars.png)
 
 ```julia
-data(penguins) * Layer(@geom_point(aes(x = bill_length_mm, y = bill_depth_mm, color = species))) |> draw
+data(penguins) * 
+    Layer(@geom_point(aes(x = bill_length_mm, y = bill_depth_mm, color = species))) |> 
+    draw
 ```
 
 ![](assets/interop.png)
+
+```julia
+df = (x=rand(100), y=rand(100), z=rand(100))
+@ggplot(df) + 
+    @geom_point(aes(x = x, y = y, color = z)) + 
+    @scale_colour_continuous(palette = "batlowW100")
+```
+
+![](assets/continuous.png)

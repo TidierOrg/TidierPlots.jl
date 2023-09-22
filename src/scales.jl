@@ -22,23 +22,65 @@ function colour_scale_to_ggoptions(args_dict::Dict)
     
     options_dict = Dict()
 
-    if haskey(args_dict, "palette")
-        options_dict["palette"] = Symbol(args_dict["palette"])
+    if args_dict["scale"] == "colour_discrete"
+        if haskey(args_dict, "palette")
+            options_dict["palettes"] = Symbol(args_dict["palette"])
+            options_dict["color_palette_type"] = "discrete"
+        end
+    elseif args_dict["scale"] == "colour_manual"
+        if haskey(args_dict, "values")
+            v = args_dict["values"]
+            if v isa Expr
+                v = [value for value in v.args[2:end]]
+            end  
+            colors = (x -> parse(Colors.Colorant, x)).(v)
+            options_dict["palettes"] = (color = colors,)
+            options_dict["color_palette_type"] = "manual"
+        end
+    elseif args_dict["scale"] == "colour_continuous"
+        if haskey(args_dict, "palette")
+            options_dict["colormap"] = Symbol(args_dict["palette"])
+            options_dict["color_palette_type"] = "continuous"
+        end
     end
 
     return(options_dict)
 
 end
 
+macro scale_colour_manual(exprs...)
+    aes_dict, args_dict = extract_aes(:($(exprs)))
+    args_dict["scale"] = "colour_manual"
+    return colour_scale_to_ggoptions(args_dict)
+end
+
+macro scale_color_manual(exprs...)
+    aes_dict, args_dict = extract_aes(:($(exprs)))
+    args_dict["scale"] = "colour_manual"
+    return colour_scale_to_ggoptions(args_dict)
+end
+
+macro scale_colour_discrete(exprs...)
+    aes_dict, args_dict = extract_aes(:($(exprs)))
+    args_dict["scale"] = "colour_discrete"
+    return colour_scale_to_ggoptions(args_dict)
+end
+
+macro scale_color_discrete(exprs...)
+    aes_dict, args_dict = extract_aes(:($(exprs)))
+    args_dict["scale"] = "colour_discrete"
+    return colour_scale_to_ggoptions(args_dict)
+end
+
 macro scale_colour_continuous(exprs...)
     aes_dict, args_dict = extract_aes(:($(exprs)))
-    args_dict["scale"] = "colour"
+    args_dict["scale"] = "colour_continuous"
     return colour_scale_to_ggoptions(args_dict)
 end
 
 macro scale_color_continuous(exprs...)
     aes_dict, args_dict = extract_aes(:($(exprs)))
-    args_dict["scale"] = "colour"
+    args_dict["scale"] = "colour_continuous"
     return colour_scale_to_ggoptions(args_dict)
 end
 

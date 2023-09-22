@@ -5,6 +5,10 @@ using CairoMakie
 using AlgebraOfGraphics
 using DataFrames
 using Reexport
+using Colors
+using PlotUtils
+using FixedPointNumbers
+using ColorSchemes
 
 include("structs.jl")
 include("geom.jl")
@@ -41,7 +45,9 @@ export @scale_x_log10, @scale_y_log10, @scale_x_log2, @scale_y_log2, @scale_x_lo
 export @scale_x_logit, @scale_y_logit 
 export @scale_x_pseudolog10, @scale_y_pseudolog10, @scale_x_Symlog10, @scale_y_Symlog10 
 export @scale_x_reverse, @scale_y_reverse, @scale_x_sqrt, @scale_y_sqrt
-export @scale_colour_continuous, @scale_colour_continuous
+export @scale_colour_continuous, @scale_color_continuous
+export @scale_colour_discrete, @scale_color_discrete
+export @scale_colour_manual, @scale_color_manual
 
 const autoplot = Ref{Bool}(true)
 
@@ -119,6 +125,8 @@ function extract_aes(geom)
                         end
                     end
                 end
+            elseif section.args[1] == :c
+                args_dict["values"] = [v for v in section.args[2:end]] 
             # if not, its a generic argument
             else
                 if section.args[2] isa QuoteNode
@@ -164,8 +172,8 @@ function geom_to_layer(geom, data, labs)
 
     visual_layer = geom.visual
 
-    if haskey(labs, "palette")
-        visual_layer = geom.visual * AlgebraOfGraphics.visual(colormap = labs["palette"])
+    if haskey(labs, "colormap")
+        visual_layer = geom.visual * AlgebraOfGraphics.visual(colormap = labs["colormap"])
     end
 
     mapping_args_array = []
@@ -250,7 +258,34 @@ function draw_ggplot(plot::GGPlot)
     # this creates a named tuple
     label_options = (;[Symbol(supported_label_options[key]) => plot.axis_options[key] for key in provided_label_options]...)
 
-    draw(layers; axis = label_options)
+    if haskey(plot.axis_options, "palettes")
+        if plot.axis_options["color_palette_type"] == "manual"
+            draw(layers; axis = label_options, palettes = plot.axis_options["palettes"])
+        elseif plot.axis_options["color_palette_type"] == "discrete"
+            # which column is assigned to colour? 
+            if haskey(plot.default_aes, "colour") 
+                colour_column = plot.default_aes["colour"]
+            elseif haskey(plot.default_aes, "color")
+                colour_column = plot.default_aes["color"]
+            else
+                for g in plot.geoms
+                    if haskey(g.aes, "color")
+                        colour_column = g.aes["color"]
+                    elseif haskey(g.aes, "colour")
+                        colour_column = g.aes["colour"]
+                    end
+                end
+            end
+
+            #how many colours do we need? 
+            plot_data = DataFrame(plot.data.data)
+            ncolours = length(unique(plot_data[!, colour_column]))
+        
+            draw(layers; axis = label_options, palettes = (color = cgrad(plot.axis_options["palettes"], ncolours, categorical=true), ))
+        end
+    else
+        draw(layers; axis = label_options)
+    end
 end
 
 function Base.show(io::IO, geom::Geom)

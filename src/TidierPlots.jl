@@ -30,7 +30,7 @@ include("facets.jl")
 
 @reexport using Makie: theme_black, theme_dark, theme_ggplot2, theme_light, theme_minimal
 
-export draw_ggplot, geom_to_layer, ggplot_to_layers, layer_equal, @ggplot
+export draw_ggplot, geom_to_layer, ggplot_to_layers, layer_equal, @ggplot, ggsave
 export Layer, Layers
 export @geom_point, @geom_smooth 
 export @geom_bar, @geom_col, @geom_histogram
@@ -309,6 +309,14 @@ function draw_ggplot(plot::GGPlot)
     else
         draw(layers; axis = label_options)
     end
+end
+
+function ggsave(path::String, plot::GGPlot; scale = 0.75)
+    save(path, draw_ggplot(plot); px_per_unit = scale)
+end
+
+function ggsave(plot::GGPlot, path::String; scale = 0.75)
+    save(path, draw_ggplot(plot); px_per_unit = scale)
 end
 
 function Base.show(io::IO, geom::Geom)

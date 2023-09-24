@@ -64,8 +64,8 @@ Makie Themes (Note that these are **not macros**):
 
 Colour Scales:
 
-- `@scale_colo[u]r_manual()` - give a list of hex values enclosed in `c()` to define a scale
-- `@scale_colo[u]r_[discrete|continuous]()` - give `palette =` one of the many Makie palettes [here]( https://docs.makie.org/stable/explanations/colors/index.html#colormaps). 
+- `@scale_colo[u]r_manual()` - give a list of hex `values` enclosed in `c()` to define a scale
+- `@scale_colo[u]r_[discrete|continuous]()` - set `palette =` a [Makie palette]( https://docs.makie.org/stable/explanations/colors/index.html#colormaps). 
 
 Additional Elements:
 
@@ -73,7 +73,7 @@ Additional Elements:
 - `@labs`
 - `@lims`
 
-## Example
+## Examples
 
 Let's make some plots using the Palmer Penguins data from `PalmerPenguins.jl`:
 

@@ -185,6 +185,16 @@ function geom_to_layer(geom, data, labs)
     # are implemented 
 
     for key in geom.required_aes
+        if haskey(labs, key * "_function")
+            if haskey(labs, key)
+                labs[key] = labs[key * "_function"] => labs[key]
+            else
+                labs[key] = labs[key * "_function"]
+            end
+        end
+    end
+
+    for key in geom.required_aes
         if !haskey(labs, key)
             push!(mapping_args_array, Symbol(geom.aes[key]))
         else 
@@ -193,6 +203,16 @@ function geom_to_layer(geom, data, labs)
     end
     
     mapping_args = Tuple(mapping_args_array)
+
+    for key in keys(geom.optional_aes)
+        if haskey(geom.args, key * "_function")
+            if haskey(labs, key)
+                labs[key] = eval(geom.args[key * "_function"]) => labs[key]
+            else
+                labs[key] = eval(geom.args[key * "_function"])
+            end
+        end
+    end
 
     # check which supported optional aesthetics are available
     # and which ones have labels assigned to them
@@ -215,7 +235,7 @@ function geom_to_layer(geom, data, labs)
     # if any are available, multiply them in to the layer 
     # geom.optional_aes[a] gets the expected AoG arg name
     # geom_aes[a] gets the variable that was assigned to the aesthetic
-    # if applicable, labs.values[a] gets the label that was assigned to the aes
+    # if applicable, labs[a] gets the label that was assigned to the aes
     # if none are available, just use the required aes
 
     if length(available_optional_aes) != 0

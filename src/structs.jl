@@ -15,3 +15,7 @@ struct GGPlot
     data::Layer
     axis_options::Dict
 end
+
+struct Aesthetics
+    aes::Dict
+end

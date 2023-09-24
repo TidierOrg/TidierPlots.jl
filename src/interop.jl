@@ -19,6 +19,12 @@ function Layers(plot::GGPlot)
             data = geom.data
         end
 
+        # if there is no data in either, throw an error
+        if layer_equal(data, empty_layer)
+            name = geom.args["geom_name"]
+            @error("No data found for $name. Either specify a data argument for each geom or specify a default for the ggplot.")
+        end
+
         data_with_na = DataFrame(data.data)
         data_without_na = dropmissing(DataFrame(data.data), unique(String.(values(geom.aes))))
 

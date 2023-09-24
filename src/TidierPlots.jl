@@ -26,6 +26,7 @@ include("geom_point.jl")
 include("geom_smooth.jl")
 include("geom_text.jl")
 include("geom_violin.jl")
+include("facets.jl")
 
 @reexport using Makie: theme_black, theme_dark, theme_ggplot2, theme_light, theme_minimal
 
@@ -40,6 +41,7 @@ export @geom_contour, @geom_tile
 export @geom_text, @geom_label
 export @geom_density
 export @labs, @lims
+export @facet_grid, @facet_wrap
 export @scale_x_continuous, @scale_y_continuous
 export @scale_x_log10, @scale_y_log10, @scale_x_log2, @scale_y_log2, @scale_x_log, @scale_y_log  
 export @scale_x_logit, @scale_y_logit 
@@ -62,7 +64,8 @@ end
 function Base.:+(x::GGPlot, y...)::GGPlot
     result = GGPlot(
         vcat(x.geoms, [i for i in y if i isa Geom]), 
-        x.default_aes, 
+        merge(x.default_aes, 
+            [a.aes for a in y if a isa Aesthetics]...),
         x.data,
         merge(x.axis_options, 
             [l.axis_options for l in y if l isa Geom]...,

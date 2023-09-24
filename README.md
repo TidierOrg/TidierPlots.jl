@@ -67,6 +67,11 @@ Colour Scales:
 - `@scale_colo[u]r_manual()` - give a list of hex `values` enclosed in `c()` to define a scale
 - `@scale_colo[u]r_[discrete|continuous]()` - set `palette =` a [Makie palette]( https://docs.makie.org/stable/explanations/colors/index.html#colormaps). 
 
+Facetting:
+
+- `@facet_wrap`: Specify `facets` variable.
+- `@facet_grid`: Specify `rows` and/or `cols`.
+
 Additional Elements:
 
 - `@scale_[x|y]_[continuous|log[ |2|10]|logit|pseudolog10|sqrt|reverse]`

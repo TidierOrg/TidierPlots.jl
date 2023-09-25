@@ -108,7 +108,7 @@ penguins = dropmissing(DataFrame(PalmerPenguins.load()))
 @ggplot(data = penguins) + 
     @geom_bar(aes(x = species, color = island), position = "stack") +
     @labs(x = "Species") + 
-    @scale_color_manual(values = c("red", "green", "blue"))
+    @scale_color_manual(values = c("#CB3C33", "#389826", "#9558B2"))
 ```
 ![](assets/example_col_stack.png)
 

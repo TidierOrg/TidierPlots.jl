@@ -6,9 +6,6 @@ using AlgebraOfGraphics
 using DataFrames
 using Reexport
 using Colors
-using PlotUtils
-using FixedPointNumbers
-using ColorSchemes
 
 include("structs.jl")
 include("geom.jl")

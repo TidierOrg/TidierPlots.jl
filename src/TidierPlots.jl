@@ -28,6 +28,7 @@ include("facets.jl")
 @reexport using Makie: theme_black, theme_dark, theme_ggplot2, theme_light, theme_minimal
 
 export draw_ggplot, geom_to_layer, ggplot_to_layers, layer_equal, @ggplot, ggsave
+export TidierPlots_set
 export Layer, Layers
 export @geom_point, @geom_smooth 
 export @geom_bar, @geom_col, @geom_histogram
@@ -153,17 +154,34 @@ function check_aes(required_aes, aes_dict, geom_name)
 end
 
 function layer_equal(L1::Layer, L2::Layer)
-    if L1.transformation != L2.transformation
-        return false
-    elseif L1.data != L2.data
-        return false
-    elseif L1.named != L2.named
-        return false
-    elseif L1.positional != L2.positional
-        return false
+    
+    if hasfield(typeof(L1.transformation), :plottype) && hasfield(typeof(L2.transformation), :plottype)
+        if L1.transformation.plottype != L2.transformation.plottype
+            return false
+        end
+
+        if L1.transformation.attributes != L2.transformation.attributes
+            return false       
+        end
     else
-        return true
+        if L1.transformation != L2.transformation
+            return false
+        end
     end
+
+    if L1.data != L2.data
+        return false
+    end
+
+    if L1.named != L2.named
+        return false
+    end
+
+    if L1.positional != L2.positional
+        return false
+    end
+
+    return true
 end
 
 function geom_to_layer(geom, data, labs)

@@ -27,9 +27,14 @@ include("facets.jl")
 
 @reexport using Makie: theme_black, theme_dark, theme_ggplot2, theme_light, theme_minimal
 
+# 
+
 export draw_ggplot, geom_to_layer, ggplot_to_layers, layer_equal, @ggplot, ggsave
 export TidierPlots_set
 export Layer, Layers
+
+# geoms
+
 export @geom_point, @geom_smooth 
 export @geom_bar, @geom_col, @geom_histogram
 export @geom_errorbar, @geom_errorbarh
@@ -100,7 +105,7 @@ macro ggplot(exprs...)
     end
 
     haskey(args_dict, "data") ? 
-        plot_data = AlgebraOfGraphics.data(Base.eval(Main, args_dict["data"])) :
+        plot_data = AlgebraOfGraphics.data(Base.eval(@__MODULE__, args_dict["data"])) :
         plot_data = mapping()
     
     GGPlot([], 

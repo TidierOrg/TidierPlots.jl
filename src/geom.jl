@@ -3,7 +3,7 @@ function build_geom(aes_dict, args_dict, required_aes, visual, analysis; special
     # if data is specified, call a questionable eval to grab it as a layer
 
     haskey(args_dict, "data") ? 
-        plot_data = AlgebraOfGraphics.data(Base.eval(Main, args_dict["data"])) :
+        plot_data = AlgebraOfGraphics.data(Base.eval(@__MODULE__, args_dict["data"])) :
         plot_data = mapping()
 
     # translation dict to convert ggplot aes terms to Makie terms

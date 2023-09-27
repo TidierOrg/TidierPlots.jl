@@ -37,46 +37,54 @@ function plot_images_equal(tidier, aog)
     return a_hash == t_hash
 end
 
-@testset "geom_point" begin
-    tidier = @ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + 
-        @geom_point()
-
-    aog = data(penguins) * 
-        mapping(:bill_length_mm, :bill_depth_mm, color = :species) * 
-        visual(Scatter)
-
-    @test plot_images_equal(tidier, aog)
-end
-
-@testset "geom_smooth" begin
-    tidier_lm = @ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + 
-            @geom_smooth(method = "lm")
-
-    aog_lm = data(penguins) *
-        mapping(:bill_length_mm, :bill_depth_mm, color = :species) * 
-        linear()
-
-    @test plot_images_equal(tidier_lm, aog_lm)
-
-    tidier_sm = @ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + 
-            @geom_smooth()
-
-    aog_sm = data(penguins) *
-        mapping(:bill_length_mm, :bill_depth_mm, color = :species) * 
-        smooth()
-
-    @test plot_images_equal(tidier_sm, aog_sm)
-end
-
-@testset "geom_bar" begin
-    tidier = @ggplot(data = penguins) + 
+@testset "geoms" begin
+    @test plot_images_equal(
+        @ggplot(data = penguins) + 
             @geom_bar(aes(x = species)) +
-            @labs(x = "Species")
-
-    aog = data(penguins) * 
-        mapping(:species) *
-        frequency() *
-        visual(BarPlot)
-
-    @test plot_images_equal(tidier, aog)
+            @labs(x = "Species"),
+        data(penguins) * 
+            mapping(:species) *
+            frequency() *
+            visual(BarPlot)
+    )
+    @test plot_images_equal(
+        @ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + 
+            @geom_smooth(method = "lm"),
+        data(penguins) *
+            mapping(:bill_length_mm, :bill_depth_mm, color = :species) * 
+            linear()        
+    )
+    @test plot_images_equal(
+        @ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + 
+            @geom_point(),
+        data(penguins) * 
+            mapping(:bill_length_mm, :bill_depth_mm, color = :species) * 
+            visual(Scatter)
+    )
+    @test plot_images_equal(
+        @ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm)) + 
+            @geom_point(shape = diamond, 
+                size = 20, 
+                stroke = 1, 
+                strokecolour = "black",
+                alpha = 0.8),
+        data(penguins) *
+            mapping(:bill_length_mm, :bill_depth_mm) *
+            visual(Scatter; 
+                marker = :diamond,
+                markersize = 20, 
+                strokewidth = 1,
+                strokecolor = :black,
+                alpha = 0.8)
+    )
+    @test plot_images_equal(
+        @ggplot(penguins, aes(x = species, y = bill_depth_mm)) +
+            @geom_violin(),
+        data(penguins) *
+            mapping(:species, :bill_depth_mm) *
+            visual(Violin)
+    )
 end
+
+
+    

@@ -7,7 +7,7 @@ function build_geom(aes_dict, args_dict, required_aes, visual, analysis; special
         if !isnothing(match(r"#==#", @__FILE__))
             plot_data = AlgebraOfGraphics.data(eval(args_dict["data"]))
         else
-            plot_data = AlgebraOfGraphics.data(Base.eval(@__MODULE__, args_dict["data"]))
+            plot_data = AlgebraOfGraphics.data(Base.eval(Main, args_dict["data"]))
         end
     else
         plot_data = mapping()

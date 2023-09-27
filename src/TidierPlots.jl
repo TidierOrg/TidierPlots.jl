@@ -23,11 +23,12 @@ include("geom_point.jl")
 include("geom_smooth.jl")
 include("geom_text.jl")
 include("geom_violin.jl")
+
 include("facets.jl")
 
 @reexport using Makie: theme_black, theme_dark, theme_ggplot2, theme_light, theme_minimal
 
-# 
+# functions
 
 export draw_ggplot, geom_to_layer, ggplot_to_layers, layer_equal, @ggplot, ggsave
 export TidierPlots_set
@@ -43,6 +44,9 @@ export @geom_violin, @geom_boxplot
 export @geom_contour, @geom_tile
 export @geom_text, @geom_label
 export @geom_density
+
+# scales 
+
 export @labs, @lims
 export @facet_grid, @facet_wrap
 export @scale_x_continuous, @scale_y_continuous
@@ -104,10 +108,17 @@ macro ggplot(exprs...)
         args_dict["width"] = 600
     end
 
-    haskey(args_dict, "data") ? 
-        plot_data = AlgebraOfGraphics.data(Base.eval(@__MODULE__, args_dict["data"])) :
+    if haskey(args_dict, "data")
+        # if the code is running in a Pluto.jl notebook
+        if !isnothing(match(r"#==#", @__FILE__))
+            plot_data = AlgebraOfGraphics.data(eval(args_dict["data"]))
+        else
+            plot_data = AlgebraOfGraphics.data(Base.eval(@__MODULE__, args_dict["data"]))
+        end
+    else
         plot_data = mapping()
-    
+    end
+
     GGPlot([], 
            aes_dict, 
            plot_data,

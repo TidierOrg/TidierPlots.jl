@@ -2,9 +2,16 @@ function build_geom(aes_dict, args_dict, required_aes, visual, analysis; special
     
     # if data is specified, call a questionable eval to grab it as a layer
 
-    haskey(args_dict, "data") ? 
-        plot_data = AlgebraOfGraphics.data(Base.eval(@__MODULE__, args_dict["data"])) :
+    if haskey(args_dict, "data")
+        # if the code is running in a Pluto.jl notebook
+        if !isnothing(match(r"#==#", @__FILE__))
+            plot_data = AlgebraOfGraphics.data(eval(args_dict["data"]))
+        else
+            plot_data = AlgebraOfGraphics.data(Base.eval(@__MODULE__, args_dict["data"]))
+        end
+    else
         plot_data = mapping()
+    end
 
     # translation dict to convert ggplot aes terms to Makie terms
 

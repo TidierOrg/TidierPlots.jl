@@ -38,8 +38,11 @@ end
 
 geom_histogram = geom_template("geom_histogram", ["x"], nothing, AlgebraOfGraphics.histogram())
 
+function handle_position(dicts)
+    handle_position(dicts[1], dicts[2])
+end
+
 function handle_position(aes_dict, args_dict)
-    
     # handles defaults and grouping for geom_bar 
 
     if haskey(args_dict, "position")
@@ -74,3 +77,4 @@ function handle_position(aes_dict, args_dict)
 end
 
 geom_col = geom_template("geom_col", ["x"], Makie.BarPlot, mapping(); dict_function = handle_position)
+geom_bar = geom_template("geom_bar", ["x"], Makie.BarPlot,  AlgebraOfGraphics.frequency(); dict_function = handle_position)

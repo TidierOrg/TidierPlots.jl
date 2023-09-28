@@ -47,14 +47,14 @@ export geom_template
 
 # geoms
 
-export @geom_bar
+export @geom_bar, geom_bar
 export @geom_col, geom_col
 export @geom_histogram, geom_histogram
 export @geom_point, geom_point
 export @geom_path, geom_path
 export @geom_line, geom_line
 export @geom_step, geom_step
-export @geom_smooth 
+export @geom_smooth, geom_smooth 
 export @geom_errorbar
 export @geom_errorbarh
 export @geom_violin, geom_violin
@@ -68,7 +68,7 @@ export @geom_density
 # scales 
 
 export @labs, @lims, labs, lims
-export @facet_grid, @facet_wrap
+export @facet_grid, @facet_wrap, facet_wrap, facet_grid
 export @scale_x_continuous, @scale_y_continuous, scale_x_continuous, scale_y_continuous
 export @scale_x_log10, @scale_y_log10, @scale_x_log2, @scale_y_log2, @scale_x_log, @scale_y_log  
 export scale_x_log10, scale_y_log10, scale_x_log2, scale_y_log2, scale_x_log, scale_y_log  

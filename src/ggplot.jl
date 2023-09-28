@@ -23,7 +23,8 @@ macro ggplot(exprs...)
     GGPlot([], 
            aes_dict, 
            plot_data,
-           args_dict) 
+           args_dict, 
+           theme_ggplot2()) 
 end
 
 function ggplot(args...; kwargs...)
@@ -57,5 +58,6 @@ function ggplot(args...; kwargs...)
     GGPlot([], 
            aes_dict, 
            plot_data,
-           args_dict) 
+           args_dict, 
+           theme_ggplot2()) 
 end

@@ -14,6 +14,7 @@ struct GGPlot
     default_aes::Dict
     data::Layer
     axis_options::Dict
+    theme::Attributes
 end
 
 struct Aesthetics

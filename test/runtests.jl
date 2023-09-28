@@ -8,7 +8,8 @@ using ImageHashes, Images
 
 penguins = dropmissing(DataFrame(PalmerPenguins.load()))
 
-TidierPlots_set("autoplot", false)
+TidierPlots_set("plot_show", false)
+TidierPlots_set("plot_log", false)
 
 set_theme!(theme_ggplot2())
 

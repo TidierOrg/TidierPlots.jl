@@ -140,7 +140,7 @@ ggplot(penguins, aes(x = "bill_length_mm", y = "bill_depth_mm", color = "species
                strokecolour = "black",
                alpha = 0.8) +
     labs(x = "Bill Length (mm)", y = "Bill Width (mm)") +
-    @lims(x = c(40, 60), y = c(15, 20)) +
+    lims(x = c(40, 60), y = c(15, 20)) +
     theme_minimal()
 
 ```
@@ -150,8 +150,8 @@ ggplot(penguins, aes(x = "bill_length_mm", y = "bill_depth_mm", color = "species
 ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + 
     geom_point() + 
     geom_smooth(method = "lm") +
-    @scale_x_log10(name = "Log10 Scaled Bill Length") + 
-    @scale_y_reverse(name = "Reversed Bill Width")
+    scale_x_log10(name = "Log10 Scaled Bill Length") + 
+    scale_y_reverse(name = "Reversed Bill Width")
 ```
 ![](assets/scales.png)
 

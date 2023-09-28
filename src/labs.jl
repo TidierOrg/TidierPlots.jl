@@ -5,10 +5,13 @@ macro labs(exprs...)
     return args_dict
 end
 
-macro lims(exprs...)
-    # there should only be args 
-    aes_dict, args_dict = extract_aes(:($(exprs)))
+function labs(args...; kwargs...)
+    aes_dict, args_dict = extract_aes(args, kwargs)
 
+    return args_dict
+end
+
+function get_lims(args_dict)
     lims_dict = Dict()
 
     if haskey(args_dict, "x")
@@ -38,5 +41,18 @@ macro lims(exprs...)
     end
 
     return lims_dict
+end
+
+macro lims(exprs...)
+    # there should only be args 
+    aes_dict, args_dict = extract_aes(:($(exprs)))
+
+    return get_lims(args_dict)
+end
+
+function lims(args...; kwargs...)
+    aes_dict, args_dict = extract_aes(args, kwargs)
+
+    return get_lims(args_dict)
 end
 

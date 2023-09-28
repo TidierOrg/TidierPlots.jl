@@ -6,6 +6,9 @@ function TidierPlots_set(option::AbstractString, value::Bool)
     end
 end
 
+function c(args...)
+    return [v for v in args]
+end
 
 function layer_equal(L1::Layer, L2::Layer)
     

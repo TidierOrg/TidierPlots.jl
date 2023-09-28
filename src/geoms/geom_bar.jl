@@ -36,6 +36,8 @@ macro geom_histogram(exprs...)
         AlgebraOfGraphics.histogram()) # function for analysis layer
 end
 
+geom_histogram = geom_template("geom_histogram", ["x"], nothing, AlgebraOfGraphics.histogram())
+
 function handle_position(aes_dict, args_dict)
     
     # handles defaults and grouping for geom_bar 
@@ -70,3 +72,5 @@ function handle_position(aes_dict, args_dict)
 
     return (aes_dict, args_dict)
 end
+
+geom_col = geom_template("geom_col", ["x"], Makie.BarPlot, mapping(); dict_function = handle_position)

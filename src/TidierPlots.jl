@@ -7,6 +7,8 @@ using DataFrames
 using Reexport
 using Colors
 
+include("structs.jl")
+
 include("addplots.jl")
 include("aes.jl")
 include("draw.jl")
@@ -19,7 +21,6 @@ include("interop.jl")
 include("labs.jl")
 include("scales.jl")
 include("show.jl")
-include("structs.jl")
 include("util.jl")
 
 include("geoms/geom_template.jl")
@@ -41,13 +42,14 @@ include("geoms/geom_violin.jl")
 export draw_ggplot, geom_to_layer, ggplot_to_layers, layer_equal, @ggplot, ggplot, ggsave
 export TidierPlots_set
 export Layer, Layers
-export aes, geom_template
+export @aes, @es, aes
+export geom_template
 
 # geoms
 
 export @geom_bar
-export @geom_col
-export @geom_histogram
+export @geom_col, geom_col
+export @geom_histogram, geom_histogram
 export @geom_point, geom_point
 export @geom_path, geom_path
 export @geom_line, geom_line
@@ -65,16 +67,23 @@ export @geom_density
 
 # scales 
 
-export @labs, @lims
+export @labs, @lims, labs, lims
 export @facet_grid, @facet_wrap
-export @scale_x_continuous, @scale_y_continuous
+export @scale_x_continuous, @scale_y_continuous, scale_x_continuous, scale_y_continuous
 export @scale_x_log10, @scale_y_log10, @scale_x_log2, @scale_y_log2, @scale_x_log, @scale_y_log  
-export @scale_x_logit, @scale_y_logit 
+export scale_x_log10, scale_y_log10, scale_x_log2, scale_y_log2, scale_x_log, scale_y_log  
+export @scale_x_logit, @scale_y_logit, scale_x_logit, scale_y_logit  
 export @scale_x_pseudolog10, @scale_y_pseudolog10, @scale_x_Symlog10, @scale_y_Symlog10 
+export scale_x_pseudolog10, scale_y_pseudolog10, scale_x_Symlog10, scale_y_Symlog10 
 export @scale_x_reverse, @scale_y_reverse, @scale_x_sqrt, @scale_y_sqrt
 export @scale_colour_continuous, @scale_color_continuous
 export @scale_colour_discrete, @scale_color_discrete
 export @scale_colour_manual, @scale_color_manual
+export scale_x_reverse, scale_y_reverse, scale_x_sqrt, scale_y_sqrt
+export scale_colour_continuous, scale_color_continuous
+export scale_colour_discrete, scale_color_discrete
+export scale_colour_manual, scale_color_manual
+
 
 const autoplot = Ref{Bool}(true)
 

@@ -201,8 +201,15 @@ end
 function scale_template(scale, f; trans = nothing, reverse = nothing)
     function scale_function(args...; kwargs...)
         aes_dict, args_dict = extract_aes(args, kwargs)
-        args_dict["scale"] = scale
-        args_dict["trans"] = trans
+        if !isnothing(scale) 
+            args_dict["scale"] = scale
+        end
+        if !isnothing(trans) 
+            args_dict["trans"] = trans
+        end
+        if !isnothing(reverse)
+            args_dict["reversed"] = reverse
+        end
         return f(args_dict)
     end
 end
@@ -216,17 +223,17 @@ scale_color_continuous = scale_template("colour_continuous", colour_scale_to_ggo
 
 scale_x_continuous = scale_template("x", continuous_scale_to_ggoptions)
 scale_y_continuous = scale_template("y", continuous_scale_to_ggoptions)
-scale_x_log10 = scale_template("x", continuous_scale_to_ggoptions, trans = AlgebraOfGraphics.log10)
-scale_y_log10 = scale_template("y", continuous_scale_to_ggoptions, trans = AlgebraOfGraphics.log10)
-scale_x_reverse = scale_template("x", continuous_scale_to_ggoptions, reverse = true)
-scale_y_reverse = scale_template("y", continuous_scale_to_ggoptions, reverse = true)
-scale_x_sqrt = scale_template("x", continuous_scale_to_ggoptions, trans = AlgebraOfGraphics.sqrt)
-scale_y_sqrt = scale_template("y", continuous_scale_to_ggoptions, trans = AlgebraOfGraphics.sqrt)
-scale_x_log2 = scale_template("x", continuous_scale_to_ggoptions, trans = AlgebraOfGraphics.log2)
-scale_y_log2 = scale_template("y", continuous_scale_to_ggoptions, trans = AlgebraOfGraphics.log2)
-scale_x_log = scale_template("x", continuous_scale_to_ggoptions, trans = AlgebraOfGraphics.log)
-scale_y_log = scale_template("y", continuous_scale_to_ggoptions, trans = AlgebraOfGraphics.log)
-scale_x_logit = scale_template("x", continuous_scale_to_ggoptions, trans = Makie.logit)
-scale_y_logit = scale_template("y", continuous_scale_to_ggoptions, trans = Makie.logit)
-scale_x_pseudolog10 = scale_template("x", continuous_scale_to_ggoptions, trans = Makie.pseudolog10)
-scale_y_pseudolog10 = scale_template("y", continuous_scale_to_ggoptions, trans = Makie.pseudolog10)
+scale_x_log10 = scale_template("x", continuous_scale_to_ggoptions; trans = AlgebraOfGraphics.log10)
+scale_y_log10 = scale_template("y", continuous_scale_to_ggoptions; trans = AlgebraOfGraphics.log10)
+scale_x_reverse = scale_template("x", continuous_scale_to_ggoptions; reverse = true)
+scale_y_reverse = scale_template("y", continuous_scale_to_ggoptions; reverse = true)
+scale_x_sqrt = scale_template("x", continuous_scale_to_ggoptions; trans = AlgebraOfGraphics.sqrt)
+scale_y_sqrt = scale_template("y", continuous_scale_to_ggoptions; trans = AlgebraOfGraphics.sqrt)
+scale_x_log2 = scale_template("x", continuous_scale_to_ggoptions; trans = AlgebraOfGraphics.log2)
+scale_y_log2 = scale_template("y", continuous_scale_to_ggoptions; trans = AlgebraOfGraphics.log2)
+scale_x_log = scale_template("x", continuous_scale_to_ggoptions; trans = AlgebraOfGraphics.log)
+scale_y_log = scale_template("y", continuous_scale_to_ggoptions; trans = AlgebraOfGraphics.log)
+scale_x_logit = scale_template("x", continuous_scale_to_ggoptions; trans = Makie.logit)
+scale_y_logit = scale_template("y", continuous_scale_to_ggoptions; trans = Makie.logit)
+scale_x_pseudolog10 = scale_template("x", continuous_scale_to_ggoptions; trans = Makie.pseudolog10)
+scale_y_pseudolog10 = scale_template("y", continuous_scale_to_ggoptions; trans = Makie.pseudolog10)

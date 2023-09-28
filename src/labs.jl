@@ -11,7 +11,10 @@ function labs(args...; kwargs...)
     return args_dict
 end
 
-function get_lims(args_dict)
+macro lims(exprs...)
+    # there should only be args 
+    aes_dict, args_dict = extract_aes(:($(exprs)))
+
     lims_dict = Dict()
 
     if haskey(args_dict, "x")
@@ -43,16 +46,37 @@ function get_lims(args_dict)
     return lims_dict
 end
 
-macro lims(exprs...)
-    # there should only be args 
-    aes_dict, args_dict = extract_aes(:($(exprs)))
-
-    return get_lims(args_dict)
-end
-
 function lims(args...; kwargs...)
     aes_dict, args_dict = extract_aes(args, kwargs)
 
-    return get_lims(args_dict)
+    lims_dict = Dict()
+
+    if haskey(args_dict, "x")
+        if haskey(args_dict, "y")
+            lims_dict["limits"] = (
+                (args_dict["x"][1], args_dict["x"][2]),
+                (args_dict["y"][1], args_dict["y"][2])
+            )
+        else
+            lims_dict["limits"] = (
+                (args_dict["x"][1], args_dict["x"][2]),
+                nothing
+            )
+        end
+    else
+        if haskey(args_dict, "y")
+            lims_dict["limits"] = (
+                nothing,
+                (args_dict["y"][1], args_dict["y"][2])
+            )
+        else
+            lims_dict["limits"] = (
+                nothing,
+                nothing
+            )
+        end
+    end
+
+    return lims_dict
 end
 

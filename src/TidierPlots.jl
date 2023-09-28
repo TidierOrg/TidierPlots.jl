@@ -67,7 +67,7 @@ export @geom_density
 
 # scales 
 
-export @labs, @lims, labs, lims
+export @labs, @lims, labs, lims, c
 export @facet_grid, @facet_wrap, facet_wrap, facet_grid
 export @scale_x_continuous, @scale_y_continuous, scale_x_continuous, scale_y_continuous
 export @scale_x_log10, @scale_y_log10, @scale_x_log2, @scale_y_log2, @scale_x_log, @scale_y_log  
@@ -84,7 +84,7 @@ export scale_colour_continuous, scale_color_continuous
 export scale_colour_discrete, scale_color_discrete
 export scale_colour_manual, scale_color_manual
 
-
-const autoplot = Ref{Bool}(true)
+const plot_log = Ref{Bool}(true)
+const plot_show = Ref{Bool}(true)
 
 end

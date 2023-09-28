@@ -16,7 +16,7 @@ macro facet_grid(exprs...)
     return Aesthetics(aes_dict)
 end
 
-function facet_grid(args..., kwargs...)
+function facet_grid(args...; kwargs...)
     aes_dict, args_dict = extract_aes(args, kwargs)
  
     if haskey(args_dict, "data")
@@ -48,7 +48,7 @@ macro facet_wrap(exprs...)
     return Aesthetics(aes_dict)
 end
 
-function facet_wrap(args..., kwargs...)
+function facet_wrap(args...; kwargs...)
     aes_dict, args_dict = extract_aes(args, kwargs)
 
     if haskey(args_dict, "data")

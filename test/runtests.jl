@@ -39,9 +39,9 @@ end
 
 @testset "geoms" begin
     @test plot_images_equal(
-        @ggplot(data = penguins) + 
-            @geom_bar(aes(x = species)) +
-            @labs(x = "Species"),
+        ggplot(data = penguins) + 
+            geom_bar(@aes(x = species)) +
+            labs(x = "Species"),
         data(penguins) * 
             mapping(:species) *
             frequency() *
@@ -55,15 +55,15 @@ end
             linear()        
     )
     @test plot_images_equal(
-        @ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + 
-            @geom_point(),
+        ggplot(penguins, @es(x = bill_length_mm, y = bill_depth_mm, color = species)) + 
+            geom_point(),
         data(penguins) * 
             mapping(:bill_length_mm, :bill_depth_mm, color = :species) * 
             visual(Scatter)
     )
     @test plot_images_equal(
-        @ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm)) + 
-            @geom_point(shape = diamond, 
+        ggplot(penguins, aes(x = :bill_length_mm, y = :bill_depth_mm)) + 
+            geom_point(shape = :diamond, 
                 size = 20, 
                 stroke = 1, 
                 strokecolour = "black",
@@ -78,8 +78,8 @@ end
                 alpha = 0.8)
     )
     @test plot_images_equal(
-        @ggplot(penguins, aes(x = species, y = bill_depth_mm)) +
-            @geom_violin(),
+        ggplot(penguins, aes(x = "species", y = "bill_depth_mm")) +
+            geom_violin(),
         data(penguins) *
             mapping(:species, :bill_depth_mm) *
             visual(Violin)

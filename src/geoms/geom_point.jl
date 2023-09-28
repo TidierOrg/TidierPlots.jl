@@ -40,3 +40,5 @@ macro geom_point(exprs...)
         Makie.Scatter, # function for visual layer
         mapping()) # function for analysis layer    
 end
+
+geom_point = geom_template("geom_point", ["x", "y"], Makie.Scatter, mapping())

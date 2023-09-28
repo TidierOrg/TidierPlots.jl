@@ -35,3 +35,5 @@ macro geom_density(exprs...)
         nothing, # function for visual layer
         AlgebraOfGraphics.density()) # function for analysis layer    
 end
+
+geom_density = geom_template("geom_density", ["x"], nothing, AlgebraOfGraphics.density())

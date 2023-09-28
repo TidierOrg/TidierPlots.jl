@@ -9,3 +9,5 @@ macro geom_boxplot(exprs...)
         AlgebraOfGraphics.mapping()) # function for analysis layer
 
 end
+
+geom_boxplot = geom_template("geom_boxplot", ["x", "y"], Makie.BoxPlot, mapping())

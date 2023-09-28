@@ -1,13 +1,17 @@
 function build_geom(aes_dict, args_dict, required_aes, visual, analysis; special_aes = nothing)
     
     # if data is specified, call a questionable eval to grab it as a layer
-
     if haskey(args_dict, "data")
         # if the code is running in a Pluto.jl notebook
-        if !isnothing(match(r"#==#", @__FILE__))
-            plot_data = AlgebraOfGraphics.data(eval(args_dict["data"]))
-        else
+        if args_dict["data"] isa DataFrame
+            plot_data = AlgebraOfGraphics.data(args_dict["data"])
+        elseif args_dict["data"] isa Symbol
             plot_data = AlgebraOfGraphics.data(Base.eval(Main, args_dict["data"]))
+        elseif args_dict["data"] isa AbstractString
+            plot_data = AlgebraOfGraphics.data(Base.eval(Main, Symbol(args_dict["data"])))
+        else
+            type = typeof(args_dict["data"])
+            @error "Data was provided in an unsupported type: $type"
         end
     else
         plot_data = mapping()

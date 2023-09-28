@@ -38,23 +38,21 @@ Pkg.add(url="https://github.com/TidierOrg/TidierPlots.jl")
 
 ## What functions does TidierPlots.jl support?
 
-To support R-style programming, TidierPlots.jl is implemented using macros.
-
-TidierPlots.jl currently supports the top-level macro `@ggplot()`, plus:
+TidierPlots.jl currently supports the top-level function `ggplot()`, plus:
 
 Geoms:
 
-- `@geom_point`
-- `@geom_smooth`
-- `@geom_errorbar`
-- `@geom_path`, `@geom_line`, and `@geom_step`
-- `@geom_bar`, `@geom_col`, and `@geom_histogram`
-- `@geom_boxplot` and `@geom_violin`
-- `@geom_contour` and `@geom_tile`
-- `@geom_density`
-- `@geom_text` and `@geom_label`
+- `geom_point`
+- `geom_smooth`
+- `geom_errorbar`
+- `geom_path`, `geom_line`, and `geom_step`
+- `geom_bar`, `geom_col`, and `geom_histogram`
+- `geom_boxplot` and `geom_violin`
+- `geom_contour` and `geom_tile`
+- `geom_density`
+- `geom_text` and `geom_label`
 
-Makie Themes (Note that these are **not macros**):
+Makie Themes:
 
 - `theme_ggplot2()` (the default)
 - `theme_dark()`
@@ -64,19 +62,28 @@ Makie Themes (Note that these are **not macros**):
 
 Colour Scales:
 
-- `@scale_colo[u]r_manual()` - give a list of hex `values` enclosed in `c()` to define a scale
-- `@scale_colo[u]r_[discrete|continuous]()` - set `palette =` a [Makie palette]( https://docs.makie.org/stable/explanations/colors/index.html#colormaps). 
+- `scale_colo[u]r_manual()` - give a list of hex `values` enclosed in `c()` to define a scale
+- `scale_colo[u]r_[discrete|continuous]()` - set `palette =` a [Makie palette]( https://docs.makie.org/stable/explanations/colors/index.html#colormaps). 
 
 Facetting:
 
-- `@facet_wrap`: Specify `facets` variable.
-- `@facet_grid`: Specify `rows` and/or `cols`.
+- `facet_wrap`: Specify `facets` variable.
+- `facet_grid`: Specify `rows` and/or `cols`.
 
 Additional Elements:
 
-- `@scale_[x|y]_[continuous|log[ |2|10]|logit|pseudolog10|sqrt|reverse]`
-- `@labs`
-- `@lims`
+- `scale_[x|y]_[continuous|log[ |2|10]|logit|pseudolog10|sqrt|reverse]`
+- `labs`
+- `lims`
+
+## Differences from ggplot2
+
+The goal of this package is to allow you to write code that is as similar to ggplot2 code as possible. The only difference in basic usage is in the `aes()` function. TidierPlots.jl accepts multiple forms for aes specification, none of which is *exactly* the same as ggplot2.
+
+- Option 1: `@aes` macro, aes as in ggplot, e.g. `@aes(x = x, y = y)`
+- Option 2: `@es` macro, aes as in ggplot, e.g. `@es(x = x, y = y)`
+- Option 3: `aes` function, julia-style columns, e.g. `aes(x = :x, y = :y)`
+- Option 4: `aes` function, strings for columns, e.g. `aes(x = "x", y = "y")`
 
 ## Examples
 
@@ -89,35 +96,35 @@ using PalmerPenguins
 
 penguins = dropmissing(DataFrame(PalmerPenguins.load()))
 
-@ggplot(data = penguins) + 
-    @geom_bar(aes(x = species)) +
-    @labs(x = "Species")
+ggplot(data = penguins) + 
+    geom_bar(@aes(x = species)) +
+    labs(x = "Species")
 ```
 ![](assets/example_col.png)
 
 
 ```julia
-@ggplot(data = penguins) +
-    @geom_bar(aes(x = species, color = island), position = "dodge") +
-    @labs(x = "Species", y = "Count", color = "Island of Origin") + 
-    @scale_colour_discrete(palette = "default")
+ggplot(data = penguins) +
+    geom_bar(aes(x = :species, color = :island), position = "dodge") +
+    labs(x = "Species", y = "Count", color = "Island of Origin") + 
+    scale_colour_discrete(palette = "default")
 ```
 ![](assets/example_col_color.png)
 
 ```julia
-@ggplot(data = penguins) + 
-    @geom_bar(aes(x = species, color = island), position = "stack") +
-    @labs(x = "Species") + 
-    @scale_color_manual(values = c("#CB3C33", "#389826", "#9558B2"))
+ggplot(data = penguins) + 
+    geom_bar(@es(x = species, color = island), position = "stack") +
+    labs(x = "Species") + 
+    scale_color_manual(values = c("#CB3C33", "#389826", "#9558B2"))
 ```
 ![](assets/example_col_stack.png)
 
 
 ```julia
-@ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + 
-    @geom_point() + 
-    @geom_smooth(method = "lm") +
-    @labs(x = "Bill Length (mm)", y = "Bill Width (mm)", 
+ggplot(penguins, aes(x = "bill_length_mm", y = "bill_depth_mm", color = "species")) + 
+    geom_point() + 
+    geom_smooth(method = "lm") +
+    labs(x = "Bill Length (mm)", y = "Bill Width (mm)", 
         title = "Bill Length vs. Bill Width", 
         subtitle = "Using geom_point and geom_smooth") +
     theme_dark()
@@ -126,13 +133,13 @@ penguins = dropmissing(DataFrame(PalmerPenguins.load()))
 ![](assets/example_point_smooth.png)
 
 ```julia
- @ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm, color = bill_depth_mm)) + 
-    @geom_point(shape = diamond, 
-                size = 20, 
-                stroke = 1, 
-                strokecolour = "black",
-                alpha = 0.8) +
-    @labs(x = "Bill Length (mm)", y = "Bill Width (mm)") +
+ ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + 
+    geom_point(shape = :diamond, 
+               size = 20, 
+               stroke = 1, 
+               strokecolour = "black",
+               alpha = 0.8) +
+    labs(x = "Bill Length (mm)", y = "Bill Width (mm)") +
     @lims(x = c(40, 60), y = c(15, 20)) +
     theme_minimal()
 
@@ -140,9 +147,9 @@ penguins = dropmissing(DataFrame(PalmerPenguins.load()))
 ![](assets/geom_point_customize.png)
 
 ```julia
-@ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + 
-    @geom_point() + 
-    @geom_smooth(method = "lm") +
+ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + 
+    geom_point() + 
+    geom_smooth(method = "lm") +
     @scale_x_log10(name = "Log10 Scaled Bill Length") + 
     @scale_y_reverse(name = "Reversed Bill Width")
 ```
@@ -153,33 +160,20 @@ using MarketData
 AAPL = DataFrame(yahoo("AAPL"))
 SPX = DataFrame(yahoo("^GSPC"))
 
-@ggplot(data = AAPL, aes(x = timestamp, y = Open)) + 
-    @geom_path(colour = "blue") + 
-    @geom_path(data = SPX, colour = "orange") + 
-    @labs(x = "Date", title = "Historical AAPL and S&P Prices at Open") +
+ggplot(data = AAPL, @es(x = timestamp, y = Open)) + 
+    geom_path(colour = "blue") + 
+    geom_path(data = SPX, colour = "orange") + 
+    labs(x = "Date", title = "Historical AAPL and S&P Prices at Open") +
     theme_minimal()
 ```
 ![](assets/example_path.png)
 
-```julia
-df = DataFrame(
-         trt = ["1", "1", "2", "2"],
-         resp = [1, 5, 3, 4],
-         group = ["1", "2", "1", "2"],
-         upper = [1.1, 5.3, 3.3, 4.2],
-         lower = [0.8, 4.6, 2.4, 3.6]
-       )
-
-p = @ggplot(data = df, aes(x = trt, y = resp, colour = group))
-
-p + @geom_errorbar(aes(ymin = lower, ymax = upper)) + 
-    @geom_point(aes(x = trt, y = resp, colour = group))
-```
-![](assets/errorbars.png)
 
 ```julia
+using AlgebraOfGraphics
+
 data(penguins) * 
-    Layer(@geom_point(aes(x = bill_length_mm, y = bill_depth_mm, color = species))) |> 
+    Layer(geom_point(aes(x = :bill_length_mm, y = :bill_depth_mm, color = :species))) |> 
     draw
 ```
 
@@ -187,9 +181,9 @@ data(penguins) *
 
 ```julia
 df = (x=rand(100), y=rand(100), z=rand(100))
-@ggplot(df) + 
-    @geom_point(aes(x = x, y = y, color = z)) + 
-    @scale_colour_continuous(palette = "batlowW100")
+ggplot(df) + 
+    geom_point(aes(x = x, y = y, color = z)) + 
+    scale_colour_continuous(palette = "batlowW100")
 ```
 
 ![](assets/continuous.png.png)

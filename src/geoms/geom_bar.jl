@@ -1,43 +1,3 @@
-macro geom_bar(exprs...)
-    aes_dict, args_dict = extract_aes(:($(exprs)))
-
-    aes_dict, args_dict = handle_position(aes_dict, args_dict)
-
-    args_dict["geom_name"] = "geom_bar"
-    
-    return build_geom(aes_dict, args_dict, 
-        ["x"], # required aesthetics
-        Makie.BarPlot, # function for visual layer
-        AlgebraOfGraphics.frequency()) # function for analysis layer
-
-end
-
-macro geom_col(exprs...)
-    aes_dict, args_dict = extract_aes(:($(exprs)))
-
-    aes_dict, args_dict = handle_position(aes_dict, args_dict)
-
-    args_dict["geom_name"] = "geom_col"
-    
-    return build_geom(aes_dict, args_dict, 
-        ["x"], # required aesthetics
-        Makie.BarPlot, # function for visual layer
-        mapping()) # function for analysis layer
-end
-
-macro geom_histogram(exprs...)
-    aes_dict, args_dict = extract_aes(:($(exprs)))
-
-    args_dict["geom_name"] = "geom_histogram"
-
-    return build_geom(aes_dict, args_dict, 
-        ["x"], # required aesthetics
-        nothing, # function for visual layer
-        AlgebraOfGraphics.histogram()) # function for analysis layer
-end
-
-geom_histogram = geom_template("geom_histogram", ["x"], nothing, AlgebraOfGraphics.histogram())
-
 function handle_position(dicts)
     handle_position(dicts[1], dicts[2])
 end
@@ -76,5 +36,6 @@ function handle_position(aes_dict, args_dict)
     return (aes_dict, args_dict)
 end
 
+geom_histogram = geom_template("geom_histogram", ["x"], nothing, AlgebraOfGraphics.histogram())
 geom_col = geom_template("geom_col", ["x"], Makie.BarPlot, mapping(); dict_function = handle_position)
 geom_bar = geom_template("geom_bar", ["x"], Makie.BarPlot,  AlgebraOfGraphics.frequency(); dict_function = handle_position)

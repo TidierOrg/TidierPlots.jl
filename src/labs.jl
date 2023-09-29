@@ -1,8 +1,8 @@
-macro labs(exprs...)
+function labs(plot::GGPlot, args...; kwargs...)
     # there should only be args 
     aes_dict, args_dict = extract_aes(:($(exprs)))
 
-    return args_dict
+    return plot + args_dict
 end
 
 function labs(args...; kwargs...)
@@ -11,7 +11,7 @@ function labs(args...; kwargs...)
     return args_dict
 end
 
-macro lims(exprs...)
+function lims(plot::GGPlot, args...; kwargs...)
     # there should only be args 
     aes_dict, args_dict = extract_aes(:($(exprs)))
 
@@ -43,7 +43,7 @@ macro lims(exprs...)
         end
     end
 
-    return lims_dict
+    return plot + lims_dict
 end
 
 function lims(args...; kwargs...)

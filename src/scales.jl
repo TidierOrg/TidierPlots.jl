@@ -200,6 +200,14 @@ end
 
 function scale_template(scale, f; trans = nothing, reverse = nothing)
     function scale_function(args...; kwargs...)
+        plot = nothing
+
+        if (length(args) != 0)
+            if args[1] isa GGPlot
+                plot = args[1]
+            end
+        end
+
         aes_dict, args_dict = extract_aes(args, kwargs)
         if !isnothing(scale) 
             args_dict["scale"] = scale
@@ -210,7 +218,12 @@ function scale_template(scale, f; trans = nothing, reverse = nothing)
         if !isnothing(reverse)
             args_dict["reversed"] = reverse
         end
-        return f(args_dict)
+        
+        if !isnothing(plot)
+            return plot + f(args_dict)
+        else
+            return f(args_dict)
+        end
     end
 end
 

@@ -5,6 +5,7 @@ using DataFrames
 using AlgebraOfGraphics
 using Makie
 using ImageHashes, Images
+using Chain
 
 penguins = dropmissing(DataFrame(PalmerPenguins.load()))
 
@@ -49,8 +50,8 @@ end
             visual(BarPlot)
     )
     @test plot_images_equal(
-        @ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + 
-            @geom_smooth(method = "lm"),
+        ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + 
+            geom_smooth(method = "lm"),
         data(penguins) *
             mapping(:bill_length_mm, :bill_depth_mm, color = :species) * 
             linear()        
@@ -87,5 +88,16 @@ end
     )
 end
 
-
+@testset "piping" begin
+    chainplot = @chain penguins begin
+        ggplot(aes(x = "species", y = "bill_depth_mm"))
+        geom_violin()
+    end
     
+    @test plot_images_equal(
+        chainplot,
+        data(penguins) *
+            mapping(:species, :bill_depth_mm) *
+            visual(Violin)
+    )
+end

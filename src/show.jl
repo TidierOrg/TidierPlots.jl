@@ -85,3 +85,11 @@ function Base.show(io::IO, plot::GGPlot)
         end
     end
 end
+
+function Base.show(io::IO, ::MIME"text/html", x::GGPlot)
+	show(io, MIME"text/html"(), 
+        with_theme(x.theme) do 
+            draw_ggplot(plot)
+        end
+    )
+end

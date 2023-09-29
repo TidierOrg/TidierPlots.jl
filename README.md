@@ -90,7 +90,6 @@ The goal of this package is to allow you to write code that is as similar to ggp
 Use the function `TidierPlots_set(option::String, value::Bool)` to control display options. The following options are supported:
 
 - "plot_show" (default true). Enables `ggplot`-like behaviour where plots are displayed when created.
-- "plot_pluto" (default true). Same as above, but for Pluto.jl notebooks.
 - "plot_log" (default true). Prints a text summary of the properties of the ggplot
 
 ## Examples

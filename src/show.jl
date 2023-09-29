@@ -78,4 +78,10 @@ function Base.show(io::IO, plot::GGPlot)
             display(draw_ggplot(plot))
         end
     end
+
+    if plot_pluto[]
+        with_theme(plot.theme) do
+            draw_ggplot(plot)
+        end
+    end
 end

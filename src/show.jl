@@ -78,18 +78,12 @@ function Base.show(io::IO, plot::GGPlot)
             display(draw_ggplot(plot))
         end
     end
-
-    if plot_pluto[]
-        with_theme(plot.theme) do
-            draw_ggplot(plot)
-        end
-    end
 end
 
 function Base.show(io::IO, ::MIME"text/html", x::GGPlot)
 	show(io, MIME"text/html"(), 
         with_theme(x.theme) do 
-            draw_ggplot(plot)
+            draw_ggplot(x)
         end
     )
 end

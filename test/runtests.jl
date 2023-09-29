@@ -86,6 +86,22 @@ end
             mapping(:species, :bill_depth_mm) *
             visual(Violin)
     )
+    @test plot_images_equal(
+        ggplot(penguins, aes(x = "species", y = "bill_depth_mm")) +
+            geom_boxplot(),
+        data(penguins) *
+            mapping(:species, :bill_depth_mm) *
+            visual(BoxPlot)
+    )
+    @test plot_images_equal(
+        ggplot(penguins, aes(x = "bill_length_mm", y = "bill_depth_mm")) +
+            geom_contour(),
+        data(penguins) * 
+            density() * 
+            visual(Makie.Contour) * 
+            mapping(x = :bill_length_mm, y = :bill_depth_mm)
+    )
+    
 end
 
 @testset "piping" begin

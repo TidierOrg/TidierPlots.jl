@@ -1,5 +1,5 @@
 function geom_template(name, required_aes, visual_layer, analysis_layer;
-    dict_function = identity, extra_args = Dict(), layer_function = identity)
+    dict_function = identity, extra_args = Dict())
     function geom_function(args...; kwargs...)
         plot = nothing
         
@@ -12,18 +12,6 @@ function geom_template(name, required_aes, visual_layer, analysis_layer;
         aes_dict, args_dict = dict_function(extract_aes(args, kwargs))
         args_dict["geom_name"] = name
         args_dict = merge(args_dict, extra_args)
-
-        aes_dict, 
-        args_dict, 
-        required_aes,
-        visual_layer, 
-        analysis_layer = layer_function((
-            aes_dict, 
-            args_dict, 
-            required_aes,
-            visual_layer, 
-            analysis_layer
-        ))
 
         if !isnothing(plot)
             return plot + build_geom(aes_dict, args_dict, 

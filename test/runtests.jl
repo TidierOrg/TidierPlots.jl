@@ -40,7 +40,7 @@ end
 
 @testset "geoms" begin
     @test plot_images_equal(
-        ggplot(data = penguins) + 
+        ggplot(penguins) + 
             geom_bar(@aes(x = species)) +
             labs(x = "Species"),
         data(penguins) * 

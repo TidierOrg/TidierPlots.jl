@@ -1,5 +1,5 @@
-macro geom_smooth(exprs...)
-    aes_dict, args_dict = extract_aes(:($(exprs)))
+function geom_smooth(plot::GGPlot, args...; kwargs...)
+    aes_dict, args_dict = extract_aes(args, kwargs)
 
     args_dict["geom_name"] = "geom_smooth"
     
@@ -11,7 +11,7 @@ macro geom_smooth(exprs...)
         end
     end
     
-    return build_geom(aes_dict, args_dict, 
+    return plot + build_geom(aes_dict, args_dict, 
                       ["x", "y"], # required aesthetics
                       nothing, # function for visual layer
                       analysis) # function for analysis layer

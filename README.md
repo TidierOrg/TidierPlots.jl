@@ -85,6 +85,14 @@ The goal of this package is to allow you to write code that is as similar to ggp
 - Option 3: `aes` function, julia-style columns, e.g. `aes(x = :x, y = :y)`
 - Option 4: `aes` function, strings for columns, e.g. `aes(x = "x", y = "y")`
 
+## Display Options
+
+Use the function `TidierPlots_set(option::String, value::Bool)` to control display options. The following options are supported:
+
+- "plot_show" (default true). Enables `ggplot`-like behaviour where plots are displayed when created.
+- "plot_pluto" (default true). Same as above, but for Pluto.jl notebooks.
+- "plot_log" (default true). Prints a text summary of the properties of the ggplot
+
 ## Examples
 
 Let's make some plots using the Palmer Penguins data from `PalmerPenguins.jl`:
@@ -156,7 +164,7 @@ ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm, color = species)) +
 ![](assets/scales.png)
 
 ```julia
-using MarketData
+using MarketData: yahoo
 AAPL = DataFrame(yahoo("AAPL"))
 SPX = DataFrame(yahoo("^GSPC"))
 
@@ -180,10 +188,10 @@ data(penguins) *
 ![](assets/interop.png)
 
 ```julia
-df = (x=rand(100), y=rand(100), z=rand(100))
+df = DataFrame(x=rand(100), y=rand(100), z=rand(100))
 ggplot(df) + 
-    geom_point(aes(x = x, y = y, color = z)) + 
+    geom_point(@aes(x = x, y = y, color = z)) + 
     scale_colour_continuous(palette = "batlowW100")
 ```
 
-![](assets/continuous.png.png)
+![](assets/continuous.png)

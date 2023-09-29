@@ -55,15 +55,15 @@ export @geom_path, geom_path
 export @geom_line, geom_line
 export @geom_step, geom_step
 export @geom_smooth, geom_smooth 
-export @geom_errorbar
-export @geom_errorbarh
+export @geom_errorbar, geom_errorbar
+export @geom_errorbarh, geom_errorbarh
 export @geom_violin, geom_violin
 export @geom_boxplot, geom_boxplot
 export @geom_contour, geom_contour
 export @geom_tile, geom_tile
-export @geom_text
-export @geom_label
-export @geom_density
+export @geom_text, geom_text
+export @geom_label, geom_text
+export @geom_density, geom_density
 
 # scales 
 
@@ -86,5 +86,6 @@ export scale_colour_manual, scale_color_manual
 
 const plot_log = Ref{Bool}(true)
 const plot_show = Ref{Bool}(true)
+const plot_pluto = Ref{Bool}(true)
 
 end

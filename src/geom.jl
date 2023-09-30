@@ -38,7 +38,9 @@ function build_geom(aes_dict, args_dict, required_aes, visual, analysis; special
                         "label" => "text",
                         "row" => "row",
                         "col" => "col", 
-                        "layout" => "layout")
+                        "layout" => "layout", 
+                        "direction" => "direction", 
+                        "group" => "group")
 
     if !isnothing(special_aes)
         optional_aes = merge(optional_aes, special_aes)

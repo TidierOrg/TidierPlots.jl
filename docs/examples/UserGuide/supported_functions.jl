@@ -5,31 +5,31 @@ using PalmerPenguins
 penguins = dropmissing(DataFrame(PalmerPenguins.load()))
 
 # ## @geom_bar, @labs
-@ggplot(data = penguins) + 
-    @geom_bar(aes(x = species)) +
-    @labs(x = "Species")
+ggplot(data = penguins) + 
+    geom_bar(@aes(x = species)) +
+    labs(x = "Species")
 
 ![](assets/example_col.png)
 
 
-@ggplot(data = penguins) +
-           @geom_bar(aes(x = species, color = island), position = "dodge") +
-           @labs(x = "Species", y = "Count", color = "Island of Origin")
+ggplot(data = penguins) +
+           geom_bar(@aes(x = species, color = island), position = "dodge") +
+           labs(x = "Species", y = "Count", color = "Island of Origin")
 
 ![](assets/example_col_color.png)
 
 
-@ggplot(data = penguins) + 
-    @geom_bar(aes(x = species, color = island), position = "stack") +
-    @labs(x = "Species")
+ggplot(data = penguins) + 
+    geom_bar(@aes(x = species, color = island), position = "stack") +
+    labs(x = "Species")
 
 ![](assets/example_col_stack.png)
 
-# ## @geom_point, @geom_smooth, theme_dark
-@ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + 
-    @geom_point() + 
-    @geom_smooth(method = "lm") +
-    @labs(x = "Bill Length (mm)", y = "Bill Width (mm)", 
+# ## geom_point, geom_smooth, theme_dark
+ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + 
+    geom_point() + 
+    geom_smooth(method = "lm") +
+    labs(x = "Bill Length (mm)", y = "Bill Width (mm)", 
         title = "Bill Length vs. Bill Width", 
         subtitle = "Using geom_point and geom_smooth") +
     theme_dark()
@@ -37,24 +37,24 @@ penguins = dropmissing(DataFrame(PalmerPenguins.load()))
 
 ![](assets/example_point_smooth.png)
 
- @ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + 
-    @geom_point(shape = diamond, 
-                size = 20, 
-                stroke = 1, 
-                strokecolour = "black",
-                alpha = 0.8) +
-    @labs(x = "Bill Length (mm)", y = "Bill Width (mm)") +
-    @lims(x = c(40, 60), y = c(15, 20)) +
+ ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + 
+    geom_point(shape = diamond, 
+            size = 20, 
+            stroke = 1, 
+            strokecolour = "black",
+            alpha = 0.8) +
+    labs(x = "Bill Length (mm)", y = "Bill Width (mm)") +
+    lims(x = c(40, 60), y = c(15, 20)) +
     theme_minimal()
 
 ![](assets/geom_point_customize.png)
 
 # ## @scale_x_log10, @scale_y_reverse
-@ggplot(penguins, aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + 
-    @geom_point() + 
-    @geom_smooth(method = "lm") +
-    @scale_x_log10(name = "Log10 Scaled Bill Length") + 
-    @scale_y_reverse(name = "Reversed Bill Width")
+ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + 
+    geom_point() + 
+    geom_smooth(method = "lm") +
+    scale_x_log10(name = "Log10 Scaled Bill Length") + 
+    scale_y_reverse(name = "Reversed Bill Width")
 
 ![](assets/scales.png)
 
@@ -63,10 +63,10 @@ using MarketData
 AAPL = DataFrame(yahoo("AAPL"))
 SPX = DataFrame(yahoo("^GSPC"))
 
-@ggplot(data = AAPL, aes(x = timestamp, y = Open)) + 
-    @geom_path(colour = "blue") + 
-    @geom_path(data = SPX, colour = "orange") + 
-    @labs(x = "Date", title = "Historical AAPL and S&P Prices at Open") +
+ggplot(data = AAPL, @aes(x = timestamp, y = Open)) + 
+    geom_path(colour = "blue") + 
+    geom_path(data = SPX, colour = "orange") + 
+    labs(x = "Date", title = "Historical AAPL and S&P Prices at Open") +
     theme_minimal()
 
 ![](assets/example_path.png)
@@ -80,13 +80,13 @@ df = DataFrame(
          lower = [0.8, 4.6, 2.4, 3.6]
        )
 
-p = @ggplot(data = df, aes(x = trt, y = resp, colour = group))
+p = ggplot(data = df, @aes(x = trt, y = resp, colour = group))
 
-p + @geom_errorbar(aes(ymin = lower, ymax = upper)) + 
-    @geom_point(aes(x = trt, y = resp, colour = group))
+p + geom_errorbar(@aes(ymin = lower, ymax = upper)) + 
+    geom_point(@aes(x = trt, y = resp, colour = group))
 
 ![](assets/errorbars.png)
 
-data(penguins) * Layer(@geom_point(aes(x = bill_length_mm, y = bill_depth_mm, color = species))) |> draw
+data(penguins) * Layer(geom_point(aes(x = bill_length_mm, y = bill_depth_mm, color = species))) |> draw
 
 ![](assets/interop.png)

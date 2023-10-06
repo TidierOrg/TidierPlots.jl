@@ -9,7 +9,6 @@ makedocs(
     modules = [TidierPlots]
 )
 
-
 deploydocs(
-    repo = "https://github.com/TidierOrg/TidierPlots.jl.git"
+    repo = "github.com/TidierOrg/TidierPlots.jl.git"
 )

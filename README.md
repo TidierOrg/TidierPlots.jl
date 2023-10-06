@@ -5,17 +5,14 @@
 <img src="/assets/logo.png" align="right" style="padding-left:10px;" width="150"/>
 
 ## What is TidierPlots.jl?
-TidierPlots.jl is a 100% Julia implementation of the R package ggplot in Julia. Powered by the AlgebraOfGraphics.jl, Makie.jl, and Julia’s extensive meta-programming capabilities, TidierPlots.jl is an R user’s love
-letter to data visualization in Julia.
+TidierPlots.jl is a 100% Julia implementation of the R package ggplot in Julia. Powered by AlgebraOfGraphics.jl, Makie.jl, and Julia’s extensive meta-programming capabilities, TidierPlots.jl is an R user’s love letter to data visualization in Julia.
 
 `TidierPlots.jl` has three goals, which differentiate it from other plotting packages in Julia:
 
 1.  **Stick as closely to tidyverse syntax and behaviour as possible:** Whereas other
     meta-packages introduce Julia-centric idioms for working with
     plots, this package’s goal is to reimplement ggplot
-    in Julia. This means that `TidierPlots.jl` uses *tidy expressions* as opposed
-    to idiomatic Julia expressions. An example of a tidy expression is
-    `a = mean(b)`.
+    in Julia. This currently just means that `TidierPlots.jl` gives the option for specifying `aes` with the macro `@es` to allow unquoted column references, but the use of macros may need to expand as more features are added. 
 
 2.  **Stay as compatible as possible with AlgebraOfGraphics.jl** This package is meant
     to be a thin wrapper around AoG's syntax to help introduce R users to plotting in 

@@ -2,8 +2,11 @@ using TidierPlots
 using Test
 using PalmerPenguins
 using DataFrames
+using Makie: Text, Violin, 
+    BarPlot, Contour, Heatmap, Rangebars, BoxPlot,
+    HLines, VLines, Lines, Stairs, Scatter,
+    set_theme!
 using AlgebraOfGraphics
-using Makie
 using ImageHashes, Images
 using Chain
 
@@ -97,8 +100,8 @@ end
         ggplot(penguins, aes(x = "bill_length_mm", y = "bill_depth_mm")) +
             geom_contour(),
         data(penguins) * 
-            density() * 
-            visual(Makie.Contour) * 
+            AlgebraOfGraphics.density() * 
+            visual(Contour) * 
             mapping(x = :bill_length_mm, y = :bill_depth_mm)
     )
     

@@ -48,18 +48,10 @@ function colour_scale_to_ggoptions(args_dict::Dict)
 
 end
 
-# Generator
+# Generator - generates two function signatures
 
 function scale_template(scale, f; trans = nothing, reverse = nothing)
     function scale_function(args...; kwargs...)
-        plot = nothing
-
-        if (length(args) != 0)
-            if args[1] isa GGPlot
-                plot = args[1]
-            end
-        end
-
         aes_dict, args_dict = extract_aes(args, kwargs)
         if !isnothing(scale) 
             args_dict["scale"] = scale
@@ -71,12 +63,23 @@ function scale_template(scale, f; trans = nothing, reverse = nothing)
             args_dict["reversed"] = reverse
         end
         
-        if !isnothing(plot)
-            return plot + f(args_dict)
-        else
-            return f(args_dict)
-        end
+        return f(args_dict)
     end
+    function scale_function(plot::GGPlot, args...; kwargs...)
+        aes_dict, args_dict = extract_aes(args, kwargs)
+        if !isnothing(scale) 
+            args_dict["scale"] = scale
+        end
+        if !isnothing(trans) 
+            args_dict["trans"] = trans
+        end
+        if !isnothing(reverse)
+            args_dict["reversed"] = reverse
+        end
+        
+        return plot + f(args_dict)
+    end
+    return scale_function
 end
 
 # Definitions

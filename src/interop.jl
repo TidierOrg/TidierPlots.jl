@@ -86,6 +86,8 @@ function geom_to_layer(geom, data, labs)
     return layer
 end
 
+using AlgebraOfGraphics: Layer, Layers
+
 Layer(geom::Geom) = geom_to_layer(geom, geom.data, geom.axis_options)
 
 function Layers(plot::GGPlot)

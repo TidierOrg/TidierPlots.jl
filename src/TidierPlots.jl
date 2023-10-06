@@ -1,10 +1,23 @@
 module TidierPlots
 
-using Makie
+# From Makie, get the functions that AoG needs to plot
+using Makie: Text, Violin, 
+    BarPlot, Contour, Heatmap, Rangebars, BoxPlot,
+    HLines, VLines, Lines, Stairs, Scatter
+
+# CairoMakie, the default backend for Makie
 using CairoMakie
+
+# This project mostly wraps: 
 using AlgebraOfGraphics
+
+# DataFrames are the main supported data type
 using DataFrames
+
+# to reexport the Makie default themes
 using Reexport
+
+# Needed for color scales to work correctly
 using Colors
 
 include("structs.jl")

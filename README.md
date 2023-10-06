@@ -29,6 +29,8 @@ letter to data visualization in Julia.
 
 ## Installation
 
+For the "stable" version, access the Pkg interface by pressing `]` at the `julia>` prompt, then type `add TidierPlots`. 
+
 For the development version:
 
 ```julia

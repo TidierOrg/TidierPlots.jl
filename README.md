@@ -1,6 +1,7 @@
 # TidierPlots.jl
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/TidierOrg/Tidier.jl/blob/main/LICENSE)
+[![Docs: Latest](https://img.shields.io/badge/Docs-Latest-blue.svg)](https://tidierorg.github.io/TidierPlots.jl/latest)
 
 <img src="/assets/logo.png" align="right" style="padding-left:10px;" width="150"/>
 
@@ -115,4 +116,12 @@ ggplot(penguins, aes(x = "bill_length_mm", y = "bill_depth_mm", color = "species
 
 ![](assets/example_point_smooth.png)
 
-See the documentation for many more examples. 
+See the [documentation](https://tidierorg.github.io/TidierData.jl/latest) for many more examples. 
+
+# What's New
+
+See [NEWS.md](https://github.com/TidierOrg/TidierPlots.jl/blob/main/NEWS.md) for the latest updates.
+
+# What's Missing
+
+Lots! Please feel free to file an issue and/or submit a pull request to add additional ggplot-based features. If it is in ggplot, we want to add it. 

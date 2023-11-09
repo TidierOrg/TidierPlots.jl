@@ -5,18 +5,18 @@ end
 ```
 ## Index
 ```@index
-Modules = [TidierData]
+Modules = [TidierPlots]
 Private = false
 ```
 
 ## Reference - Exported functions
 ```@autodocs
-Modules = [TidierData]
+Modules = [TidierPlots]
 Private = false
 ```
 
 ## Reference - Internal functions
 ```@autodocs
-Modules = [TidierData]
+Modules = [TidierPlots]
 Public = false
 ```

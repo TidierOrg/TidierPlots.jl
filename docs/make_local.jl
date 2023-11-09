@@ -6,6 +6,9 @@ Pkg.activate("..")
 using Documenter
 using TidierPlots
 
+makedocs(sitename="My Documentation")
+
+
 makedocs(
     sitename = "TidierPlots",
     format = Documenter.HTML(),

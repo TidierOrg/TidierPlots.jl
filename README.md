@@ -116,7 +116,7 @@ ggplot(penguins, aes(x = "bill_length_mm", y = "bill_depth_mm", color = "species
 
 ![](assets/example_point_smooth.png)
 
-See the [documentation](https://tidierorg.github.io/TidierData.jl/latest) for many more examples. 
+See the [documentation](https://tidierorg.github.io/TidierPlots.jl/latest) for many more examples. 
 
 # What's New
 

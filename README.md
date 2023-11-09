@@ -91,9 +91,9 @@ Use the function `TidierPlots_set(option::String, value::Bool)` to control displ
 - "plot_show" (default true). Enables `ggplot`-like behaviour where plots are displayed when created.
 - "plot_log" (default true). Prints a text summary of the properties of the ggplot
 
-## Examples
+## Example
 
-Let's make some plots using the Palmer Penguins data from `PalmerPenguins.jl`:
+Let's make a plots using the Palmer Penguins data from `PalmerPenguins.jl`:
 
 ```julia
 using TidierPlots
@@ -102,31 +102,6 @@ using PalmerPenguins
 
 penguins = dropmissing(DataFrame(PalmerPenguins.load()))
 
-ggplot(data = penguins) + 
-    geom_bar(@aes(x = species)) +
-    labs(x = "Species")
-```
-![](assets/example_col.png)
-
-
-```julia
-ggplot(data = penguins) +
-    geom_bar(aes(x = :species, color = :island), position = "dodge") +
-    labs(x = "Species", y = "Count", color = "Island of Origin") + 
-    scale_colour_discrete(palette = "default")
-```
-![](assets/example_col_color.png)
-
-```julia
-ggplot(data = penguins) + 
-    geom_bar(@es(x = species, color = island), position = "stack") +
-    labs(x = "Species") + 
-    scale_color_manual(values = c("#CB3C33", "#389826", "#9558B2"))
-```
-![](assets/example_col_stack.png)
-
-
-```julia
 ggplot(penguins, aes(x = "bill_length_mm", y = "bill_depth_mm", color = "species")) + 
     geom_point() + 
     geom_smooth(method = "lm") +
@@ -138,58 +113,4 @@ ggplot(penguins, aes(x = "bill_length_mm", y = "bill_depth_mm", color = "species
 
 ![](assets/example_point_smooth.png)
 
-```julia
- ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + 
-    geom_point(shape = :diamond, 
-               size = 20, 
-               stroke = 1, 
-               strokecolour = "black",
-               alpha = 0.8) +
-    labs(x = "Bill Length (mm)", y = "Bill Width (mm)") +
-    lims(x = c(40, 60), y = c(15, 20)) +
-    theme_minimal()
-
-```
-![](assets/geom_point_customize.png)
-
-```julia
-ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + 
-    geom_point() + 
-    geom_smooth(method = "lm") +
-    scale_x_log10(name = "Log10 Scaled Bill Length") + 
-    scale_y_reverse(name = "Reversed Bill Width")
-```
-![](assets/scales.png)
-
-```julia
-using MarketData: yahoo
-AAPL = DataFrame(yahoo("AAPL"))
-SPX = DataFrame(yahoo("^GSPC"))
-
-ggplot(data = AAPL, @es(x = timestamp, y = Open)) + 
-    geom_path(colour = "blue") + 
-    geom_path(data = SPX, colour = "orange") + 
-    labs(x = "Date", title = "Historical AAPL and S&P Prices at Open") +
-    theme_minimal()
-```
-![](assets/example_path.png)
-
-
-```julia
-using AlgebraOfGraphics
-
-data(penguins) * 
-    Layer(geom_point(aes(x = :bill_length_mm, y = :bill_depth_mm, color = :species))) |> 
-    draw
-```
-
-![](assets/interop.png)
-
-```julia
-df = DataFrame(x=rand(100), y=rand(100), z=rand(100))
-ggplot(df) + 
-    geom_point(@aes(x = x, y = y, color = z)) + 
-    scale_colour_continuous(palette = "batlowW100")
-```
-
-![](assets/continuous.png)
+See the documentation for many more examples. 

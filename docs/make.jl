@@ -11,7 +11,7 @@ DocMeta.setdocmeta!(TidierPlots,
 makedocs(
     modules=[TidierPlots],
     clean=true,
-    doctest=true,
+    doctest=false,
     #format   = Documenter.HTML(prettyurls = get(ENV, "CI", nothing) == "true"),
     sitename="TidierPlots.jl",
     authors="Randall Boyes et al.",

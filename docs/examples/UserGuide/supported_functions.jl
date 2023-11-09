@@ -2,6 +2,8 @@ using TidierPlots
 using DataFrames
 using PalmerPenguins
 
+TidierPlots_set("plot_show", false)
+
 penguins = dropmissing(DataFrame(PalmerPenguins.load()))
 
 # ## @geom_bar, @labs

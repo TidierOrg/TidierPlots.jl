@@ -1,5 +1,5 @@
 """
-    @geom_point(aes(...), ...)
+    geom_point(aes(...), ...)
     
     Represent data as points. 
 

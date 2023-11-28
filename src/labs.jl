@@ -1,6 +1,6 @@
 function labs(plot::GGPlot, args...; kwargs...)
     # there should only be args 
-    aes_dict, args_dict = extract_aes(:($(exprs)))
+    aes_dict, args_dict = extract_aes(args, kwargs)
 
     return plot + args_dict
 end

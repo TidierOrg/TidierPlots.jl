@@ -97,12 +97,14 @@ end
             visual(BoxPlot)
     )
     @test plot_images_equal(
-        ggplot(penguins, aes(x = "bill_length_mm", y = "bill_depth_mm")) +
+        ggplot(penguins, aes(x = "bill_length_mm",
+                             y = "bill_depth_mm",
+                             colour = "species")) +
             geom_contour(),
-        data(penguins) * 
-            AlgebraOfGraphics.density() * 
-            visual(Contour) * 
-            mapping(x = :bill_length_mm, y = :bill_depth_mm)
+        data(penguins) *
+            density() *
+            visual(Contour) *
+            mapping(:bill_length_mm, :bill_depth_mm, color = :species)
     )
     
 end

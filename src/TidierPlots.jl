@@ -33,6 +33,7 @@ include("ggsave.jl")
 include("interop.jl")
 include("labs.jl")
 include("scales.jl")
+include("themes.jl")
 include("show.jl")
 include("util.jl")
 
@@ -49,6 +50,7 @@ include("geoms/geom_text.jl")
 include("geoms/geom_violin.jl")
 
 @reexport using Makie: theme_black, theme_dark, theme_ggplot2, theme_light, theme_minimal
+@reexport using Chain
 
 # functions
 

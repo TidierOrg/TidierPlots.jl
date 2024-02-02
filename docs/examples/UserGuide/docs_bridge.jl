@@ -1,0 +1,223 @@
+using TidierPlots
+using DataFrames
+using PalmerPenguins
+using CairoMakie
+
+penguins = dropmissing(DataFrame(PalmerPenguins.load()))
+
+# ##`ggplot()`
+# `ggplot()` is the starting point of any plot. It sets up the initial plot with default settings that can be later customized with geoms, scales, theme settings and other specifications. `ggplot` usually used with a data source as an argument, and optionally, a set of aesthetics specified by @aes(). The data source is typically a DataFrame.
+#If a set of aesthetics is specified in the initial ggplot call, these aesthetics apply to all layers added to the plot, unless they are overridden in subsequent layers.
+
+ggplot(penguins, @aes(x=bill_length_mm, y=bill_depth_mm, color = species))+
+    geom_point()+
+    geom_smooth()
+    
+# ##@aes()
+#aes() is used to map variables in your data to visual properties (aesthetics) of the plot. These aesthetics can include things like position (x and y coordinates), color, shape, size, etc. Each aesthetic is a way of visualizing a variable or a statistical transformation of a variable.
+#Aesthetics are specified in the form aes(aesthetic = variable), where aesthetic is the name of the aesthetic, and variable is the column name in your data that you want to map to the aesthetic. The variable names do not need to be preceded by a colon.
+
+# Of note, TidierPlots.jl accepts multiple forms for aes specification, none of which is *exactly* the same as ggplot2.
+
+#   - Option 1: `@aes` macro, aes as in ggplot, e.g. `@aes(x = x, y = y)`
+#   - Option 2: `@es` macro, aes as in ggplot, e.g. `@es(x = x, y = y)`
+#   - Option 3: `aes` function, julia-style columns, e.g. `aes(x = :x, y = :y)`
+#   - Option 4: `aes` function, strings for columns, e.g. `aes(x = "x", y = "y")`
+
+# The examples below will generally use *option 1*
+
+# In the above example, we can see that the x, y, and color aesthetics are being mapped to each subsequent layer of the plot.
+
+# In general, `aes()` can be used within the `ggplot`  to set global aesthetics that apply to all layers, or within individual geoms to set aesthetics that apply only to that layer.
+
+# Moving from general rules, to specific plots, let us first explore `geom_point()`
+
+# `geom_point()`
+# `geom_point` is used to create a scatter plot. It is typically used with aesthetics mapping variables to x and y positions, and optionally to other aesthetics like color, shape, and size. `geom_point` can be used to visualize the relationship between two continuous variables, or a continuous and a discrete variable. The following visuals features can be changed within @geom_point(), shape, size, stroke, strokecolour, and alpha . 
+
+ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + 
+    geom_point(
+                size = 20, 
+                stroke = 1, 
+                strokecolor = "black",
+                alpha = 0.2) +
+    labs(x = "Bill Length (mm)", y = "Bill Width (mm)") +
+    lims(x = c(40, 60), y = c(15, 20)) +
+    theme_minimal()
+
+# In the example above, a scatter plot is created with the variable bill_length_mm mapped to the x position, and bill_depth_mm mapped to the y position with color mapped to species. Supported optional arguements include:
+       # - size - this is the size of the marker
+       # - alpha (or transparency), is set to a value between 0 and 1. 
+       # - strokecolor is the stroke color around the marker. https://juliagraphics.github.io/Colors.jl/stable/namedcolors/ colors can be chosen from any name on this list
+       # - stroke this is the thickeness of the stroke around the marker
+
+# ## `lims`  allows the user to set the ranges for the x and y axises.
+
+# ## `geom_smooth()`
+# The `geom_smooth()` is used to add a smoothed line (or curve) fitted to the data. It is typically used with aesthetics mapping variables to x and y positions. `geom_smooth()` can be used to visualize trends in the data. Using the example above, lets add a smoothed line to each species. `geom_smooth` currently supports only "lm" powered by `AlgebraOfGraphics.linear()`. This example also illsutrates how to use the scale `scale_x_log10()` and `scale_y_reverse()` to improve readiblity of your graph.
+
+ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + 
+    geom_point() + 
+    geom_smooth(method = "lm") +
+    scale_x_log10(name = "Log10 Scaled Bill Length") + 
+    scale_y_reverse(name = "Reversed Bill Width")+
+    theme_minimal()
+
+
+# ## `geom_path()` and `geom_line()`
+# `geom_path()` and `geom_line()`  are used to create line plots. They are typically used with aesthetics mapping variables to x and y positions. While `geom_path()` connects the points in the order they appear in the data, `geom_line()` connects the points in order of the x values. These can be used to visualize trends or relationships between two continuous variables.
+
+using MarketData
+AAPL = DataFrame(yahoo(:AAPL))
+SPX = DataFrame(yahoo("^GSPC"))
+
+ggplot(data = AAPL, @aes(x = timestamp, y = Open)) + 
+    geom_path(color = "blue", alpha = .1 , stroke = .000001) + 
+    geom_path(data = SPX, color = "mediumorchid4") + 
+    labs(x = "Date", title = "Historical AAPL and S&P Prices at Open") +
+    theme_minimal()
+
+#### IS THIS TRUE aboveIn the examples above, a line plot is created with the variable Var1 mapped to the x position, and Var2 mapped to the y position. The first example uses `geom_path` to connect the points in their original order, and the second example uses `geom_line` to connect the points in order of their x values.
+### alt: The first call to `geom_path` takes the data from AAPL and maps the timestamp to the x-axis and Open to the y-axis, and colors the line blue. The second call to `geom_path` takes the data from SPX and maps the same aesthetics, and colors the line orange creating the plot. . Supported optional aesthetic arguments for `geom_line` include:
+       # - alpha - transparency of the line (a value set between 0 and 1)
+       # - color - color of the line, available options in link referenced above.
+
+# `geom_errorbar()`
+# `geom_errorbar()`  is used to add error bars to the plot. It is typically used with aesthetics mapping variables to x position, y position, ymin, and ymax. This can be used to visualize uncertainty in the data.
+
+
+# ggplot(data=DataFrame, @aes(x=Var1, y=Var2)) + geom_errorbar(@aes(ymin=Lower, ymax=Upper))
+#In the example above, error bars are added to the plot with the variable Var1 mapped to the x position, Var2 mapped to the y position, Lower mapped to ymin, and Upper mapped to ymax.
+
+# `##geom_bar`, `geom_col`, and `geom_histogram`
+# `geom_bar`  is used to create bar plots for categorical data.  `geom_col`  is a special case of `geom_bar` where the height of the bars is already computed and does not need to be counted. `geom_histogram`  is used to create a histogram, which is essentially a bar plot for continuous data, where the data is divided into bins and the number of data points in each bin is counted.
+
+using TidierData: @chain, @count 
+a = @chain penguins begin
+    @count(species)
+end
+
+ggplot(data=penguins, @aes(x=species)) +
+  geom_bar(aes(color = "island"), position = "dodge")
+
+# geom_bar optional arguments include
+         # - color, alpha as above
+         # - position, when set to "dodge," bar charts will not stack
+
+
+ggplot(data=penguins, @aes(x = island, y=species)) + geom_col()
+ggplot() +
+  geom_histogram(data=penguins, @aes(x=bill_length_mm, color = species))
+
+# optional arguments inlcude 
+
+
+
+#In the first example, a bar plot is created with the variable CategoricalVar mapped to the x position, and the count of each category is represented by the height of the bars.
+
+#In the second example, a column plot is created with the variable CategoricalVar mapped to the x position, and ComputedHeight mapped to the y position.
+
+#A  histogram is created with the continuous variable, bill_length_mm, mapped to the x position, and the data is divided into bins, with the count in each bin represented by the height of the bars.
+
+
+
+# ## geom_errorbar and geom_errorbar
+#The geom_errorbar and geom_errorbarh create vertical and horizontal error bars respectively.
+
+
+
+# ##geom_path and geom_line
+#The `geom_path` and `geom_line`  are used to create line plots. `geom_path` connects the data points in the order they appear in the data, while `geom_line` connects the data points in order of the x-values.
+
+ggplot(penguins, @aes(x=bill_length_mm, y=bill_depth_mm, color=species)) + 
+    @geom_path()
+
+#In this example, a path plot is created where the bill length of penguins is mapped to the x position, the bill depth is mapped to the y position, and different species are represented by different colors.
+
+# ##`geom_step`
+#The `geom_step` macro creates a step plot, which is similar to a line plot but with a step pattern rather than a direct line from point to point.
+
+ggplot(penguins, @aes(x=bill_length_mm, y=bill_depth_mm, color=species)) + 
+  geom_step()
+
+#In this example, a step plot is created where the bill length of penguins is mapped to the x position, the bill depth is mapped to the y position, and different species are represented by different colors. 
+
+
+# ##`geom_boxplot`
+# `geom_boxplot` creates a boxplot.
+
+ggplot()+
+  geom_boxplot(data=penguins, @aes(x = island, y = bill_length_mm, color = species),  alpha = .3)
+
+#In this example, a boxplot is created where different island of penguins are mapped to the x position, and the bill length is mapped to the y position. Finally, the each species will be mapped to a different color
+
+# geom_boxplot supported optinal arguements currently include:  
+       # - color - if used within the aes() with a categorical variable it will make each category a different color as shown above. When used outside of the aes() and selected with a color, it will make each boxplot that color.
+       # - alpha - transaparency as above, used outside of the aes()
+
+# ##geom_violin
+# `geom_violin`  creates a violin plot, which is a combination of a boxplot and a kernel density plot.
+
+  ggplot(penguins, @aes(x=species, y=bill_depth_mm, color = species)) + 
+    geom_violin()
+
+#In this example, a violin plot is created where different species of penguins are mapped to the x position, and the bill depth is mapped to the y position. geom_violin does not currently support mapping a categorical variable to colors.
+         
+
+# ##`geom_contour`
+#The `geom_contour`  creates a contour plot.
+  
+ggplot(penguins, @aes(x=bill_length_mm, y=bill_depth_mm, z=body_mass_g)) + 
+  geom_contour()
+
+# In this example, a contour plot is created where the bill length of penguins is mapped to the x position, the bill depth is mapped to the y position, and the body mass is mapped to the contour lines.
+
+# ##`geom_tile`
+#The `geom_tile` creates a tile plot, also known as a heatmap.
+
+ggplot(penguins, @aes(x=species, y=island, fill=body_mass_g)) + 
+  geom_tile()
+
+#In this example, a tile plot is created where different species of penguins are mapped to the x position, the islands are mapped to the y position, and the body mass is mapped to the color of the tiles.
+
+# ## `geom_text` and `geom_label`
+# `geom_text` and `geom_label`  are used to add text and labels to a plot.
+
+# ##`scale_x_log10`,  `scale_y_log10`
+# `scale_x_log10` and `scale_y_log10` apply a base 10 logarithmic transformation to the x and y axes, respectively.
+
+ggplot(penguins, @aes(x=body_mass_g, y=bill_length_mm)) + 
+  geom_point() +
+  scale_x_log10()
+
+  
+#In this example, a scatter plot is created where the body mass of penguins is mapped to the x position and the bill length to the y position. A base 10 logarithmic transformation is then applied to the x-axis.
+
+# ## scale_x_log2, scale_y_log2, scale_x_log, scale_y_log
+#These work similarly to the previous ones, but apply a base 2 or base e logarithmic transformation to the x and y axes, respectively.
+
+# ##` scale_x_logit`, `scale_y_logit`
+#`scale_x_logit` and `scale_y_logit apply a logit transformation to the x and y axes, respectively. This transformation is often used when visualizing proportions or probabilities.
+
+# ##`scale_x_pseudolog10`, `scale_y_pseudolog10`, `scale_x_Symlog10`, `scale_y_Symlog10`
+#These  apply different types of logarithmic transformations to the x and y axes. The "pseudo" and "Symlog" transformations are designed to handle zeros and negative values more effectively.
+
+# ##`scale_x_reverse`, `scale_y_reverse`
+# `scale_x_reverse` and `scale_y_reverse`  reverse the direction of the x and y axes, respectively.
+
+ggplot(penguins, @aes(x=body_mass_g, y=bill_length_mm, color = species)) + 
+   geom_point() +
+   scale_y_reverse() +
+   theme_minimal()
+
+#In this example, a scatter plot is created where the body mass of penguins is mapped to the x position and the bill length to the y position. The direction of the y-axis is then reversed.
+
+# ##`scale_x_sqrt`, `scale_y_sqrt`
+#  `scale_x_sqrt` and `scale_y_sqrt`  apply a square root transformation to the x and y axes, respectively.
+
+ggplot(penguins, @aes(x=body_mass_g, y=bill_length_mm, color = species)) + 
+   geom_point() +
+   scale_x_sqrt() +
+   theme_minimal()
+   
+#In this example, a scatter plot is created where the body mass of penguins is mapped to the x position and the bill length to the y position. A square root transformation is then applied to the x-axis

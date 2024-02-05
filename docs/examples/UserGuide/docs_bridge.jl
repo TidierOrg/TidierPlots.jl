@@ -51,7 +51,8 @@ ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm, color = species)) +
        # - strokecolor is the stroke color around the marker. https://juliagraphics.github.io/Colors.jl/stable/namedcolors/ colors can be chosen from any name on this list
        # - stroke this is the thickeness of the stroke around the marker
 
-# ## `lims`  allows the user to set the ranges for the x and y axises.
+# ## `lims`  
+# `lims` allows the user to set the ranges for the x and y axises as shown in the example above.
 
 # ## `geom_smooth()`
 # The `geom_smooth()` is used to add a smoothed line (or curve) fitted to the data. It is typically used with aesthetics mapping variables to x and y positions. `geom_smooth()` can be used to visualize trends in the data. Using the example above, lets add a smoothed line to each species. `geom_smooth` currently supports only "lm" powered by `AlgebraOfGraphics.linear()`. This example also illsutrates how to use the scale `scale_x_log10()` and `scale_y_reverse()` to improve readiblity of your graph.
@@ -66,9 +67,6 @@ ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm, color = species)) +
 
 # ## `geom_path()` and `geom_line()`
 # `geom_path()` and `geom_line()`  are used to create line plots. They are typically used with aesthetics mapping variables to x and y positions. While `geom_path()` connects the points in the order they appear in the data, `geom_line()` connects the points in order of the x values. These can be used to visualize trends or relationships between two continuous variables.
-
-# ggplot(data=DataFrame, @aes(x=Var1, y=Var2)) + geom_errorbar(@aes(ymin=Lower, ymax=Upper))
-#In the example above, error bars are added to the plot with the variable Var1 mapped to the x position, Var2 mapped to the y position, Lower mapped to ymin, and Upper mapped to ymax.
 
 # `##geom_bar`, `geom_col`, and `geom_histogram`
 # `geom_bar`  is used to create bar plots for categorical data.  `geom_col`  is a special case of `geom_bar` where the height of the bars is already computed and does not need to be counted. `geom_histogram`  is used to create a histogram, which is essentially a bar plot for continuous data, where the data is divided into bins and the number of data points in each bin is counted.
@@ -92,14 +90,11 @@ ggplot() +
 
 # optional arguments inlcude 
 
-
-
 # In the first example, a bar plot is created with the variable CategoricalVar mapped to the x position, and the count of each category is represented by the height of the bars.
 
 # In the second example, a column plot is created with the variable CategoricalVar mapped to the x position, and ComputedHeight mapped to the y position.
 
 # A histogram is created with the continuous variable, bill_length_mm, mapped to the x position, and the data is divided into bins, with the count in each bin represented by the height of the bars.
-
 
 # ## `geom_path` and `geom_line`
 # The `geom_path` and `geom_line`  are used to create line plots. `geom_path` connects the data points in the order they appear in the data, while `geom_line` connects the data points in order of the x-values.
@@ -201,5 +196,10 @@ ggplot(penguins, @aes(x=body_mass_g, y=bill_length_mm, color = species)) +
 # The geom_errorbar and geom_errorbarh create vertical and horizontal error bars respectively.
 
 # ## `facet_wrap` and `facet_grid`
+# `facet_wrap` arranges a sequence of plots into a grid, wrapping them based on one or more grouping variables.
+
+ggplot(penguins, height = 200, width = 200)+
+  geom_point(@es(x = bill_length_mm, y = bill_depth_mm, colour = species))+
+  facet_wrap(facets = :species)
 
 # ## `ggsave`

@@ -145,11 +145,6 @@ ggplot(penguins, @aes(x=bill_length_mm, y=bill_depth_mm, z=body_mass_g)) +
 # ## `geom_tile`
 # The `geom_tile` creates a tile plot, also known as a heatmap.
 
-ggplot(penguins, @aes(x=species, y=island, fill=body_mass_g)) + 
-  geom_tile()
-
-#In this example, a tile plot is created where different species of penguins are mapped to the x position, the islands are mapped to the y position, and the body mass is mapped to the color of the tiles.
-
 # ## `geom_text` and `geom_label`
 # `geom_text` and `geom_label`  are used to add text and labels to a plot.
 
@@ -159,7 +154,6 @@ ggplot(penguins, @aes(x=species, y=island, fill=body_mass_g)) +
 ggplot(penguins, @aes(x=body_mass_g, y=bill_length_mm)) + 
   geom_point() +
   scale_x_log10()
-
   
 # In this example, a scatter plot is created where the body mass of penguins is mapped to the x position and the bill length to the y position. A base 10 logarithmic transformation is then applied to the x-axis.
 

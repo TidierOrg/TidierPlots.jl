@@ -100,9 +100,9 @@ ggplot() +
 # The `geom_path` and `geom_line`  are used to create line plots. `geom_path` connects the data points in the order they appear in the data, while `geom_line` connects the data points in order of the x-values.
 
 ggplot(penguins, @aes(x=bill_length_mm, y=bill_depth_mm, color=species)) + 
-    @geom_path()
+    geom_path()
 
-# In this example, a path plot is created where the bill length of penguins is mapped to the x position, the bill depth is mapped to the y position, and different species are represented by different colors.
+# In this example, a path plot is created where the bill length of penguins is mapped to the x position, the bill depth is mapped to the y position, and different species are represented by different colors. Please note, geom_path is used here as an example, but this is not a correct plot type given the data at hand.
 
 # ## `geom_step`
 # The `geom_step` macro creates a step plot, which is similar to a line plot but with a step pattern rather than a direct line from point to point.

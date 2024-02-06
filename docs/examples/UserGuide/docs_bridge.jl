@@ -205,9 +205,10 @@ df_errorbar = DataFrame(
     LowerBound = LowerBound,
     UpperBound = UpperBound);
 
-ggplot(df_step, @aes(x = Time, y = Value)) +
-    geom_step() +
-    labs(title = "Step Plot Example", x = "Time", y = "Value")
+ggplot(df_errorbar, @aes(x = Category, y = MeanValue, ymin = LowerBound, ymax = UpperBound)) +
+    geom_point() + # to show the mean value
+    geom_errorbar(width = 0.2) + # width of the horizontal line at the top and bottom of the error bar
+    labs(title = "Error Bar Plot Example", x = "Category", y = "Mean Value")
 
 # ## `facet_wrap` and `facet_grid`
 # `facet_wrap` arranges a sequence of plots into a grid, wrapping them based on one or more grouping variables.

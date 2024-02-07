@@ -3,7 +3,7 @@ using DataFrames
 using PalmerPenguins
 using CairoMakie
 
-penguins = dropmissing(DataFrame(PalmerPenguins.load()))
+penguins = dropmissing(DataFrame(PalmerPenguins.load()));
 
 # ## `ggplot()`
 # `ggplot()` is the starting point of any plot. It sets up the initial plot with default settings that can be later customized with geoms, scales, theme settings and other specifications. `ggplot` usually used with a data source as an argument, and optionally, a set of aesthetics specified by @aes(). The data source is typically a DataFrame.
@@ -33,11 +33,10 @@ ggplot(penguins, @aes(x=bill_length_mm, y=bill_depth_mm, color = species))+
 # Moving from general rules, to specific plots, let us first explore `geom_point()`
 
 # `geom_point()`
-# `geom_point` is used to create a scatter plot. It is typically used with aesthetics mapping variables to x and y positions, and optionally to other aesthetics like color, shape, and size. `geom_point` can be used to visualize the relationship between two continuous variables, or a continuous and a discrete variable. The following visuals features can be changed within @geom_point(), shape, size, stroke, strokecolour, and alpha . 
+# `geom_point` is used to create a scatter plot. It is typically used with aesthetics mapping variables to x and y positions, and optionally to other aesthetics like color, shape, and size. `geom_point` can be used to visualize the relationship between two continuous variables, or a continuous and a discrete variable. The following visuals features can be changed within `geom_point()`, shape, size, stroke, strokecolour, and alpha . 
 
 ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + 
-    geom_point(
-                size = 20, 
+    geom_point( size = 20, 
                 stroke = 1, 
                 strokecolor = "black",
                 alpha = 0.2) +
@@ -64,17 +63,8 @@ ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm, color = species)) +
     scale_y_reverse(name = "Reversed Bill Width")+
     theme_minimal()
 
-
-# ## `geom_path()` and `geom_line()`
-# `geom_path()` and `geom_line()`  are used to create line plots. They are typically used with aesthetics mapping variables to x and y positions. While `geom_path()` connects the points in the order they appear in the data, `geom_line()` connects the points in order of the x values. These can be used to visualize trends or relationships between two continuous variables.
-
-# `##geom_bar`, `geom_col`, and `geom_histogram`
-# `geom_bar`  is used to create bar plots for categorical data.  `geom_col`  is a special case of `geom_bar` where the height of the bars is already computed and does not need to be counted. `geom_histogram`  is used to create a histogram, which is essentially a bar plot for continuous data, where the data is divided into bins and the number of data points in each bin is counted.
-
-using TidierData: @chain, @count 
-a = @chain penguins begin
-    @count(species)
-end
+# ## `geom_bar`, `geom_col`, and `geom_histogram`
+# `geom_bar` is used to create bar plots for categorical data.  `geom_col`  is a special case of `geom_bar` where the height of the bars is already computed and does not need to be counted. `geom_histogram`  is used to create a histogram, which is essentially a bar plot for continuous data, where the data is divided into bins and the number of data points in each bin is counted.
 
 ggplot(data=penguins, @aes(x=species)) +
   geom_bar(aes(color = "island"), position = "dodge")
@@ -85,10 +75,9 @@ ggplot(data=penguins, @aes(x=species)) +
 
 
 ggplot(data=penguins, @aes(x = island, y=species)) + geom_col()
+
 ggplot() +
   geom_histogram(data=penguins, @aes(x=bill_length_mm, color = species))
-
-# optional arguments inlcude 
 
 # In the first example, a bar plot is created with the variable CategoricalVar mapped to the x position, and the count of each category is represented by the height of the bars.
 
@@ -99,18 +88,21 @@ ggplot() +
 # ## `geom_path` and `geom_line`
 # The `geom_path` and `geom_line`  are used to create line plots. `geom_path` connects the data points in the order they appear in the data, while `geom_line` connects the data points in order of the x-values.
 
-ggplot(penguins, @aes(x=bill_length_mm, y=bill_depth_mm, color=species)) + 
-    geom_path()
-
-# In this example, a path plot is created where the bill length of penguins is mapped to the x position, the bill depth is mapped to the y position, and different species are represented by different colors. Please note, geom_path is used here as an example, but this is not a correct plot type given the data at hand.
+x_values = 1:10;
+y_values = x_values .^ 2;
+df_line = DataFrame(X = x_values, Y = y_values);
+ggplot(df_line) +
+    geom_line(@aes(x = X, y = Y)) +
+    labs(title = "Line Plot Example", x = "X axis", y = "Y axis")+
+    theme_dark()
 
 # ## `geom_step`
-# The `geom_step` macro creates a step plot, which is similar to a line plot but with a step pattern rather than a direct line from point to point.
+#  `geom_step` creates a step plot, which is similar to a line plot but with a step pattern rather than a direct line from point to point.
 
-ggplot(penguins, @aes(x=bill_length_mm, y=bill_depth_mm, color=species)) + 
-  geom_step()
-
-# In this example, a step plot is created where the bill length of penguins is mapped to the x position, the bill depth is mapped to the y position, and different species are represented by different colors. 
+ggplot(df_line, @aes(x = X, y = Y)) +
+    geom_step() +
+    labs(title = "Step Plot Example", x = "X axis", y = "Y axis")+
+    theme_minimal()
 
 
 # ## `geom_boxplot`
@@ -144,6 +136,15 @@ ggplot(penguins, @aes(x=bill_length_mm, y=bill_depth_mm, z=body_mass_g)) +
 
 # ## `geom_tile`
 # The `geom_tile` creates a tile plot, also known as a heatmap.
+
+x_values = repeat(1:5, inner = 5);
+y_values = repeat(1:5, outer = 5);
+values = x_values .* y_values;
+df_tile = DataFrame(X = x_values, Y = y_values, Value = values);
+
+ggplot(df_tile, @aes(x = X, y = Y, fill = Value)) +
+    geom_tile() +
+    labs(title = "Tile Plot Example", x = "X axis", y = "Y axis", fill = "Value")
 
 # ## `geom_text` and `geom_label`
 # `geom_text` and `geom_label`  are used to add text and labels to a plot.
@@ -186,8 +187,28 @@ ggplot(penguins, @aes(x=body_mass_g, y=bill_length_mm, color = species)) +
    
 # In this example, a scatter plot is created where the body mass of penguins is mapped to the x position and the bill length to the y position. A square root transformation is then applied to the x-axis
 
-# ## `geom_errorbar` and `geom_errorbar`
-# The geom_errorbar and geom_errorbarh create vertical and horizontal error bars respectively.
+# ## `geom_errorbar`
+# `geom_errorbar` creates vertical and error bars .
+
+categories = ['A', 'B', 'C', 'D'];
+n = length(categories);
+
+mean_values = rand(n);  # Random mean values for demonstration
+errors = rand(n) / 2;   # Random error values for demonstration
+
+LowerBound = mean_values .- errors;
+UpperBound = mean_values .+ errors;
+
+df_errorbar = DataFrame(
+    Category = categories,
+    MeanValue = mean_values,
+    LowerBound = LowerBound,
+    UpperBound = UpperBound);
+
+ggplot(df_errorbar, @aes(x = Category, y = MeanValue, ymin = LowerBound, ymax = UpperBound)) +
+    geom_point() + # to show the mean value
+    geom_errorbar(width = 0.2) + # width of the horizontal line at the top and bottom of the error bar
+    labs(title = "Error Bar Plot Example", x = "Category", y = "Mean Value")
 
 # ## `facet_wrap` and `facet_grid`
 # `facet_wrap` arranges a sequence of plots into a grid, wrapping them based on one or more grouping variables.

@@ -115,14 +115,16 @@ function Layers(plot::GGPlot)
             @error("No data found for $name. Either specify a data argument for each geom or specify a default for the ggplot.")
         end
 
-        data_with_na = DataFrame(data.data)
-        data_without_na = dropmissing(DataFrame(data.data), unique(String.(values(geom.aes))))
+        if length(geom.aes) != 0
+            data_with_na = DataFrame(data.data)
+            data_without_na = dropmissing(DataFrame(data.data), unique(String.(values(geom.aes))))
 
-        if nrow(data_with_na) != nrow(data_without_na)
-            name = geom.args["geom_name"]
-            number = nrow(data_with_na) - nrow(data_without_na)
-            @warn("$name will not plot $number rows with missing values.")
-            data = AlgebraOfGraphics.data(data_without_na)
+            if nrow(data_with_na) != nrow(data_without_na)
+                name = geom.args["geom_name"]
+                number = nrow(data_with_na) - nrow(data_without_na)
+                @warn("$name will not plot $number rows with missing values.")
+                data = AlgebraOfGraphics.data(data_without_na)
+            end
         end
 
         push!(layers, geom_to_layer(geom, data, plot.axis_options))

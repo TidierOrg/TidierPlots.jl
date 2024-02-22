@@ -1,20 +1,19 @@
-function build_geom(aes_dict, args_dict, required_aes, visual, analysis; special_aes = nothing)
+function build_geom(aes_dict, args_dict, required_aes, spec_api_function; special_aes = nothing)
     
-    # if data is specified, call a questionable eval to grab it as a layer
     if haskey(args_dict, "data")
         # if the code is running in a Pluto.jl notebook
         if args_dict["data"] isa DataFrame
-            plot_data = AlgebraOfGraphics.data(args_dict["data"])
+            plot_data = args_dict["data"]
         elseif args_dict["data"] isa Symbol
-            plot_data = AlgebraOfGraphics.data(Base.eval(Main, args_dict["data"]))
+            plot_data = Base.eval(Main, args_dict["data"])
         elseif args_dict["data"] isa AbstractString
-            plot_data = AlgebraOfGraphics.data(Base.eval(Main, Symbol(args_dict["data"])))
+            plot_data = Base.eval(Main, Symbol(args_dict["data"]))
         else
             type = typeof(args_dict["data"])
             @error "Data was provided in an unsupported type: $type"
         end
     else
-        plot_data = mapping()
+        plot_data = DataFrame()
     end
 
     # translation dict to convert ggplot aes terms to Makie terms
@@ -49,26 +48,31 @@ function build_geom(aes_dict, args_dict, required_aes, visual, analysis; special
 
     # turn the visual function into a layer with the right args
 
-    optional_visual_args = optional_aes
+    #optional_visual_args = optional_aes
 
-    args_given = intersect(
-        keys(optional_visual_args),
-        keys(args_dict)
-    )
+    #args_given = intersect(
+    #    keys(optional_visual_args),
+    #    keys(args_dict)
+    #)
 
-    if isnothing(visual)
-        geom_visual = mapping() 
-    elseif length(args_given) != 0
-        visual_args = Dict(Symbol(optional_visual_args[a]) => args_dict[a] for a in args_given)
-        geom_visual = AlgebraOfGraphics.visual(visual; visual_args...)
-    else
-        geom_visual = AlgebraOfGraphics.visual(visual)
-    end  
+    #if isnothing(spec_api_function)
+    #    @error("Missing Makie function to plot data.")
+    #elseif length(args_given) != 0
+        #if there are keyword args, call the spec api function with args and kwargs
+        #visual_args = Tuple([plot_data[!, aes_dict[aes]] for aes in required_aes])
+    #    visual_kwargs = Dict(Symbol(optional_visual_args[a]) => args_dict[a] for a in args_given)
+    #    geom_visual = function(args...)
+    #        spec_api_function(args; visual_kwargs...)
+    #    end
+    #else
+        #if not, just call it with the required aes only
+        #visual_args = Tuple([plot_data[!, aes_dict[aes]] for aes in required_aes])
+    #    geom_visual = spec_api_function
+    #end  
 
     # return a geom object
-
     return Geom(aes_dict, args_dict,
-        plot_data, geom_visual, analysis,
+        plot_data, spec_api_function,
         required_aes, optional_aes, Dict())
 
 end

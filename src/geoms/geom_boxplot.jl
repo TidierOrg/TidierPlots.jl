@@ -1,1 +1,1 @@
-geom_boxplot = geom_template("geom_boxplot", ["x", "y"], Makie.BoxPlot, mapping())
+geom_boxplot = geom_template("geom_boxplot", ["x", "y"], Makie.SpecApi.BoxPlot)

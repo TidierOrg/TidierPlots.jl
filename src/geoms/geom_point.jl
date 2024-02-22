@@ -45,4 +45,4 @@
     ```
     ![](src/assets/geom_point1.png)
 """
-geom_point = geom_template("geom_point", ["x", "y"], Makie.Scatter, mapping())
+geom_point = geom_template("geom_point", ["x", "y"], Makie.SpecApi.Scatter)

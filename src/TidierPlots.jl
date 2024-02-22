@@ -20,6 +20,9 @@ using Reexport
 # Needed for color scales to work correctly
 using Colors
 
+# for experimental implementation of the spec api
+import Makie.SpecApi as S
+
 include("structs.jl")
 
 include("addplots.jl")
@@ -33,6 +36,7 @@ include("ggsave.jl")
 include("interop.jl")
 include("labs.jl")
 include("scales.jl")
+include("spec.jl")
 include("themes.jl")
 include("show.jl")
 include("util.jl")
@@ -47,7 +51,7 @@ include("geoms/geom_errorbar.jl")
 include("geoms/geom_hvline.jl")
 include("geoms/geom_path.jl")
 include("geoms/geom_point.jl")
-include("geoms/geom_smooth.jl")
+#include("geoms/geom_smooth.jl")
 include("geoms/geom_text.jl")
 include("geoms/geom_violin.jl")
 
@@ -61,6 +65,7 @@ export TidierPlots_set
 export Layer, Layers
 export @aes, @es, aes
 export geom_template
+export draw_ggplot_spec
 
 # geoms
 

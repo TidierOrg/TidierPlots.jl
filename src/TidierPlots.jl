@@ -1,15 +1,7 @@
 module TidierPlots
 
-# From Makie, get the functions that AoG needs to plot
-using Makie: Text, Violin, 
-    BarPlot, Contour, Heatmap, Rangebars, BoxPlot,
-    HLines, VLines, Lines, Stairs, Scatter
-
 # CairoMakie, the default backend for Makie
 using CairoMakie
-
-# This project mostly wraps: 
-using AlgebraOfGraphics
 
 # DataFrames are the main supported data type
 using DataFrames
@@ -19,9 +11,6 @@ using Reexport
 
 # Needed for color scales to work correctly
 using Colors
-
-# for experimental implementation of the spec api
-import Makie.SpecApi as S
 
 include("structs.jl")
 
@@ -33,10 +22,8 @@ include("facets.jl")
 include("geom.jl")
 include("ggplot.jl")
 include("ggsave.jl")
-include("interop.jl")
 include("labs.jl")
 include("scales.jl")
-include("spec.jl")
 include("themes.jl")
 include("show.jl")
 include("util.jl")
@@ -52,7 +39,7 @@ include("geoms/geom_hvline.jl")
 include("geoms/geom_path.jl")
 include("geoms/geom_point.jl")
 #include("geoms/geom_smooth.jl")
-include("geoms/geom_text.jl")
+#include("geoms/geom_text.jl")
 include("geoms/geom_violin.jl")
 
 @reexport using Makie: theme_black, theme_dark, theme_ggplot2, theme_light, theme_minimal
@@ -60,12 +47,10 @@ include("geoms/geom_violin.jl")
 
 # functions
 
-export draw_ggplot, geom_to_layer, ggplot_to_layers, layer_equal, ggplot, ggsave
+export draw_ggplot, ggplot, ggsave
 export TidierPlots_set
-export Layer, Layers
 export @aes, @es, aes
 export geom_template
-export draw_ggplot_spec
 
 # geoms
 

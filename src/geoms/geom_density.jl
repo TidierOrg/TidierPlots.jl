@@ -25,4 +25,4 @@
     - colour/color
 
 """
-geom_density = geom_template("geom_density", ["x"], Makie.SpecApi.Density)
+geom_density = geom_template("geom_density", ["x"], :Density)

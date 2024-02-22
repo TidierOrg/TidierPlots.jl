@@ -1,17 +1,17 @@
 struct Geom
     aes::Dict
     args::Dict
-    data::DataFrame
-    visual::Makie.PlotSpec
     required_aes::AbstractArray
-    optional_aes::Dict
+    special_aes::Dict
+    data::Union{Nothing, DataFrame}
+    visual::Symbol
     axis_options::Dict
 end
 
 struct GGPlot
     geoms::AbstractArray
     default_aes::Dict
-    data::DataFrame
+    data::Union{Nothing, DataFrame}
     axis_options::Dict
     theme::Attributes
 end

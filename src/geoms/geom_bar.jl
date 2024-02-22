@@ -73,4 +73,4 @@ end
     - linewidth
 
 """
-geom_col = geom_template("geom_col", ["x", "y"], Makie.SpecApi.BarPlot)
+geom_col = geom_template("geom_col", ["x", "y"], :BarPlot)

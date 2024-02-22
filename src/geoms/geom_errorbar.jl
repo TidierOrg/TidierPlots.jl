@@ -1,27 +1,3 @@
-function geom_errorbar(plot::GGPlot, args...; kwargs...)
-    aes_dict, args_dict = extract_aes(args, kwargs)
-
-    args_dict["geom_name"] = "geom_errorbar"
-    
-    return plot + build_geom(aes_dict, args_dict, 
-        ["x", "ymin", "ymax"], # required aesthetics
-        Makie.Rangebars, # function for visual layer
-        special_aes = Dict("width" => "whiskerwidth")) 
-end
-
-function geom_errorbarh(plot::GGPlot, args...; kwargs...)
-    aes_dict, args_dict = extract_aes(args, kwargs)
-
-    args_dict["geom_name"] = "geom_errorbarh"
-    args_dict["errorbar_direction"] = :x
-
-    return plot + build_geom(aes_dict, args_dict, 
-        ["y", "xmin", "xmax"], # required aesthetics
-        Makie.Rangebars, # function for visual layer
-        special_aes = Dict("width" => "whiskerwidth")) 
-
-end
-
 function geom_errorbar(args...; kwargs...)
     aes_dict, args_dict = extract_aes(args, kwargs)
 
@@ -44,4 +20,12 @@ function geom_errorbarh(args...; kwargs...)
         Makie.Rangebars, # function for visual layer
         special_aes = Dict("width" => "whiskerwidth")) 
 
+end
+
+function geom_errorbarh(plot::GGPlot, args...; kwargs...)
+    return plot + geom_errorbarh(args..., kwargs...)
+end
+
+function geom_errorbar(plot::GGPlot, args...; kwargs...)
+    return plot + geom_errorbar(args..., kwargs...)
 end

@@ -16,10 +16,9 @@ TidierPlots.jl is a 100% Julia implementation of the R package ggplot in Julia. 
     plots, this package’s goal is to reimplement ggplot
     in Julia. This currently just means that `TidierPlots.jl` gives the option for specifying `aes` with the macro `@es` to allow unquoted column references, but the use of macros may need to expand as more features are added. 
 
-2.  **Stay as compatible as possible with AlgebraOfGraphics.jl** This package is meant
-    to be a thin wrapper around AoG's syntax to help introduce R users to plotting in 
-    Julia. `Geom` objects declared in TidierPlots.jl can be easily converted to AoG `Layer`
-    objects using `Layer(Geom)`, and `GGPlot` objects can be converted to AoG `Layers` objects using `Layers(GGPlot)`.
+2.  **Stay as compatible as possible with Makie.jl** This package is meant
+    to be a thin wrapper around Makie's SpecApi syntax to help introduce R users to plotting in 
+    Julia. 
 
 3. **To Extend ggplot using julia-specific features where appropriate** as long as this does
     not confict with the first two goals. The package aims to behave exactly like ggplot

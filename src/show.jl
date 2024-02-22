@@ -9,8 +9,8 @@ function Base.show(io::IO, geom::Geom)
                 ref_data = geom.args["data"]
             end
 
-            row_count = nrow(DataFrame(geom.data.data))
-            col_count = ncol(DataFrame(geom.data.data))
+            row_count = nrow(geom.data)
+            col_count = ncol(geom.data)
             printstyled(io, "data: $ref_data ($row_count rows, $col_count columns)\n", color = :green)
         else
             printstyled(io, "data: inherits from plot\n", color = :blue)
@@ -30,7 +30,7 @@ function Base.show(io::IO, geom::Geom)
                     printstyled(io, "$colname \n", color = :blue)
                 end
             else
-                printstyled(io, "$aes: not specified \n", color = :yellow)
+                printstyled(io, "$aes: inherits from plot \n", color = :yellow)
             end
         end
 
@@ -47,16 +47,14 @@ function Base.show(io::IO, plot::GGPlot)
     if plot_log[]
         printstyled(io, "ggplot options\n", underline = true)
 
-        if haskey(plot.axis_options, "data")
-            if plot.axis_options["data"] isa DataFrame
-                ref_data = "A DataFrame"
-            else
-                ref_data = plot.axis_options["data"]
-            end
-        
-            row_count = nrow(DataFrame(plot.data.data))
-            col_count = ncol(DataFrame(plot.data.data))
-            printstyled(io, "data: $ref_data ($row_count rows, $col_count columns)\n", color = :blue)
+        if !isnothing(plot.data)        
+            row_count = nrow(DataFrame(plot.data))
+            col_count = ncol(DataFrame(plot.data))
+            printstyled(io, "data: A DataFrame ($row_count rows, $col_count columns)\n", color = :blue)
+        end
+
+        for (k, v) in plot.default_aes
+            printstyled(io, "$k: $v\n", color = :yellow)
         end
 
         for k in keys(plot.axis_options)

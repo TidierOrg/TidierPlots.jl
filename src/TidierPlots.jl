@@ -12,6 +12,9 @@ using Reexport
 # Needed for color scales to work correctly
 using Colors
 
+# For handling categorical data types
+using CategoricalArrays
+
 include("structs.jl")
 
 include("addplots.jl")

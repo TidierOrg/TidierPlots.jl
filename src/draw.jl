@@ -44,11 +44,23 @@ function draw_ggplot(plot::GGPlot)
         
         # which ones were given as aes?
         optional_aes_given = intersect(
-            keys(geom.aes),
+            keys(aes_dict),
             keys(optional_visual_args)
         )
 
-        visual_optional_aes = Dict(Symbol(optional_visual_args[a]) => plot_data[!, aes_dict[a]] for a in optional_aes_given)
+        visual_optional_aes = Dict{Symbol, Any}()
+        
+        for a in optional_aes_given
+            aes = Symbol(optional_visual_args[a])
+            
+            if eltype(plot_data[!, aes_dict[a]]) <: AbstractString
+                column_data = levelcode.(CategoricalArray(plot_data[!, aes_dict[a]]))
+            else
+                column_data = plot_data[!, aes_dict[a]]
+            end
+
+            push!(visual_optional_aes, aes => column_data)
+        end
 
         # which ones were given as arguments? 
         args_given = intersect(
@@ -57,7 +69,7 @@ function draw_ggplot(plot::GGPlot)
         )
         
         # make a Dict that has the kwargs
-        visual_args = Dict(Symbol(optional_visual_args[a]) => args_dict[a] for a in args_given)
+        visual_args = Dict(Symbol(optional_visual_args[a]) => geom.args[a] for a in args_given)
 
         kwargs = (;merge(visual_args, visual_optional_aes)...)
 

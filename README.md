@@ -85,7 +85,7 @@ The goal of this package is to allow you to write code that is as similar to ggp
 - Option 3: `aes` function, julia-style columns, e.g. `aes(x = :x, y = :y)`
 - Option 4: `aes` function, strings for columns, e.g. `aes(x = "x", y = "y")`
 
-Specifying aes options positionally, e.g. `aes("x", "y")` is not yet supported.
+Specifying aes options positionally, e.g. `aes("x", "y")` is also supported.
 
 ## Display Options
 

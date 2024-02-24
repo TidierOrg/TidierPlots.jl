@@ -35,9 +35,10 @@ function draw_ggplot(plot::GGPlot)
 
         # check to make sure all required aesthetics are available
         check_aes(geom.required_aes, aes_dict, geom.args["geom_name"]) 
-        
-        # make a Tuple that contains the columns from the data in their required order to pass to PlotSpec
-        args = Tuple([plot_data[!, aes_dict[req_aes]] for req_aes in geom.required_aes])
+
+        # apply function if required to edit the aes
+        aes_dict, args_dict, required_aes, plot_data = 
+            aes_function(aes_dict, geom.args, geom.required_aes, plot_data)
         
         # make a master list of all possible accepted optional aesthetics and args
         optional_visual_args = merge(optional_aes, geom.special_aes)
@@ -64,15 +65,18 @@ function draw_ggplot(plot::GGPlot)
 
         # which ones were given as arguments? 
         args_given = intersect(
-            keys(geom.args),
+            keys(args_dict),
             keys(optional_visual_args)
         )
         
         # make a Dict that has the kwargs
-        visual_args = Dict(Symbol(optional_visual_args[a]) => geom.args[a] for a in args_given)
+        visual_args = Dict(Symbol(optional_visual_args[a]) => args_dict[a] for a in args_given)
 
         kwargs = (;merge(visual_args, visual_optional_aes)...)
-
+        
+        # make a Tuple that contains the columns from the data in their required order to pass to PlotSpec
+        args = Tuple([plot_data[!, aes_dict[req_aes]] for req_aes in required_aes])
+        
         push!(plot_list, Makie.PlotSpec(geom.visual, args...; kwargs...))
     end
 

@@ -6,6 +6,7 @@ struct Geom
     data::Union{Nothing, DataFrame}
     visual::Symbol
     axis_options::Dict
+    aes_function::Function
 end
 
 struct GGPlot
@@ -17,5 +18,6 @@ struct GGPlot
 end
 
 struct Aesthetics
-    aes::Dict
+    positional::AbstractArray
+    named::Dict
 end

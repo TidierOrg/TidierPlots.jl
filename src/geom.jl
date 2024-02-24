@@ -2,7 +2,8 @@ function build_geom(
         aes_dict,
         args_dict,
         required_aes, 
-        spec_api_function; 
+        spec_api_function,
+        aes_function; 
         special_aes = Dict())
     
     if haskey(args_dict, "data")
@@ -26,6 +27,7 @@ function build_geom(
         special_aes,
         plot_data, 
         spec_api_function,
-        Dict()
+        Dict(),
+        aes_function
     )
 end

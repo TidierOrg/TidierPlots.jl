@@ -25,6 +25,7 @@ function draw_ggplot(plot::GGPlot)
         "glowcolor" => Symbol,
         "colormap" => Symbol,
         "yaxisposition" => Symbol,
+        "direction" => Symbol,
         # Float
         "alpha" => Float32,
         "markersize" => Float32,
@@ -33,6 +34,7 @@ function draw_ggplot(plot::GGPlot)
     )
 
     plot_list = Makie.PlotSpec[]
+    axis_options = Dict{Symbol, Any}()
 
     for geom in plot.geoms
         # use the dataframe specified in the geom if present, otherwise default to the ggplot one
@@ -57,8 +59,8 @@ function draw_ggplot(plot::GGPlot)
         visual_optional_aes = Dict{Symbol, Any}()
         
         for a in optional_aes_given
-            if has_key(ggplot_to_makie_dict, a)
-                aes = Symbol(ggplot_to_makie_dict[a])
+            if haskey(ggplot_to_makie_geom, a)
+                aes = Symbol(ggplot_to_makie_geom[a])
             else
                 aes = Symbol(a)
             end
@@ -82,8 +84,8 @@ function draw_ggplot(plot::GGPlot)
         for (arg, value) in args_dict
             if haskey(expected_type, arg)
                 try
-                    if haskey(ggplot_to_makie_dict, arg)
-                        args_dict_makie[Symbol(ggplot_to_makie_dict[arg])] = expected_type[arg](value)
+                    if haskey(ggplot_to_makie_geom, arg)
+                        args_dict_makie[Symbol(ggplot_to_makie_geom[arg])] = expected_type[arg](value)
                     else
                         args_dict_makie[Symbol(arg)] = expected_type[arg](value)
                     end
@@ -95,8 +97,6 @@ function draw_ggplot(plot::GGPlot)
                 end
             end
         end
-
-        kwargs = (;merge(args_dict_makie, visual_optional_aes)...)
         
         # make a Tuple that contains the columns from the data in their required order to pass to PlotSpec
         visual_args_list = []
@@ -106,7 +106,7 @@ function draw_ggplot(plot::GGPlot)
                 cat_array = CategoricalArray(plot_data[!, aes_dict[req_aes]])
                 column_data = levelcode.(cat_array)
                 labels = levels(cat_array)
-                args_dict_makie[req_aes * "ticks"] = (1:length(labels), labels)
+                axis_options[Symbol(req_aes * "ticks")] = (1:length(labels), labels)
             else
                 column_data = plot_data[!, aes_dict[req_aes]]
             end
@@ -114,6 +114,7 @@ function draw_ggplot(plot::GGPlot)
         end
         
         args = Tuple(visual_args_list)
+        kwargs = (;merge(args_dict_makie, visual_optional_aes)...)
         
         # push completed PlotSpec (type, args, and kwargs) to the list of plots
         push!(plot_list, Makie.PlotSpec(geom.visual, args...; kwargs...))
@@ -121,21 +122,21 @@ function draw_ggplot(plot::GGPlot)
 
     # rename and correct types on all axis options
 
-    axis_options = Dict{Symbol, Any}()
-
     for (arg, value) in plot.axis_options
         if haskey(expected_type, arg)
-            try
-                if haskey(ggplot_to_makie, arg)
-                    axis_options[Symbol(ggplot_to_makie[arg])] = expected_type[arg](value)
-                else
-                    axis_options[Symbol(arg)] = expected_type[arg](value)
-                end
-            catch
-                ex_type = expected_type[arg]
-                given_type = typeof(args_dict[arg])
-                @error "Argument $arg in ggplot() given as type $given_type, which cannot be converted to expected type $ex_type."
+            value = expected_type[arg](value)
+        end
+
+        try
+            if haskey(ggplot_to_makie, arg)
+                axis_options[Symbol(ggplot_to_makie[arg])] = value
+            else
+                axis_options[Symbol(arg)] = value
             end
+        catch
+            ex_type = expected_type[arg]
+            given_type = typeof(args_dict[arg])
+            @error "Argument $arg in ggplot() given as type $given_type, which cannot be converted to expected type $ex_type."
         end
     end
 

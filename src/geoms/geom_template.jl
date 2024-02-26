@@ -1,7 +1,7 @@
 function geom_template(name::AbstractString,
                        required_aes::AbstractArray, 
                        spec_api_function::Symbol;
-                       aes_function::Function = identity, 
+                       aes_function::Function = do_nothing, 
                        extra_args::Dict = Dict())
 
     extract_geom_aes = make_aes_extractor(required_aes)

@@ -21,3 +21,7 @@ function check_aes(required_aes, aes_dict, geom_name)
         error("$geom_name is missing required aesthetic(s): $missing_aes")
     end
 end
+
+function do_nothing(aes_dict, args_dict, required_aes, plot_data)
+    return (aes_dict, args_dict, required_aes, plot_data)
+end

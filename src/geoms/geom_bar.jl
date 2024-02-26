@@ -1,9 +1,5 @@
-function handle_position(dicts)
-    handle_position(dicts[1], dicts[2])
-end
-
-function handle_position(aes_dict, args_dict)
-    # handles defaults and grouping for geom_bar 
+function handle_position(aes_dict, args_dict, required_aes, plot_data)
+    # handles defaults and grouping for geom_bar/col
 
     if haskey(args_dict, "position")
         if args_dict["position"] == "dodge"
@@ -33,7 +29,7 @@ function handle_position(aes_dict, args_dict)
         end
     end
 
-    return (aes_dict, args_dict)
+    return (aes_dict, args_dict, required_aes, plot_data)
 end
 
 
@@ -73,4 +69,5 @@ end
     - linewidth
 
 """
-geom_col = geom_template("geom_col", ["x", "y"], :BarPlot)
+geom_col = geom_template("geom_col", ["x", "y"], :BarPlot; aes_function = handle_position)
+geom_bar = geom_template("geom_bar", [], :BarPlot; aes_function = handle_position)

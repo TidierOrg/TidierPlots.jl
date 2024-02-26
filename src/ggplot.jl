@@ -1,14 +1,6 @@
 function ggplot(args...; kwargs...)
     aes_dict, args_dict = extract_aes(args, kwargs)
 
-    if !haskey(args_dict, "height")
-        args_dict["height"] = 400
-    end
-    
-    if !haskey(args_dict, "width")
-        args_dict["width"] = 600
-    end
-
     if haskey(args_dict, "data")
         if args_dict["data"] isa DataFrame
             plot_data = args_dict["data"]
@@ -30,14 +22,6 @@ end
 
 function ggplot(data::DataFrame, args...; kwargs...)
     aes_dict, args_dict = extract_aes(args, kwargs)
-
-    if !haskey(args_dict, "height")
-        args_dict["height"] = 400
-    end
-    
-    if !haskey(args_dict, "width")
-        args_dict["width"] = 600
-    end
 
     GGPlot([], 
            aes_dict, 

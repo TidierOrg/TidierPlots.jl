@@ -44,9 +44,9 @@ function draw_ggplot(plot::GGPlot)
         aes_dict = merge(plot.default_aes, geom.aes)
 
         # check to make sure all required aesthetics are available
-        check_aes(geom.required_aes, aes_dict, geom.args["geom_name"]) 
+        #check_aes(geom.required_aes, aes_dict, geom.args["geom_name"]) 
 
-        # apply function if required to edit the aes
+        # apply function if required to edit the aes/args/data
         aes_dict, args_dict, required_aes, plot_data = 
             geom.aes_function(aes_dict, geom.args, geom.required_aes, plot_data)
         
@@ -54,8 +54,9 @@ function draw_ggplot(plot::GGPlot)
         ggplot_to_makie_geom = merge(ggplot_to_makie, geom.special_aes)
         
         # which optional aesthetics were given?
-        optional_aes_given = [k for (k, v) in aes_dict if !(k in geom.required_aes)]
-
+        optional_aes_given = [k for (k, v) in aes_dict if !(k in required_aes)]
+        println("optional_aes_given: $optional_aes_given")
+        println("required_aes: $required_aes")
         visual_optional_aes = Dict{Symbol, Any}()
         
         for a in optional_aes_given
@@ -140,12 +141,20 @@ function draw_ggplot(plot::GGPlot)
         end
     end
 
-    Makie.plot(
-        Makie.SpecApi.GridLayout(
-            Makie.SpecApi.Axis(
+    println(plot_list)
+
+    println(axis_options)
+
+    axis = length(axis_options) == 0 ? 
+        Makie.SpecApi.Axis(plots = plot_list) :
+        Makie.SpecApi.Axis(
                 plots = plot_list; 
                 axis_options...
             )
+
+    Makie.plot(
+        Makie.SpecApi.GridLayout(
+            axis
         )
     )
     

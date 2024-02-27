@@ -15,6 +15,9 @@ using Colors
 # For handling categorical data types
 using CategoricalArrays
 
+# Data manipulation, expression parsing
+using TidierData
+
 include("structs.jl")
 
 include("addplots.jl")

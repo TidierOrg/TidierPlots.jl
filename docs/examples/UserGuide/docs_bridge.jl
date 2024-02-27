@@ -122,7 +122,7 @@ y_values = repeat(1:5, outer = 5);
 values = x_values .* y_values;
 df_tile = DataFrame(X = x_values, Y = y_values, Value = values);
 
-ggplot(df_tile, @aes(x = X, y = Y, fill = Value)) +
+ggplot(df_tile, @aes(x = X, y = Y, z = Value)) +
     geom_tile() +
     labs(title = "Tile Plot Example", x = "X axis", y = "Y axis")
 

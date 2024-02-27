@@ -124,7 +124,7 @@ df_tile = DataFrame(X = x_values, Y = y_values, Value = values);
 
 ggplot(df_tile, @aes(x = X, y = Y, fill = Value)) +
     geom_tile() +
-    labs(title = "Tile Plot Example", x = "X axis", y = "Y axis", fill = "Value")
+    labs(title = "Tile Plot Example", x = "X axis", y = "Y axis")
 
 # ## `geom_text` and `geom_label`
 # `geom_text` and `geom_label`  are used to add text and labels to a plot.

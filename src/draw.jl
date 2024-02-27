@@ -55,8 +55,6 @@ function draw_ggplot(plot::GGPlot)
         
         # which optional aesthetics were given?
         optional_aes_given = [k for (k, v) in aes_dict if !(k in required_aes)]
-        println("optional_aes_given: $optional_aes_given")
-        println("required_aes: $required_aes")
         visual_optional_aes = Dict{Symbol, Any}()
         
         for a in optional_aes_given
@@ -140,8 +138,6 @@ function draw_ggplot(plot::GGPlot)
             @error "Argument $arg in ggplot() given as type $given_type, which cannot be converted to expected type $ex_type."
         end
     end
-
-
 
     axis = length(axis_options) == 0 ? 
         Makie.SpecApi.Axis(plots = plot_list) :

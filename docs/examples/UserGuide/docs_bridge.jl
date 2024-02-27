@@ -170,7 +170,7 @@ ggplot(penguins, @aes(x=body_mass_g, y=bill_length_mm, color = species)) +
 # ## `geom_errorbar`
 # `geom_errorbar` creates vertical and error bars .
 
-categories = ['A', 'B', 'C', 'D'];
+categories = ["A", "B", "C", "D"];
 n = length(categories);
 
 mean_values = rand(n);  # Random mean values for demonstration

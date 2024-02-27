@@ -43,7 +43,6 @@ TidierPlots.jl currently supports the top-level function `ggplot()`, plus:
 Geoms:
 
 - `geom_point`
-- `geom_smooth`
 - `geom_errorbar`
 - `geom_path`, `geom_line`, and `geom_step`
 - `geom_bar`, `geom_col`, and `geom_histogram`
@@ -65,11 +64,6 @@ Colour Scales:
 - `scale_colo[u]r_manual()` - give a list of hex `values` enclosed in `c()` to define a scale
 - `scale_colo[u]r_[discrete|continuous]()` - set `palette =` a [Makie palette]( https://docs.makie.org/stable/explanations/colors/index.html#colormaps). 
 
-Facetting:
-
-- `facet_wrap`: Specify `facets` variable.
-- `facet_grid`: Specify `rows` and/or `cols`.
-
 Additional Elements:
 
 - `scale_[x|y]_[continuous|log[ |2|10]|logit|pseudolog10|sqrt|reverse]`
@@ -85,7 +79,7 @@ The goal of this package is to allow you to write code that is as similar to ggp
 - Option 3: `aes` function, julia-style columns, e.g. `aes(x = :x, y = :y)`
 - Option 4: `aes` function, strings for columns, e.g. `aes(x = "x", y = "y")`
 
-Specifying aes options positionally, e.g. `aes("x", "y")` is also supported.
+Specifying aes options positionally, e.g. `aes("x", "y")` is also supported for required aesthetics.
 
 ## Display Options
 

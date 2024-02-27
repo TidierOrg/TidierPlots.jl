@@ -21,7 +21,7 @@ function Base.show(io::IO, geom::Geom)
                 colname = geom.aes[aes]
                 printstyled(io, "$aes: ", color = :green)
                 if haskey(geom.args, "data")
-                    if String(colname) in names(DataFrame(geom.data.data))
+                    if String(colname) in names(DataFrame(geom.data))
                         printstyled(io, "$colname \n", color = :green)
                     else
                         printstyled(io, "$colname \n", color = :red)

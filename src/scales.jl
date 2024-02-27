@@ -14,7 +14,7 @@ function continuous_scale_to_ggoptions(args_dict::Dict)
         options_dict[args_dict["scale"] * "reversed"] = args_dict["reversed"]
     end
 
-    return AxisOptions(options_dict) 
+    return AxisOptions(Dict(Symbol(k) => v for (k, v) in options_dict))
 
 end
 
@@ -44,7 +44,7 @@ function colour_scale_to_ggoptions(args_dict::Dict)
         end
     end
 
-    return AxisOptions(options_dict) 
+    return AxisOptions(Dict(Symbol(k) => v for (k, v) in options_dict))
 end
 
 # Generator - generates two function signatures

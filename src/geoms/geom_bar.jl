@@ -151,3 +151,5 @@ geom_col = geom_template("geom_col", ["x", "y"], :BarPlot; aes_function = handle
 
 """
 geom_bar = geom_template("geom_bar", String[], :BarPlot; aes_function = handle_position)
+
+geom_histogram = geom_template("geom_histogram", ["x"], :Hist)

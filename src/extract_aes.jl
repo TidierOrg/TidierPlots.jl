@@ -1,21 +1,3 @@
-function extract_aes(args, kwargs)
-    aes_dict = Dict{String, Symbol}() 
-    args_dict = Dict{String, Any}() 
-
-    for arg in args
-        if arg isa DataFrame
-            args_dict["data"] = arg
-        elseif arg isa Aesthetics
-            aes_dict = merge(aes_dict, arg.aes)
-        end
-    end
-
-    d = Dict(kwargs)
-    args_dict = merge(args_dict, Dict([String(key) => d[key] for key in keys(d)]))
-
-    return (aes_dict, args_dict)
-end   
-
 function make_aes_extractor(required_aes)
     return function extract_aes(args, kwargs)
         aes_dict = Dict{String, Symbol}() 
@@ -26,6 +8,10 @@ function make_aes_extractor(required_aes)
                 args_dict["data"] = arg
             elseif arg isa Aesthetics
                 if length(arg.positional) != 0
+                    if length(required_aes) == 0
+                        @error "Positional aes detected, but meaning is ambiguous. Please use aes names in your aes call (e.g. @aes(x = x) instead of @aes(x))."
+                    end
+
                     for (i, pos_arg) in enumerate(arg.positional)
                         if haskey(arg.named, required_aes[i])
                             bad_aes = required_aes[i]
@@ -44,3 +30,5 @@ function make_aes_extractor(required_aes)
         return (aes_dict, args_dict)
     end
 end    
+
+extract_aes = make_aes_extractor([])

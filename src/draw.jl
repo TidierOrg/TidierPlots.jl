@@ -66,7 +66,7 @@ function draw_ggplot(plot::GGPlot)
                 aes = Symbol(a)
             end
             
-            if eltype(plot_data[!, aes_dict[a]]) <: AbstractString
+            if eltype(plot_data[!, aes_dict[a]]) <: Union{AbstractString, AbstractChar}
                 cat_array = CategoricalArray(plot_data[!, aes_dict[a]])
                 column_data = levelcode.(cat_array)
                 labels = levels(cat_array)
@@ -103,7 +103,7 @@ function draw_ggplot(plot::GGPlot)
         visual_args_list = []
 
         for req_aes in required_aes
-            if eltype(plot_data[!, aes_dict[req_aes]]) <: AbstractString
+            if eltype(plot_data[!, aes_dict[req_aes]]) <: Union{AbstractString, AbstractChar}
                 cat_array = CategoricalArray(plot_data[!, aes_dict[req_aes]])
                 column_data = levelcode.(cat_array)
                 labels = levels(cat_array)
@@ -141,9 +141,7 @@ function draw_ggplot(plot::GGPlot)
         end
     end
 
-    println(plot_list)
 
-    println(axis_options)
 
     axis = length(axis_options) == 0 ? 
         Makie.SpecApi.Axis(plots = plot_list) :

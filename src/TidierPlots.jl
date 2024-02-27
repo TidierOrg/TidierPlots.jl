@@ -24,7 +24,7 @@ include("addplots.jl")
 include("aes.jl")
 include("draw.jl")
 include("extract_aes.jl")
-include("facets.jl")
+#include("facets.jl")
 include("geom.jl")
 include("ggplot.jl")
 include("ggsave.jl")
@@ -45,7 +45,7 @@ include("geoms/geom_hvline.jl")
 include("geoms/geom_path.jl")
 include("geoms/geom_point.jl")
 #include("geoms/geom_smooth.jl")
-#include("geoms/geom_text.jl")
+include("geoms/geom_text.jl")
 include("geoms/geom_violin.jl")
 
 @reexport using Makie: theme_black, theme_dark, theme_ggplot2, theme_light, theme_minimal
@@ -67,7 +67,7 @@ export geom_point
 export geom_path
 export geom_line
 export geom_step
-export geom_smooth 
+#export geom_smooth 
 export geom_errorbar
 export geom_errorbarh
 export geom_violin
@@ -83,7 +83,7 @@ export geom_vline
 # scales 
 
 export labs, lims, c
-export facet_wrap, facet_grid
+#export facet_wrap, facet_grid
 export scale_x_continuous, scale_y_continuous
 export scale_x_log10, scale_y_log10, scale_x_log2, scale_y_log2, scale_x_log, scale_y_log  
 export scale_x_logit, scale_y_logit  

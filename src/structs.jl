@@ -21,3 +21,7 @@ struct Aesthetics
     positional::AbstractArray
     named::Dict
 end
+
+struct AxisOptions
+    opt::Dict{Symbol, Any}
+end

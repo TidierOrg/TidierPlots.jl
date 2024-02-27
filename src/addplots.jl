@@ -15,7 +15,7 @@ function Base.:+(x::GGPlot, y...)::GGPlot
         x.data,
         merge(x.axis_options, 
             [l.axis_options for l in y if l isa Geom]...,
-            [d for d in y if d isa Dict]...),
+            [d.opt for d in y if d isa AxisOptions]...),
         theme
     )
 

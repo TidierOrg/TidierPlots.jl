@@ -16,10 +16,9 @@ TidierPlots.jl is a 100% Julia implementation of the R package ggplot in Julia. 
     plots, this package’s goal is to reimplement ggplot
     in Julia. This currently just means that `TidierPlots.jl` gives the option for specifying `aes` with the macro `@es` to allow unquoted column references, but the use of macros may need to expand as more features are added. 
 
-2.  **Stay as compatible as possible with AlgebraOfGraphics.jl** This package is meant
-    to be a thin wrapper around AoG's syntax to help introduce R users to plotting in 
-    Julia. `Geom` objects declared in TidierPlots.jl can be easily converted to AoG `Layer`
-    objects using `Layer(Geom)`, and `GGPlot` objects can be converted to AoG `Layers` objects using `Layers(GGPlot)`.
+2.  **Stay as compatible as possible with Makie.jl** This package is meant
+    to be a thin wrapper around Makie's SpecApi syntax to help introduce R users to plotting in 
+    Julia. 
 
 3. **To Extend ggplot using julia-specific features where appropriate** as long as this does
     not confict with the first two goals. The package aims to behave exactly like ggplot
@@ -44,7 +43,6 @@ TidierPlots.jl currently supports the top-level function `ggplot()`, plus:
 Geoms:
 
 - `geom_point`
-- `geom_smooth`
 - `geom_errorbar`
 - `geom_path`, `geom_line`, and `geom_step`
 - `geom_bar`, `geom_col`, and `geom_histogram`
@@ -66,11 +64,6 @@ Colour Scales:
 - `scale_colo[u]r_manual()` - give a list of hex `values` enclosed in `c()` to define a scale
 - `scale_colo[u]r_[discrete|continuous]()` - set `palette =` a [Makie palette]( https://docs.makie.org/stable/explanations/colors/index.html#colormaps). 
 
-Facetting:
-
-- `facet_wrap`: Specify `facets` variable.
-- `facet_grid`: Specify `rows` and/or `cols`.
-
 Additional Elements:
 
 - `scale_[x|y]_[continuous|log[ |2|10]|logit|pseudolog10|sqrt|reverse]`
@@ -86,7 +79,7 @@ The goal of this package is to allow you to write code that is as similar to ggp
 - Option 3: `aes` function, julia-style columns, e.g. `aes(x = :x, y = :y)`
 - Option 4: `aes` function, strings for columns, e.g. `aes(x = "x", y = "y")`
 
-Specifying aes options positionally, e.g. `aes("x", "y")` is not yet supported.
+Specifying aes options positionally, e.g. `aes("x", "y")` is also supported for required aesthetics.
 
 ## Display Options
 

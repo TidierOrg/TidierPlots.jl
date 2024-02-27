@@ -1,15 +1,7 @@
 module TidierPlots
 
-# From Makie, get the functions that AoG needs to plot
-using Makie: Text, Violin, 
-    BarPlot, Contour, Heatmap, Rangebars, BoxPlot,
-    HLines, VLines, Lines, Stairs, Scatter
-
 # CairoMakie, the default backend for Makie
 using CairoMakie
-
-# This project mostly wraps: 
-using AlgebraOfGraphics
 
 # DataFrames are the main supported data type
 using DataFrames
@@ -20,17 +12,22 @@ using Reexport
 # Needed for color scales to work correctly
 using Colors
 
+# For handling categorical data types
+using CategoricalArrays
+
+# Data manipulation, expression parsing
+using TidierData
+
 include("structs.jl")
 
 include("addplots.jl")
 include("aes.jl")
 include("draw.jl")
 include("extract_aes.jl")
-include("facets.jl")
+#include("facets.jl")
 include("geom.jl")
 include("ggplot.jl")
 include("ggsave.jl")
-include("interop.jl")
 include("labs.jl")
 include("scales.jl")
 include("themes.jl")
@@ -47,7 +44,7 @@ include("geoms/geom_errorbar.jl")
 include("geoms/geom_hvline.jl")
 include("geoms/geom_path.jl")
 include("geoms/geom_point.jl")
-include("geoms/geom_smooth.jl")
+#include("geoms/geom_smooth.jl")
 include("geoms/geom_text.jl")
 include("geoms/geom_violin.jl")
 
@@ -56,9 +53,8 @@ include("geoms/geom_violin.jl")
 
 # functions
 
-export draw_ggplot, geom_to_layer, ggplot_to_layers, layer_equal, ggplot, ggsave
+export draw_ggplot, ggplot, ggsave
 export TidierPlots_set
-export Layer, Layers
 export @aes, @es, aes
 export geom_template
 
@@ -71,7 +67,7 @@ export geom_point
 export geom_path
 export geom_line
 export geom_step
-export geom_smooth 
+#export geom_smooth 
 export geom_errorbar
 export geom_errorbarh
 export geom_violin
@@ -87,7 +83,7 @@ export geom_vline
 # scales 
 
 export labs, lims, c
-export facet_wrap, facet_grid
+#export facet_wrap, facet_grid
 export scale_x_continuous, scale_y_continuous
 export scale_x_log10, scale_y_log10, scale_x_log2, scale_y_log2, scale_x_log, scale_y_log  
 export scale_x_logit, scale_y_logit  

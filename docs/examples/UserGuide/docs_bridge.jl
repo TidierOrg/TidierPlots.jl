@@ -10,8 +10,7 @@ penguins = dropmissing(DataFrame(PalmerPenguins.load()));
 #If a set of aesthetics is specified in the initial ggplot call, these aesthetics apply to all layers added to the plot, unless they are overridden in subsequent layers.
 
 ggplot(penguins, @aes(x=bill_length_mm, y=bill_depth_mm, color = species))+
-    geom_point()+
-    geom_smooth()
+    geom_point()
     
 # ## `@aes()`
 # `aes()` is used to map variables in your data to visual properties (aesthetics) of the plot. These aesthetics can include things like position (x and y coordinates), color, shape, size, etc. Each aesthetic is a way of visualizing a variable or a statistical transformation of a variable.
@@ -53,16 +52,6 @@ ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm, color = species)) +
 # ## `lims`  
 # `lims` allows the user to set the ranges for the x and y axises as shown in the example above.
 
-# ## `geom_smooth()`
-# The `geom_smooth()` is used to add a smoothed line (or curve) fitted to the data. It is typically used with aesthetics mapping variables to x and y positions. `geom_smooth()` can be used to visualize trends in the data. Using the example above, lets add a smoothed line to each species. `geom_smooth` currently supports only "lm" powered by `AlgebraOfGraphics.linear()`. This example also illsutrates how to use the scale `scale_x_log10()` and `scale_y_reverse()` to improve readiblity of your graph.
-
-ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + 
-    geom_point() + 
-    geom_smooth(method = "lm") +
-    scale_x_log10(name = "Log10 Scaled Bill Length") + 
-    scale_y_reverse(name = "Reversed Bill Width")+
-    theme_minimal()
-
 # ## `geom_bar`, `geom_col`, and `geom_histogram`
 # `geom_bar` is used to create bar plots for categorical data.  `geom_col`  is a special case of `geom_bar` where the height of the bars is already computed and does not need to be counted. `geom_histogram`  is used to create a histogram, which is essentially a bar plot for continuous data, where the data is divided into bins and the number of data points in each bin is counted.
 
@@ -77,7 +66,7 @@ ggplot(data=penguins, @aes(x=species)) +
 ggplot(data=penguins, @aes(x = island, y=species)) + geom_col()
 
 ggplot() +
-  geom_histogram(data=penguins, @aes(x=bill_length_mm, color = species))
+  geom_histogram(data=penguins, @aes(x=bill_length_mm))
 
 # In the first example, a bar plot is created with the variable CategoricalVar mapped to the x position, and the count of each category is represented by the height of the bars.
 
@@ -109,7 +98,7 @@ ggplot(df_line, @aes(x = X, y = Y)) +
 # `geom_boxplot` creates a boxplot.
 
 ggplot()+
-  geom_boxplot(data=penguins, @aes(x = island, y = bill_length_mm, color = species),  alpha = .3)
+  geom_boxplot(data=penguins, @aes(x = island, y = bill_length_mm),  alpha = .3)
 
 # In this example, a boxplot is created where different island of penguins are mapped to the x position, and the bill length is mapped to the y position. Finally, the each species will be mapped to a different color
 
@@ -120,20 +109,11 @@ ggplot()+
 # ## `geom_violin`
 # `geom_violin`  creates a violin plot, which is a combination of a boxplot and a kernel density plot.
 
-  ggplot(penguins, @aes(x=species, y=bill_depth_mm, color = species)) + 
+  ggplot(penguins, @aes(x=species, y=bill_depth_mm)) + 
     geom_violin()
 
 # In this example, a violin plot is created where different species of penguins are mapped to the x position, and the bill depth is mapped to the y position. geom_violin does not currently support mapping a categorical variable to colors.
-         
-
-# ## `geom_contour`
-# The `geom_contour`  creates a contour plot.
-  
-ggplot(penguins, @aes(x=bill_length_mm, y=bill_depth_mm, z=body_mass_g)) + 
-  geom_contour()
-
-# In this example, a contour plot is created where the bill length of penguins is mapped to the x position, the bill depth is mapped to the y position, and the body mass is mapped to the contour lines.
-
+    
 # ## `geom_tile`
 # The `geom_tile` creates a tile plot, also known as a heatmap.
 
@@ -142,9 +122,9 @@ y_values = repeat(1:5, outer = 5);
 values = x_values .* y_values;
 df_tile = DataFrame(X = x_values, Y = y_values, Value = values);
 
-ggplot(df_tile, @aes(x = X, y = Y, fill = Value)) +
+ggplot(df_tile, @aes(x = X, y = Y, z = Value)) +
     geom_tile() +
-    labs(title = "Tile Plot Example", x = "X axis", y = "Y axis", fill = "Value")
+    labs(title = "Tile Plot Example", x = "X axis", y = "Y axis")
 
 # ## `geom_text` and `geom_label`
 # `geom_text` and `geom_label`  are used to add text and labels to a plot.
@@ -190,7 +170,7 @@ ggplot(penguins, @aes(x=body_mass_g, y=bill_length_mm, color = species)) +
 # ## `geom_errorbar`
 # `geom_errorbar` creates vertical and error bars .
 
-categories = ['A', 'B', 'C', 'D'];
+categories = ["A", "B", "C", "D"];
 n = length(categories);
 
 mean_values = rand(n);  # Random mean values for demonstration
@@ -209,12 +189,5 @@ ggplot(df_errorbar, @aes(x = Category, y = MeanValue, ymin = LowerBound, ymax = 
     geom_point() + # to show the mean value
     geom_errorbar(width = 0.2) + # width of the horizontal line at the top and bottom of the error bar
     labs(title = "Error Bar Plot Example", x = "Category", y = "Mean Value")
-
-# ## `facet_wrap` and `facet_grid`
-# `facet_wrap` arranges a sequence of plots into a grid, wrapping them based on one or more grouping variables.
-
-ggplot(penguins, height = 200, width = 200)+
-  geom_point(@es(x = bill_length_mm, y = bill_depth_mm, colour = species))+
-  facet_wrap(facets = :species)
 
 # ## `ggsave`

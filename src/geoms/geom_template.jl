@@ -1,24 +1,25 @@
-function geom_template(name, required_aes, visual_layer, analysis_layer;
-    dict_function = identity, extra_args = Dict())
+function geom_template(name::AbstractString,
+                       required_aes::AbstractArray, 
+                       spec_api_function::Symbol;
+                       aes_function::Function = do_nothing, 
+                       extra_args::Dict = Dict())
+
+    extract_geom_aes = make_aes_extractor(required_aes)
+
     function geom_function(args...; kwargs...)
-        aes_dict, args_dict = dict_function(extract_aes(args, kwargs))
+        aes_dict, args_dict = extract_geom_aes(args, kwargs)
         args_dict["geom_name"] = name
         args_dict = merge(args_dict, extra_args)
 
         return build_geom(aes_dict, args_dict, 
             required_aes,
-            visual_layer, 
-            analysis_layer)
+            spec_api_function,
+            aes_function)
     end
-    function geom_function(plot::GGPlot, args...; kwargs...)
-        aes_dict, args_dict = dict_function(extract_aes(args, kwargs))
-        args_dict["geom_name"] = name
-        args_dict = merge(args_dict, extra_args)
 
-        return plot + build_geom(aes_dict, args_dict, 
-            required_aes,
-            visual_layer, 
-            analysis_layer)
+    function geom_function(plot::GGPlot, args...; kwargs...)
+        return plot + geom_function(args...; kwargs...)
     end
+
     return geom_function
 end

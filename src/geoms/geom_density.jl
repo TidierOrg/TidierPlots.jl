@@ -25,4 +25,4 @@
     - colour/color
 
 """
-geom_density = geom_template("geom_density", ["x"], nothing, AlgebraOfGraphics.density())
+geom_density = geom_template("geom_density", ["x"], :Density)

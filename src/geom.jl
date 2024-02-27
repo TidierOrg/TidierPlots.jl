@@ -1,74 +1,33 @@
-function build_geom(aes_dict, args_dict, required_aes, visual, analysis; special_aes = nothing)
+function build_geom(
+        aes_dict,
+        args_dict,
+        required_aes, 
+        spec_api_function,
+        aes_function; 
+        special_aes = Dict())
     
-    # if data is specified, call a questionable eval to grab it as a layer
     if haskey(args_dict, "data")
-        # if the code is running in a Pluto.jl notebook
         if args_dict["data"] isa DataFrame
-            plot_data = AlgebraOfGraphics.data(args_dict["data"])
-        elseif args_dict["data"] isa Symbol
-            plot_data = AlgebraOfGraphics.data(Base.eval(Main, args_dict["data"]))
-        elseif args_dict["data"] isa AbstractString
-            plot_data = AlgebraOfGraphics.data(Base.eval(Main, Symbol(args_dict["data"])))
+            plot_data = args_dict["data"]
         else
             type = typeof(args_dict["data"])
-            @error "Data was provided in an unsupported type: $type"
+            geom_name = args_dict["geom_name"]
+            @warn "Data was provided in $geom_name with unsupported type: $type. Data argument ignored."
+            plot_data = nothing
         end
     else
-        plot_data = mapping()
+        plot_data = nothing
     end
-
-    # translation dict to convert ggplot aes terms to Makie terms
-
-    optional_aes = Dict("color" => "color",
-                        "colour" => "color",
-                        "shape" => "marker",
-                        "size" => "markersize",
-                        "stroke" => "strokewidth",
-                        "strokecolor" => "strokecolor",
-                        "strokecolour" => "strokecolor",
-                        "linetype" => "linestyle",
-                        "linewidth" => "linewidth",
-                        "glow" => "glowwidth",
-                        "glowcolor" => "glowcolor",
-                        "glowcolour" => "glowcolor",
-                        "alpha" => "alpha",
-                        "stack" => "stack",
-                        "dodge" => "dodge",
-                        "errorbar_direction" => "direction",
-                        "text" => "text",
-                        "label" => "text",
-                        "row" => "row",
-                        "col" => "col", 
-                        "layout" => "layout", 
-                        "direction" => "direction", 
-                        "group" => "group")
-
-    if !isnothing(special_aes)
-        optional_aes = merge(optional_aes, special_aes)
-    end
-
-    # turn the visual function into a layer with the right args
-
-    optional_visual_args = optional_aes
-
-    args_given = intersect(
-        keys(optional_visual_args),
-        keys(args_dict)
-    )
-
-    if isnothing(visual)
-        geom_visual = mapping() 
-    elseif length(args_given) != 0
-        visual_args = Dict(Symbol(optional_visual_args[a]) => args_dict[a] for a in args_given)
-        geom_visual = AlgebraOfGraphics.visual(visual; visual_args...)
-    else
-        geom_visual = AlgebraOfGraphics.visual(visual)
-    end  
 
     # return a geom object
-
-    return Geom(aes_dict, args_dict,
-        plot_data, geom_visual, analysis,
-        required_aes, optional_aes, Dict())
-
+    return Geom(
+        aes_dict, 
+        args_dict,
+        required_aes, 
+        special_aes,
+        plot_data, 
+        spec_api_function,
+        Dict(),
+        aes_function
+    )
 end

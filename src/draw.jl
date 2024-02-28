@@ -66,10 +66,10 @@ function draw_ggplot(plot::GGPlot)
             
             if eltype(plot_data[!, aes_dict[a]]) <: Union{AbstractString, AbstractChar}
                 if haskey(plot.axis_options, "fct_inorder")
-                    cat_column = plot_data[!, aes_dict[req_aes]]
+                    cat_column = plot_data[!, aes_dict[a]]
                     cat_array = CategoricalArray(cat_column, levels = unique(cat_column), ordered = true)
                 else
-                    cat_array = CategoricalArray(plot_data[!, aes_dict[req_aes]])
+                    cat_array = CategoricalArray(plot_data[!, aes_dict[a]])
                 end
                 column_data = levelcode.(cat_array)
                 labels = levels(cat_array)

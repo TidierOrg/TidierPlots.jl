@@ -65,7 +65,7 @@ function draw_ggplot(plot::GGPlot)
             end
             
             if eltype(plot_data[!, aes_dict[a]]) <: Union{AbstractString, AbstractChar}
-                if haskey(plot.axis_options, "fct_inorder")
+                if haskey(plot.axis_options, "cat_inorder")
                     cat_column = plot_data[!, aes_dict[a]]
                     cat_array = CategoricalArray(cat_column, levels = unique(cat_column), ordered = true)
                 else
@@ -107,7 +107,7 @@ function draw_ggplot(plot::GGPlot)
 
         for req_aes in required_aes
             if eltype(plot_data[!, aes_dict[req_aes]]) <: Union{AbstractString, AbstractChar}
-                if haskey(plot.axis_options, "fct_inorder")
+                if haskey(plot.axis_options, "cat_inorder")
                     cat_column = plot_data[!, aes_dict[req_aes]]
                     cat_array = CategoricalArray(cat_column, levels = unique(cat_column), ordered = true)
                 else
@@ -131,8 +131,8 @@ function draw_ggplot(plot::GGPlot)
 
     # remove options from args_dict that are not meant for Makie
 
-    if haskey(plot.axis_options, "fct_inorder")
-        delete!(plot.axis_options, "fct_inorder")
+    if haskey(plot.axis_options, "cat_inorder")
+        delete!(plot.axis_options, "cat_inorder")
     end
 
     # rename and correct types on all axis options

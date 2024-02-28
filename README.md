@@ -81,36 +81,44 @@ The goal of this package is to allow you to write code that is as similar to ggp
 
 Specifying aes options positionally, e.g. `aes("x", "y")` is also supported for required aesthetics.
 
-## Display Options
+## Why would I use this instead of ggplot2? 
 
-Use the function `TidierPlots_set(option::String, value::Bool)` to control display options. The following options are supported:
+**Right now, you probably wouldn't.** This package is still early in development, and is not ready for production use. However, there are a couple of advantages already and the list will hopefully get longer over time. 
 
-- "plot_show" (default true). Enables `ggplot`-like behaviour where plots are displayed when created.
-- "plot_log" (default true). Prints a text summary of the properties of the ggplot
+### Easier Factor Handling
 
-## Example
+Sort your categorical variables in order of appearance with a single keyword rather than wrestle with factor ordering!
 
-Let's make a plots using the Palmer Penguins data from `PalmerPenguins.jl`:
-
-```julia
-using TidierPlots
-using DataFrames
-using PalmerPenguins
-
-penguins = dropmissing(DataFrame(PalmerPenguins.load()))
-
-ggplot(penguins, aes(x = "bill_length_mm", y = "bill_depth_mm", color = "species")) + 
-    geom_point() + 
-    geom_smooth(method = "lm") +
-    labs(x = "Bill Length (mm)", y = "Bill Width (mm)", 
-        title = "Bill Length vs. Bill Width", 
-        subtitle = "Using geom_point and geom_smooth") +
-    theme_dark()
 ```
+@chain cars begin
+    @count(manufacturer)
+    @arrange(n)
+    ggplot(cat_inorder = true, xticklabelrotation = .5)
+        geom_col(@aes(y = n, x = manufacturer))
+end
+```
+![](assets/in_order.png)
 
-![](assets/example_point_smooth.png)
+### Simple Bar Labels
 
-See the [documentation](https://tidierorg.github.io/TidierPlots.jl/latest) for many more examples. 
+Access to all axis and plot options from `Makie` let you take advantage of nice features like easy `bar_labels`: 
+
+```
+df = DataFrame(
+    cat = ["left", "left", "left",
+           "middle", "middle", "middle",
+           "right", "right", "right"],
+    height = 0.1:0.1:0.9,
+    grp = [1, 2, 3, 1, 2, 3, 1, 2, 3]
+)
+
+ggplot(df, yticks = (1:3, ["bottom", "middle", "top"])) + 
+    geom_col(@aes(cat, height, color = grp, bar_labels = height), 
+        position = "dodge", direction = "x") + labs(title = "Dodged Bars") + theme_dark()
+```
+![](assets/bar_labels.png)
+
+See the [documentation](https://tidierorg.github.io/TidierPlots.jl/latest) for more information and examples. 
 
 # What's New
 

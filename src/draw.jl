@@ -65,7 +65,12 @@ function draw_ggplot(plot::GGPlot)
             end
             
             if eltype(plot_data[!, aes_dict[a]]) <: Union{AbstractString, AbstractChar}
-                cat_array = CategoricalArray(plot_data[!, aes_dict[a]])
+                if haskey(plot.axis_options, "fct_inorder")
+                    cat_column = plot_data[!, aes_dict[req_aes]]
+                    cat_array = CategoricalArray(cat_column, levels = unique(cat_column), ordered = true)
+                else
+                    cat_array = CategoricalArray(plot_data[!, aes_dict[req_aes]])
+                end
                 column_data = levelcode.(cat_array)
                 labels = levels(cat_array)
                 args_dict[a * "ticks"] = (1:length(labels), labels)
@@ -102,7 +107,12 @@ function draw_ggplot(plot::GGPlot)
 
         for req_aes in required_aes
             if eltype(plot_data[!, aes_dict[req_aes]]) <: Union{AbstractString, AbstractChar}
-                cat_array = CategoricalArray(plot_data[!, aes_dict[req_aes]])
+                if haskey(plot.axis_options, "fct_inorder")
+                    cat_column = plot_data[!, aes_dict[req_aes]]
+                    cat_array = CategoricalArray(cat_column, levels = unique(cat_column), ordered = true)
+                else
+                    cat_array = CategoricalArray(plot_data[!, aes_dict[req_aes]])
+                end
                 column_data = levelcode.(cat_array)
                 labels = levels(cat_array)
                 axis_options[Symbol(req_aes * "ticks")] = (1:length(labels), labels)
@@ -117,6 +127,12 @@ function draw_ggplot(plot::GGPlot)
         
         # push completed PlotSpec (type, args, and kwargs) to the list of plots
         push!(plot_list, Makie.PlotSpec(geom.visual, args...; kwargs...))
+    end
+
+    # remove options from args_dict that are not meant for Makie
+
+    if haskey(plot.axis_options, "fct_inorder")
+        delete!(plot.axis_options, "fct_inorder")
     end
 
     # rename and correct types on all axis options

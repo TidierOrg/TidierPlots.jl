@@ -78,6 +78,21 @@ function Base.show(io::IO, plot::GGPlot)
     end
 end
 
+function Base.show(io::IO, plot_grid::GGPlotGrid)
+    if plot_log[]
+        for p in plot_grid.plots
+            println(p)
+        end
+    end
+
+    if plot_show[]
+        with_theme(plot_grid.plots[1].theme) do
+            display(draw_ggplot(plot_grid))
+        end
+    end
+end
+
+
 function Base.show(io::IO, ::MIME"text/html", x::GGPlot)
 	show(io, MIME"text/html"(), 
         with_theme(x.theme) do 

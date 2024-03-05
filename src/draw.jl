@@ -1,6 +1,7 @@
-function draw_ggplot(plot::GGPlot)
-    
-    # translation dict for GGPlot term => Makie Term
+import Makie.SpecApi
+
+function Makie.SpecApi.Axis(plot::GGPlot)
+     # translation dict for GGPlot term => Makie Term
     # terms that aren't on this list won't be translated, just passed directly to Makie
     ggplot_to_makie = Dict{String, String}(
         "colour" => "color",
@@ -67,7 +68,9 @@ function draw_ggplot(plot::GGPlot)
             if eltype(plot_data[!, aes_dict[a]]) <: Union{AbstractString, AbstractChar}
                 if haskey(plot.axis_options, "cat_inorder")
                     cat_column = plot_data[!, aes_dict[a]]
-                    cat_array = CategoricalArray(cat_column, levels = unique(cat_column), ordered = true)
+                    cat_array = CategoricalArray(cat_column,
+                                                 levels = unique(cat_column),
+                                                 ordered = true)
                 else
                     cat_array = CategoricalArray(plot_data[!, aes_dict[a]])
                 end
@@ -97,7 +100,8 @@ function draw_ggplot(plot::GGPlot)
                     ex_type = expected_type[arg]
                     given_type = typeof(args_dict[arg])
                     geom_name = geom.args["geom_name"]
-                    @error "Argument $arg in $geom_name given as type $given_type, which cannot be converted to expected type $ex_type."
+                    @error "Argument $arg in $geom_name given as type $given_type, 
+                            which cannot be converted to expected type $ex_type."
                 end
             end
         end
@@ -155,17 +159,24 @@ function draw_ggplot(plot::GGPlot)
         end
     end
 
-    axis = length(axis_options) == 0 ? 
+    return length(axis_options) == 0 ? 
         Makie.SpecApi.Axis(plots = plot_list) :
         Makie.SpecApi.Axis(
                 plots = plot_list; 
                 axis_options...
             )
+end
+
+function draw_ggplot(plot::GGPlot)
+    axis = Makie.SpecApi.Axis(plot)
 
     Makie.plot(
         Makie.SpecApi.GridLayout(
             axis
         )
     )
-    
+end
+
+function draw_ggplot(plot_grid::GGPlotGrid)
+    Makie.plot(plot_grid.grid)
 end

@@ -25,3 +25,8 @@ end
 struct AxisOptions
     opt::Dict{Symbol, Any}
 end
+
+struct GGPlotGrid
+    plots::Vector{GGPlot}
+    grid::Any
+end

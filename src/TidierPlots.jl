@@ -31,6 +31,7 @@ include("ggsave.jl")
 include("labs.jl")
 include("scales.jl")
 include("themes.jl")
+include("patchwork.jl")
 include("show.jl")
 include("util.jl")
 

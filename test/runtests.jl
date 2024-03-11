@@ -1,12 +1,14 @@
 using TidierPlots
 using Test
-using PalmerPenguins
 using DataFrames
 using Makie
+using TidierData
 using ImageHashes, Images
 using Chain
+using JDF
+using CategoricalArrays
 
-penguins = dropmissing(DataFrame(PalmerPenguins.load()))
+penguins = DataFrame(JDF.load(joinpath(@__DIR__, "penguins.jdf")))
 
 TidierPlots_set("plot_show", false)
 TidierPlots_set("plot_log", false)
@@ -14,28 +16,16 @@ TidierPlots_set("plot_log", false)
 set_theme!(theme_ggplot2())
 
 function plot_images_equal(tidier, makie)
-    @info "Getting temporary paths..."
-    tidierpath = "file1" * ".png"
-    makiepath = "file2" * ".png"
+    tidierpath = tempname() * ".png"
+    makiepath = tempname() * ".png"
 
-    @info "Saving TidierPlot..."
     ggsave(tidierpath, tidier)
-    @info "Saving Makie plot..."
     save(makiepath, makie)
 
-    @info "Loading TidierPlot..."
     t_img = load(tidierpath)
-    @info "Loading Makie plot..."
     m_img = load(makiepath)
     
-    @info "Hashing TidierPlot..."
-    t_hash = difference_hash(t_img)
-    @info "Done. Hash: $t_hash"
-    @info "Saving Makie plot..."
-    m_hash = difference_hash(m_img)
-    @info "Done. Hash: $m_hash"
-
-    return m_hash == t_hash
+    return difference_hash(t_img) == difference_hash(m_img)
 end
 
 function Base.:(==)(aes1::TidierPlots.Aesthetics, aes2::TidierPlots.Aesthetics) 
@@ -90,3 +80,49 @@ end
     
     @test plot_images_equal(t, m)
 end
+
+@testset "geom_bar-basic" begin
+    t = ggplot(penguins) + 
+        geom_bar(@aes(x = species))
+
+    penguins_count = @chain penguins begin
+        groupby(:species)
+        @summarize(count = n())
+        @arrange(species)
+    end
+    
+    m = Makie.plot(
+        Makie.SpecApi.GridLayout(
+            Makie.SpecApi.Axis(
+                plots = [
+                    Makie.PlotSpec(
+                        :BarPlot, 
+                        penguins_count.count)
+                ]; xticks = (1:3, penguins_count.species)
+            )
+        )
+    )
+    
+    @test plot_images_equal(t, m)
+end
+
+@testset "geom_line-basic" begin
+    t = ggplot(penguins) + 
+        geom_line(@aes(x = bill_length_mm, y = bill_depth_mm))
+    
+    m = Makie.plot(
+        Makie.SpecApi.GridLayout(
+            Makie.SpecApi.Axis(
+                plots = [
+                    Makie.PlotSpec(
+                        :Lines, 
+                        penguins.bill_length_mm,
+                        penguins.bill_depth_mm)
+                ]
+            )
+        )
+    )
+    
+    @test plot_images_equal(t, m)
+end
+

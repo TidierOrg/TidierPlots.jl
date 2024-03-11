@@ -10,7 +10,8 @@ function geom_hline(args...; kwargs...)
 
     return build_geom(aes_dict, args_dict, 
         ["yintercept"], # required aesthetics
-        :HLines) # function for visual layer  
+        :HLines,
+        do_nothing) # function for visual layer  
 end
 
 function geom_vline(args...; kwargs...)
@@ -25,7 +26,8 @@ function geom_vline(args...; kwargs...)
 
     return build_geom(aes_dict, args_dict, 
         ["xintercept"], # required aesthetics
-        :VLines) # function for visual layer   
+        :VLines,
+        do_nothing) # function for visual layer   
 end
 
 function geom_hline(plot::GGPlot, args...; kwargs...)

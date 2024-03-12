@@ -1,6 +1,6 @@
-function aes(args...;kwargs...)
+function aes(args...; kwargs...)
     d = Dict(kwargs)
-    return Aesthetics([args...],
+    return Aesthetics(Symbol.([args...]),
         Dict([String(key) => Symbol(d[key]) for key in keys(d)]))
 end
 

@@ -3,10 +3,14 @@ using Test
 using DataFrames
 using Makie
 using TidierData
-using ImageHashes, Images
-using Chain
+using Images
 using JDF
 using CategoricalArrays
+
+# functions to compare two images using a difference hash
+# essentially copied from ImageHashes.jl, but package is out of date
+
+include("difference_hash.jl")
 
 # load the penguins dataset
 
@@ -20,21 +24,6 @@ TidierPlots_set("plot_log", false)
 # configure Makie to use the ggplot2 theme
 
 set_theme!(theme_ggplot2())
-
-# function to compare two images using a hash
-
-function plot_images_equal(tidier, makie)
-    tidierpath = tempname() * ".png"
-    makiepath = tempname() * ".png"
-
-    ggsave(tidierpath, tidier)
-    save(makiepath, makie)
-
-    t_img = load(tidierpath)
-    m_img = load(makiepath)
-    
-    return difference_hash(t_img) == difference_hash(m_img)
-end
 
 # see files for tests
 

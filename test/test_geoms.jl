@@ -1,4 +1,4 @@
-@testset "geoms" begin
+@testset verbose = true "geoms" begin
 
     @testset "geom_point" begin
         t = ggplot(penguins) + 

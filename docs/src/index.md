@@ -79,13 +79,14 @@ The goal of this package is to allow you to write code that is as similar to ggp
 
 Specifying aes options positionally, e.g. `aes("x", "y")` is not yet supported.
 
-## Display Options
+## Display Options for Quarto, Jupyter, and Pluto.jl
 
 Use the function `TidierPlots_set(option::String, value::Bool)` to control display options. The following options are supported:
 
 - "plot_show" (default true). Enables `ggplot`-like behaviour where plots are displayed when created.
 - "plot_log" (default true). Prints a text summary of the properties of the ggplot
 
+You will likely want to disable both of these if you are working in a notebook environment. In Pluto.jl, you can get interactive plots (scroll, zoom, labels, etc.) using `WGLMakie` by including `WGLMakie.activate!()` as the first cell after your imports. 
 
 ## Example
 

@@ -8,12 +8,12 @@ function get_options(geom_list)
 end
 
 function Base.:+(x::GGPlot, y...)::GGPlot
-    theme = [i for i in y if t isa Attributes]
+    theme = [i for i in y if i isa Attributes]
 
     if length(theme) == 0
-        theme = Makie.theme_ggplot2()
+        theme = Makie.theme_ggplot2() # default is to look like a ggplot
     else
-        theme = theme[end]
+        theme = theme[end] # use only the last specified theme
     end
     
     result = GGPlot(

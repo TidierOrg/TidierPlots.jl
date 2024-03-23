@@ -18,8 +18,9 @@ using CategoricalArrays
 # Data manipulation, expression parsing
 using TidierData
 
-# for ... GLMS
+# for geom_smooth fits
 using GLM
+using Loess
 
 include("structs.jl")
 

@@ -217,6 +217,75 @@
         @test plot_images_equal(t, m)
     
     end
-    
+
+    @testset "geom_smooth" begin
+        t = ggplot(penguins, aes(x = "bill_length_mm", y = "bill_depth_mm")) + 
+            geom_smooth() + geom_point()
+
+        model = Loess.loess(penguins.bill_length_mm, penguins.bill_depth_mm; span = .75, degree = 2)
+        x̂ = range(extrema(penguins.bill_length_mm)..., length=200)
+        ŷ = Loess.predict(model, x̂)
+
+        m = Makie.plot(
+            Makie.SpecApi.GridLayout(
+                Makie.SpecApi.Axis(
+                    plots = [
+                        Makie.PlotSpec(
+                            :Lines, 
+                            x̂,
+                            ŷ),
+                        Makie.PlotSpec(
+                            :Scatter,
+                            penguins.bill_length_mm,
+                            penguins.bill_depth_mm
+                        )
+                    ]
+                )
+            )
+        )
+        
+        @test plot_images_equal(t, m)
+        
+        t = ggplot(penguins, aes(x = "bill_length_mm", y = "bill_depth_mm")) + 
+            geom_smooth(method = "lm") + geom_point()
+
+        
+        function add_intercept_column(x::AbstractVector{T}) where {T}
+            mat = similar(x, float(T), (length(x), 2))
+            fill!(view(mat, :, 1), 1)
+            copyto!(view(mat, :, 2), x)
+            return mat
+        end
+
+        lin_model = GLM.lm(add_intercept_column(penguins.bill_length_mm), penguins.bill_depth_mm)
+        x̂ = range(extrema(penguins.bill_length_mm)..., length=100)
+        pred = DataFrame(GLM.predict(lin_model, add_intercept_column(x̂); interval = :confidence))
+
+        m = Makie.plot(
+            Makie.SpecApi.GridLayout(
+                Makie.SpecApi.Axis(
+                    plots = [
+                        Makie.PlotSpec(
+                            :Lines, 
+                            x̂,
+                            pred.prediction),
+                        Makie.PlotSpec(
+                            :Scatter,
+                            penguins.bill_length_mm,
+                            penguins.bill_depth_mm
+                        ), 
+                        Makie.PlotSpec(
+                            :Band,
+                            x̂,
+                            pred.lower,
+                            pred.upper
+                        )
+                    ]
+                )
+            )
+        )
+
+        @test plot_images_equal(t, m)
+
     end
-    
+end

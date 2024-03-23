@@ -33,35 +33,45 @@ end
 function geom_smooth(args...; kwargs...)
     aes_dict, args_dict = extract_aes(args, kwargs)
     args_dict["geom_name"] = "geom_smooth"
-    
-    analysis = stat_loess
 
     if haskey(args_dict, "method")
         if args_dict["method"] == "lm"
-            analysis = stat_linear
+            return [build_geom(aes_dict, 
+                        args_dict, 
+                        ["x", "y"],
+                        :Lines, 
+                        stat_linear),
+                    build_geom(aes_dict,
+                        args_dict, 
+                        ["x", "lower", "upper"],
+                        :Band, 
+                        stat_linear)]
         end
     end
-    
-    # geom_smooth returns TWO makie plots: 
-    # :Lines - the center line
-    # :Band - the uncertainty interval
 
-    return [build_geom(aes_dict, 
+    return build_geom(aes_dict, 
                       args_dict, 
                       ["x", "y"],
                       :Lines, 
-                      analysis),
-            build_geom(aes_dict,
-                      args_dict, 
-                      ["x", "lower", "upper"],
-                      :Band, 
-                      analysis)]
+                      stat_loess)
 end
 
 function stat_loess(aes_dict::Dict{String, Symbol}, 
     args_dict::Dict{Any, Any}, required_aes::Vector{String}, plot_data::DataFrame)
 
-    return (aes_dict, args_dict, required_aes, plot_data)
+    x = plot_data[!, aes_dict["x"]]
+    y = plot_data[!, aes_dict["y"]]
+
+    model = Loess.loess(x, y; span = .75, degree = 2)
+    x̂ = range(extrema(x)..., length=200)
+    ŷ = Loess.predict(model, x̂)
+
+    return_data = DataFrame(
+        String(aes_dict["x"]) => x̂,
+        String(aes_dict["y"]) => ŷ 
+    )
+
+    return (aes_dict, args_dict, required_aes, return_data)
 end
 
 function stat_linear(aes_dict::Dict{String, Symbol}, 

@@ -8,7 +8,7 @@ function get_options(geom_list)
 end
 
 function Base.:+(x::GGPlot, y...)::GGPlot
-    theme = [t for t in y if t isa Attributes]
+    theme = [i for i in y if t isa Attributes]
 
     if length(theme) == 0
         theme = Makie.theme_ggplot2()
@@ -18,15 +18,15 @@ function Base.:+(x::GGPlot, y...)::GGPlot
     
     result = GGPlot(
         vcat(x.geoms, 
-            [i for i in y if i isa Geom], 
-            [j for j in y if j isa Vector{Geom}]...), 
+            [i              for i in y if i isa Geom], 
+            [i              for i in y if i isa Vector{Geom}]...), 
         merge(x.default_aes, 
-            [a.aes for a in y if a isa Aesthetics]...),
+            [i.aes          for i in y if i isa Aesthetics]...),
         x.data,
         merge(x.axis_options, 
-            [l.axis_options for l in y if l isa Geom]...,
-            [get_options(m) for m in y if m isa Vector{Geom}]...,
-            [d.opt for d in y if d isa AxisOptions]...),
+            [i.axis_options for i in y if i isa Geom]...,
+            [get_options(i) for i in y if i isa Vector{Geom}]...,
+            [i.opt          for i in y if i isa AxisOptions]...),
         theme
     )
 

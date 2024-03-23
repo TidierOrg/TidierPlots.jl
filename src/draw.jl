@@ -59,6 +59,8 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         # which optional aesthetics were given?
         optional_aes_given = [k for (k, v) in aes_dict if !(k in required_aes)]
         visual_optional_aes = Dict{Symbol, Any}()
+
+        dont_categorize = ["text", "label"]
         
         for a in optional_aes_given
             if haskey(ggplot_to_makie_geom, a)
@@ -67,7 +69,9 @@ function Makie.SpecApi.Axis(plot::GGPlot)
                 aes = Symbol(a)
             end
             
-            if eltype(plot_data[!, aes_dict[a]]) <: Union{AbstractString, AbstractChar}
+            if a in dont_categorize
+                column_data = String.(plot_data[!, aes_dict[a]])
+            elseif eltype(plot_data[!, aes_dict[a]]) <: Union{AbstractString, AbstractChar}
                 if haskey(plot.axis_options, "cat_inorder")
                     cat_column = plot_data[!, aes_dict[a]]
                     cat_array = CategoricalArray(cat_column,
@@ -113,7 +117,9 @@ function Makie.SpecApi.Axis(plot::GGPlot)
 
         for req_aes in required_aes
 
-            if eltype(plot_data[!, aes_dict[req_aes]]) <: Union{AbstractString, AbstractChar}
+            if req_aes in dont_categorize
+                column_data = String.(plot_data[!, aes_dict[req_aes]])
+            elseif eltype(plot_data[!, aes_dict[req_aes]]) <: Union{AbstractString, AbstractChar}
                 if haskey(plot.axis_options, "cat_inorder")
                     cat_column = plot_data[!, aes_dict[req_aes]]
                     cat_array = CategoricalArray(cat_column, levels = unique(cat_column), ordered = true)
@@ -136,8 +142,6 @@ function Makie.SpecApi.Axis(plot::GGPlot)
 
         push!(plot_list, Makie.PlotSpec(args...; kwargs...))
     end
-
-    println(plot.axis_options)
 
     # remove options from args_dict that are not meant for Makie
 

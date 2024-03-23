@@ -288,4 +288,26 @@
         @test plot_images_equal(t, m)
 
     end
+
+    @testset "geom_text" begin
+        t = ggplot(penguins) + 
+            geom_text(aes(x = :bill_length_mm, y = :bill_depth_mm, text = :species))
+
+        m = Makie.plot(
+            Makie.SpecApi.GridLayout(
+                Makie.SpecApi.Axis(
+                    plots = [
+                        Makie.PlotSpec(
+                            :Text,
+                            penguins.bill_length_mm,
+                            penguins.bill_depth_mm;
+                            text = String.(penguins.species))
+                        ]
+                    )
+                )
+            )
+
+        @test plot_images_equal(t, m)
+        
+    end
 end

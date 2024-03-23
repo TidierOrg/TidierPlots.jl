@@ -31,7 +31,9 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         "alpha" => Float32,
         "markersize" => Float32,
         "strokewidth" => Float32,
-        "glowwidth" => Float32
+        "glowwidth" => Float32,
+        # Integer
+        "bins" => Int64
     )
 
     plot_list = Makie.PlotSpec[]
@@ -110,7 +112,7 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         visual_args_list = []
 
         for req_aes in required_aes
-            
+
             if eltype(plot_data[!, aes_dict[req_aes]]) <: Union{AbstractString, AbstractChar}
                 if haskey(plot.axis_options, "cat_inorder")
                     cat_column = plot_data[!, aes_dict[req_aes]]
@@ -126,13 +128,16 @@ function Makie.SpecApi.Axis(plot::GGPlot)
             end
             push!(visual_args_list, column_data)
         end
-        
-        args = Tuple(visual_args_list)
-        kwargs = (;merge(args_dict_makie, visual_optional_aes)...)
-        
+
+        args = Tuple([geom.visual, visual_args_list...])
+        kwargs = merge(args_dict_makie, visual_optional_aes)
+
         # push completed PlotSpec (type, args, and kwargs) to the list of plots
-        push!(plot_list, Makie.PlotSpec(geom.visual, args...; kwargs...))
+
+        push!(plot_list, Makie.PlotSpec(args...; kwargs...))
     end
+
+    println(plot.axis_options)
 
     # remove options from args_dict that are not meant for Makie
 

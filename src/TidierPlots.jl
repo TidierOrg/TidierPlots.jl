@@ -18,6 +18,9 @@ using CategoricalArrays
 # Data manipulation, expression parsing
 using TidierData
 
+# for ... GLMS
+using GLM
+
 include("structs.jl")
 
 include("addplots.jl")
@@ -45,7 +48,7 @@ include("geoms/geom_errorbar.jl")
 include("geoms/geom_hvline.jl")
 include("geoms/geom_path.jl")
 include("geoms/geom_point.jl")
-#include("geoms/geom_smooth.jl")
+include("geoms/geom_smooth.jl")
 include("geoms/geom_text.jl")
 include("geoms/geom_violin.jl")
 
@@ -67,7 +70,7 @@ export geom_point
 export geom_path
 export geom_line
 export geom_step
-#export geom_smooth 
+export geom_smooth 
 export geom_errorbar
 export geom_errorbarh
 export geom_violin

@@ -110,6 +110,7 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         visual_args_list = []
 
         for req_aes in required_aes
+            
             if eltype(plot_data[!, aes_dict[req_aes]]) <: Union{AbstractString, AbstractChar}
                 if haskey(plot.axis_options, "cat_inorder")
                     cat_column = plot_data[!, aes_dict[req_aes]]

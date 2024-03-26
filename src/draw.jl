@@ -46,9 +46,6 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         # inherit any aes specified at the ggplot level
         aes_dict = merge(plot.default_aes, geom.aes)
 
-        # check to make sure all required aesthetics are available
-        #check_aes(geom.required_aes, aes_dict, geom.args["geom_name"]) 
-
         # apply function if required to edit the aes/args/data
         aes_dict, args_dict, required_aes, plot_data = 
             geom.aes_function(aes_dict, geom.args, geom.required_aes, plot_data)
@@ -130,7 +127,11 @@ function Makie.SpecApi.Axis(plot::GGPlot)
                 labels = levels(cat_array)
                 axis_options[Symbol(req_aes * "ticks")] = (1:length(labels), labels)
             else
-                column_data = plot_data[!, aes_dict[req_aes]]
+                if plot_data isa DataFrame
+                    column_data = plot_data[!, aes_dict[req_aes]]
+                else
+                    column_data = plot_data[aes_dict[req_aes]]
+                end
             end
             push!(visual_args_list, column_data)
         end

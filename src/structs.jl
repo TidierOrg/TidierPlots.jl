@@ -7,6 +7,7 @@ struct Geom
     visual::Symbol
     axis_options::Dict
     aes_function::Function
+    column_transformations::Dict
 end
 
 struct GGPlot

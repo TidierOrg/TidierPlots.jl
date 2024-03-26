@@ -1,7 +1,8 @@
 function geom_template(name::AbstractString,
                        required_aes::AbstractArray, 
                        spec_api_function::Symbol;
-                       aes_function::Function = do_nothing, 
+                       aes_function::Function = do_nothing,
+                       column_transformations::Dict{Symbol, Function} = Dict{Symbol, Function}(), 
                        extra_args::Dict = Dict())
 
     extract_geom_aes = make_aes_extractor(required_aes)
@@ -14,7 +15,8 @@ function geom_template(name::AbstractString,
         return build_geom(aes_dict, args_dict, 
             required_aes,
             spec_api_function,
-            aes_function)
+            aes_function, 
+            column_transformations)
     end
 
     function geom_function(plot::GGPlot, args...; kwargs...)

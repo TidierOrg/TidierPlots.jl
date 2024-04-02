@@ -310,4 +310,26 @@
         @test plot_images_equal(t, m)
         
     end
+
+    @testset "geom_contour" begin
+        k = kde((penguins.bill_length_mm, penguins.bill_depth_mm))
+
+        m = Makie.plot(
+            Makie.SpecApi.GridLayout(
+                Makie.SpecApi.Axis(
+                    plots = [
+                        Makie.PlotSpec(
+                            :Contour, 
+                            k.density
+                        )
+                    ]
+                )
+            )
+        )
+
+        t = ggplot(penguins) + 
+            geom_contour(aes(x = :bill_length_mm, y = :bill_depth_mm))
+
+        @test plot_images_equal(t, m)
+    end
 end

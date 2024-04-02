@@ -65,7 +65,8 @@ function Makie.SpecApi.Axis(plot::GGPlot)
             # if there is a specified column transformation, use it
             # otherwise use cat_inseq for string-like columns and as_is for everything else
             if haskey(geom.column_transformations, aes)
-                plottable_data = geom.column_transformations[aes][2](aes, geom.column_transformations[aes][1], plot_data)
+                source_cols = [aes_dict[String(source)] for source in geom.column_transformations[aes][1]]
+                plottable_data = geom.column_transformations[aes][2](aes, source_cols, plot_data)
             elseif eltype(plot_data[!, aes_dict[a]]) <: Union{AbstractString, AbstractChar}
                 plottable_data = cat_inseq(aes, [aes_dict[a]], plot_data)
             else
@@ -111,7 +112,8 @@ function Makie.SpecApi.Axis(plot::GGPlot)
             # if there is a specified column transformation, use it
             # otherwise use cat_inseq for string-like columns and as_is for everything else
             if haskey(geom.column_transformations, aes)
-                plottable_data = geom.column_transformations[aes][2](aes, geom.column_transformations[aes][1], plot_data)
+                source_cols = [aes_dict[String(source)] for source in geom.column_transformations[aes][1]]
+                plottable_data = geom.column_transformations[aes][2](aes, source_cols, plot_data)
             elseif eltype(plot_data[!, aes_dict[a]]) <: Union{AbstractString, AbstractChar}
                 plottable_data = cat_inseq(aes, [aes_dict[a]], plot_data)
             else

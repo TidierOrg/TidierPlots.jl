@@ -7,7 +7,7 @@ function geom_errorbar(args...; kwargs...)
         ["x", "ymin", "ymax"], # required aesthetics
         :Rangebars, # function for visual layer
         do_nothing,
-        Dict{Symbol, Function}();
+        Dict{Symbol, Pair{Vector{Symbol}, Function}}();
         special_aes = Dict("width" => "whiskerwidth")) 
 end
 
@@ -21,7 +21,7 @@ function geom_errorbarh(args...; kwargs...)
         ["y", "xmin", "xmax"], # required aesthetics
         :Rangebars, # function for visual layer
         do_nothing,
-        Dict{Symbol, Function}();
+        Dict{Symbol, Pair{Vector{Symbol}, Function}}();
         special_aes = Dict("width" => "whiskerwidth")) 
 
 end

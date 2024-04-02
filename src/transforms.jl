@@ -48,7 +48,7 @@ verbatim = convert_to(String)
 function number_on_axis(target::Symbol, source::Vector{Symbol}, data::DataFrame)
     return Dict{Symbol, PlottableData}(
         target => PlottableData(
-            data[!, source[1]],                    # get the column out of the dataframe
+            data[!, source[1]],                 # get the column out of the dataframe
             identity,                           # do nothing to it
             Symbol(String(target) * "ticks"),   # the axis label it will have, e.g. :xticks
             Makie.automatic                     # calculate those ticks automatically

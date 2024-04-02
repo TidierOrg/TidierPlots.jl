@@ -41,13 +41,13 @@ function geom_smooth(args...; kwargs...)
                         ["x", "y"],
                         :Lines, 
                         stat_linear,
-                        Dict{Symbol, Function}()),
+                        Dict{Symbol, Pair{Vector{Symbol}, Function}}()),
                     build_geom(aes_dict,
                         args_dict, 
                         ["x", "lower", "upper"],
                         :Band, 
                         stat_linear,
-                        Dict{Symbol, Function}())]
+                        Dict{Symbol, Pair{Vector{Symbol}, Function}}())]
         end
     end
 
@@ -56,7 +56,7 @@ function geom_smooth(args...; kwargs...)
                       ["x", "y"],
                       :Lines, 
                       stat_loess,
-                      Dict{Symbol, Function}())
+                      Dict{Symbol, Pair{Vector{Symbol}, Function}}())
 end
 
 function stat_loess(aes_dict::Dict{String, Symbol}, 

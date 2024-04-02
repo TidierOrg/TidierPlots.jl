@@ -1,5 +1,14 @@
 # TidierPlots.jl updates
 
+# v0.6.1 - 2024-04-02
+- Tests have been added for all currently supported geom_* functions
+- Bug Fix: Repairs geoms that were broken by removal of AlgebraOfGraphics
+- Basic functionality from {patchwork} (`+`, `|`, and `/` operators for plot composition) is now supported
+- Column transformation functions have been standardized to allow easier declaration of new geom functions
+- Support added for "compound geoms" that use more than one underlying Makie.jl plot (e.g. `geom_smooth`)
+- Adds support for `stat_*` functions that modify the underlying data prior to plotting
+- Adds functionality to automatically convert arguments to Types expected by Makie.jl
+
 # v0.6.0 - 2024-02-27
 - Dependency on AlgebraOfGraphics.jl removed
 - Support for positional aes specification (e.g. @aes(x, y) instead of @aes(x = x, y = y))

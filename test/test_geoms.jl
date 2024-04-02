@@ -320,6 +320,7 @@
                     plots = [
                         Makie.PlotSpec(
                             :Contour, 
+                            k.x, k.y,
                             k.density
                         )
                     ]

@@ -54,11 +54,10 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         # make a master list of all possible accepted optional aesthetics and args
         ggplot_to_makie_geom = merge(ggplot_to_makie, geom.special_aes)
         
-        # which optional aesthetics were given?
-        optional_aes_given = [k for (k, v) in aes_dict if !(k in required_aes)]
-        visual_optional_aes = Dict{Symbol, Any}()
+        # which aesthetics were given?
+        given_aes = Dict{Symbol, PlottableData}()
         
-        for a in optional_aes_given
+        for a in keys(aes_dict)
             # the name of the aes is translated to the makie term if needed
             aes = haskey(ggplot_to_makie_geom, a) ? Symbol(ggplot_to_makie_geom[a]) : Symbol(a)
 
@@ -74,12 +73,12 @@ function Makie.SpecApi.Axis(plot::GGPlot)
             end
 
             # if the transform has a label associated with it, pass that into axis_options
-            if !isnothing(plottable_data[aes].label_target)
+            if haskey(plottable_data, aes) && !isnothing(plottable_data[aes].label_target)
                 axis_options[plottable_data[aes].label_target] = plottable_data[aes].label_function(plottable_data[aes].raw)
             end
 
             # add the transformed data to list to eventually be passed to the plots kwargs
-            push!(visual_optional_aes, aes => plottable_data[aes].makie_function(plottable_data[aes].raw))
+            merge!(given_aes, plottable_data)
         end
 
         # which ones were given as arguments? 
@@ -103,32 +102,12 @@ function Makie.SpecApi.Axis(plot::GGPlot)
                 end
             end
         end
-        
-        # make a Tuple that contains the columns from the data in their required order to pass to PlotSpec
-        visual_args_list = []
 
-        for a in required_aes
-            aes = Symbol(a)
-            # if there is a specified column transformation, use it
-            # otherwise use cat_inseq for string-like columns and as_is for everything else
-            if haskey(geom.column_transformations, aes)
-                source_cols = [aes_dict[String(source)] for source in geom.column_transformations[aes][1]]
-                plottable_data = geom.column_transformations[aes][2](aes, source_cols, plot_data)
-            elseif eltype(plot_data[!, aes_dict[a]]) <: Union{AbstractString, AbstractChar}
-                plottable_data = cat_inseq(aes, [aes_dict[a]], plot_data)
-            else
-                plottable_data = as_is(aes, [aes_dict[a]], plot_data)
-            end
+        required_aes_data = [p.makie_function(p.raw) for p in [given_aes[a] for a in Symbol.(required_aes)]]
+        optional_aes_data = [a => p.makie_function(p.raw) for (a, p) in given_aes if !(String(a) in required_aes)]
 
-            # if the transform has a label associated with it, pass that into axis_options
-            if !isnothing(plottable_data[aes].label_target)
-                axis_options[plottable_data[aes].label_target] = plottable_data[aes].label_function(plottable_data[aes].raw)
-            end
-            push!(visual_args_list, plottable_data[aes].makie_function(plottable_data[aes].raw))
-        end
-
-        args = Tuple([geom.visual, visual_args_list...])
-        kwargs = merge(args_dict_makie, visual_optional_aes)
+        args = Tuple([geom.visual, required_aes_data...])
+        kwargs = merge(args_dict_makie, Dict(optional_aes_data))
 
         # push completed PlotSpec (type, args, and kwargs) to the list of plots
 

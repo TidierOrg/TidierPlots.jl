@@ -103,10 +103,18 @@ function kernel_density_2d(target::Symbol, source::Vector{Symbol}, data::DataFra
 
     k = kde((data[!, source[1]], data[!, source[2]]))
 
-    return Dict{Symbol, PlottableData}(
-        target => PlottableData(k.density, 
+    return_dict = Dict{Symbol, PlottableData}(
+        :x => PlottableData(k.x, identity, nothing, nothing),
+        :y => PlottableData(k.y, identity, nothing, nothing),
+        :z => PlottableData(k.density, 
             identity, 
             nothing,
             nothing)
     )
+
+    return return_dict
+end
+
+function discard(target::Symbol, source::Vector{Symbol}, data::DataFrame)
+    return Dict{Symbol, PlottableData}()
 end

@@ -65,20 +65,20 @@ function Makie.SpecApi.Axis(plot::GGPlot)
             # if there is a specified column transformation, use it
             # otherwise use cat_inseq for string-like columns and as_is for everything else
             if haskey(geom.column_transformations, aes)
-                plottable_data = geom.column_transformations[aes](aes, plot_data)
+                plottable_data = geom.column_transformations[aes](aes, [aes_dict[a]], plot_data)
             elseif eltype(plot_data[!, aes_dict[a]]) <: Union{AbstractString, AbstractChar}
-                plottable_data = cat_inseq(aes, plot_data)
+                plottable_data = cat_inseq(aes, [aes_dict[a]], plot_data)
             else
-                plottable_data = as_is(aes, plot_data)
+                plottable_data = as_is(aes, [aes_dict[a]], plot_data)
             end
 
             # if the transform has a label associated with it, pass that into axis_options
-            if !isnothing(plottable_data.label_target)
-                axis_options[label_target] = plottable_data.label_function(plottable_data.raw)
+            if !isnothing(plottable_data[aes].label_target)
+                axis_options[plottable_data[aes].label_target] = plottable_data[aes].label_function(plottable_data[aes].raw)
             end
 
             # add the transformed data to list to eventually be passed to the plots kwargs
-            push!(visual_optional_aes, aes => plottable_data.makie_function(plottable_data.raw))
+            push!(visual_optional_aes, aes => plottable_data[aes].makie_function(plottable_data[aes].raw))
         end
 
         # which ones were given as arguments? 
@@ -111,18 +111,18 @@ function Makie.SpecApi.Axis(plot::GGPlot)
             # if there is a specified column transformation, use it
             # otherwise use cat_inseq for string-like columns and as_is for everything else
             if haskey(geom.column_transformations, aes)
-                plottable_data = geom.column_transformations[aes](aes_dict[a], plot_data)
+                plottable_data = geom.column_transformations[aes](aes, [aes_dict[a]], plot_data)
             elseif eltype(plot_data[!, aes_dict[a]]) <: Union{AbstractString, AbstractChar}
-                plottable_data = cat_inseq(aes_dict[a], plot_data)
+                plottable_data = cat_inseq(aes, [aes_dict[a]], plot_data)
             else
-                plottable_data = as_is(aes_dict[a], plot_data)
+                plottable_data = as_is(aes, [aes_dict[a]], plot_data)
             end
 
             # if the transform has a label associated with it, pass that into axis_options
-            if !isnothing(plottable_data[aes_dict[a]].label_target)
-                axis_options[plottable_data[aes_dict[a]].label_target] = plottable_data[aes_dict[a]].label_function(plottable_data[aes_dict[a]].raw)
+            if !isnothing(plottable_data[aes].label_target)
+                axis_options[plottable_data[aes].label_target] = plottable_data[aes].label_function(plottable_data[aes].raw)
             end
-            push!(visual_args_list, plottable_data[aes_dict[a]].makie_function(plottable_data[aes_dict[a]].raw))
+            push!(visual_args_list, plottable_data[aes].makie_function(plottable_data[aes].raw))
         end
 
         args = Tuple([geom.visual, visual_args_list...])

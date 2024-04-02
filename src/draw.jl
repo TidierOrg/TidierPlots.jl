@@ -19,28 +19,29 @@ function Makie.SpecApi.Axis(plot::GGPlot)
 
     # What type does the Makie argument expect? 
     # without a specified type here, arguments will pass "as is"
+    
     expected_type = Dict{String, Type}(
         # Symbol
-        "marker" => Symbol,
-        "strokecolor" => Symbol,
-        "glowcolor" => Symbol,
-        "colormap" => Symbol,
+        "marker"        => Symbol,
+        "strokecolor"   => Symbol,
+        "glowcolor"     => Symbol,
+        "colormap"      => Symbol,
         "yaxisposition" => Symbol,
-        "direction" => Symbol,
+        "direction"     => Symbol,
         # Float
-        "alpha" => Float32,
-        "markersize" => Float32,
-        "strokewidth" => Float32,
-        "glowwidth" => Float32,
+        "alpha"         => Float32,
+        "markersize"    => Float32,
+        "strokewidth"   => Float32,
+        "glowwidth"     => Float32,
         # Integer
-        "bins" => Int64
+        "bins"          => Int64
     )
 
     plot_list = Makie.PlotSpec[]
     axis_options = Dict{Symbol, Any}()
 
     for geom in plot.geoms
-        # use the dataframe specified in the geom if present, otherwise default to the ggplot one
+        # use the dataframe specified in the geom if present, otherwise use the ggplot one
         plot_data = isnothing(geom.data) ? plot.data : geom.data
 
         # inherit any aes specified at the ggplot level
@@ -56,35 +57,28 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         # which optional aesthetics were given?
         optional_aes_given = [k for (k, v) in aes_dict if !(k in required_aes)]
         visual_optional_aes = Dict{Symbol, Any}()
-
-        dont_categorize = ["text", "label"]
         
         for a in optional_aes_given
-            if haskey(ggplot_to_makie_geom, a)
-                aes = Symbol(ggplot_to_makie_geom[a])
-            else
-                aes = Symbol(a)
-            end
-            
-            if a in dont_categorize
-                column_data = String.(plot_data[!, aes_dict[a]])
+            # the name of the aes is translated to the makie term if needed
+            aes = haskey(ggplot_to_makie_geom, a) ? Symbol(ggplot_to_makie_geom[a]) : Symbol(a)
+
+            # if there is a specified column transformation, use it
+            # otherwise use cat_inseq for string-like columns and as_is for everything else
+            if haskey(geom.column_transformations, aes)
+                plottable_data = geom.column_transformations[aes](aes, plot_data)
             elseif eltype(plot_data[!, aes_dict[a]]) <: Union{AbstractString, AbstractChar}
-                if haskey(plot.axis_options, "cat_inorder")
-                    cat_column = plot_data[!, aes_dict[a]]
-                    cat_array = CategoricalArray(cat_column,
-                                                 levels = unique(cat_column),
-                                                 ordered = true)
-                else
-                    cat_array = CategoricalArray(plot_data[!, aes_dict[a]])
-                end
-                column_data = levelcode.(cat_array)
-                labels = levels(cat_array)
-                args_dict[a * "ticks"] = (1:length(labels), labels)
+                plottable_data = cat_inseq(aes, plot_data)
             else
-                column_data = plot_data[!, aes_dict[a]]
+                plottable_data = as_is(aes, plot_data)
             end
 
-            push!(visual_optional_aes, aes => column_data)
+            # if the transform has a label associated with it, pass that into axis_options
+            if !isnothing(plottable_data.label_target)
+                axis_options[label_target] = plottable_data.label_function(plottable_data.raw)
+            end
+
+            # add the transformed data to list to eventually be passed to the plots kwargs
+            push!(visual_optional_aes, aes => plottable_data.makie_function(plottable_data.raw))
         end
 
         # which ones were given as arguments? 
@@ -112,28 +106,23 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         # make a Tuple that contains the columns from the data in their required order to pass to PlotSpec
         visual_args_list = []
 
-        for req_aes in required_aes
-
-            if req_aes in dont_categorize
-                column_data = String.(plot_data[!, aes_dict[req_aes]])
-            elseif eltype(plot_data[!, aes_dict[req_aes]]) <: Union{AbstractString, AbstractChar}
-                if haskey(plot.axis_options, "cat_inorder")
-                    cat_column = plot_data[!, aes_dict[req_aes]]
-                    cat_array = CategoricalArray(cat_column, levels = unique(cat_column), ordered = true)
-                else
-                    cat_array = CategoricalArray(plot_data[!, aes_dict[req_aes]])
-                end
-                column_data = levelcode.(cat_array)
-                labels = levels(cat_array)
-                axis_options[Symbol(req_aes * "ticks")] = (1:length(labels), labels)
+        for a in required_aes
+            aes = Symbol(a)
+            # if there is a specified column transformation, use it
+            # otherwise use cat_inseq for string-like columns and as_is for everything else
+            if haskey(geom.column_transformations, aes)
+                plottable_data = geom.column_transformations[aes](aes_dict[a], plot_data)
+            elseif eltype(plot_data[!, aes_dict[a]]) <: Union{AbstractString, AbstractChar}
+                plottable_data = cat_inseq(aes_dict[a], plot_data)
             else
-                if plot_data isa DataFrame
-                    column_data = plot_data[!, aes_dict[req_aes]]
-                else
-                    column_data = plot_data[aes_dict[req_aes]]
-                end
+                plottable_data = as_is(aes_dict[a], plot_data)
             end
-            push!(visual_args_list, column_data)
+
+            # if the transform has a label associated with it, pass that into axis_options
+            if !isnothing(plottable_data[aes_dict[a]].label_target)
+                axis_options[plottable_data[aes_dict[a]].label_target] = plottable_data[aes_dict[a]].label_function(plottable_data[aes_dict[a]].raw)
+            end
+            push!(visual_args_list, plottable_data[aes_dict[a]].makie_function(plottable_data[aes_dict[a]].raw))
         end
 
         args = Tuple([geom.visual, visual_args_list...])
@@ -142,12 +131,6 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         # push completed PlotSpec (type, args, and kwargs) to the list of plots
 
         push!(plot_list, Makie.PlotSpec(args...; kwargs...))
-    end
-
-    # remove options from args_dict that are not meant for Makie
-
-    if haskey(plot.axis_options, "cat_inorder")
-        delete!(plot.axis_options, "cat_inorder")
     end
 
     # rename and correct types on all axis options

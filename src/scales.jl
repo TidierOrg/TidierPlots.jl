@@ -14,7 +14,13 @@ function continuous_scale_to_ggoptions(args_dict::Dict)
         options_dict[args_dict["scale"] * "reversed"] = args_dict["reversed"]
     end
 
-    return AxisOptions(Dict(Symbol(k) => v for (k, v) in options_dict))
+    if haskey(args_dict, "labels")
+        options_dict[Symbol(args_dict["scale"] * "tickformat")] = args_dict["labels"]
+    end
+
+    return AxisOptions(
+        Dict(Symbol(k) => v for (k, v) in options_dict)
+    )
 
 end 
 
@@ -50,7 +56,7 @@ end
 # Generator - generates two function signatures
 
 function scale_template(scale, f; trans = nothing, reverse = nothing)
-    function scale_function(args...; kwargs...)
+    function scale_function(args...; trans = trans, reverse = reverse, scale = scale, f = f, kwargs...)
         aes_dict, args_dict = extract_aes(args, kwargs)
         if !isnothing(scale) 
             args_dict["scale"] = scale
@@ -61,10 +67,10 @@ function scale_template(scale, f; trans = nothing, reverse = nothing)
         if !isnothing(reverse)
             args_dict["reversed"] = reverse
         end
-        
+        println(args_dict)
         return f(args_dict)
     end
-    function scale_function(plot::GGPlot, args...; kwargs...)
+    function scale_function(plot::GGPlot, args...; trans = trans, reverse = reverse, scale = scale, f = f, kwargs...)
         aes_dict, args_dict = extract_aes(args, kwargs)
         if !isnothing(scale) 
             args_dict["scale"] = scale
@@ -75,7 +81,7 @@ function scale_template(scale, f; trans = nothing, reverse = nothing)
         if !isnothing(reverse)
             args_dict["reversed"] = reverse
         end
-        
+        println(args_dict)
         return plot + f(args_dict)
     end
     return scale_function

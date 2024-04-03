@@ -9,6 +9,7 @@ using CategoricalArrays
 using GLM
 using Loess
 using KernelDensity
+using Colors
 
 # functions to compare two images using a difference hash
 # essentially copied from ImageHashes.jl, but package is out of date

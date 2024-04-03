@@ -68,6 +68,9 @@ function Makie.SpecApi.Axis(plot::GGPlot)
                 plottable_data = geom.column_transformations[aes][2](aes, source_cols, plot_data)
             elseif eltype(plot_data[!, aes_dict[a]]) <: Union{AbstractString, AbstractChar}
                 plottable_data = cat_inseq(aes, [aes_dict[a]], plot_data)
+                if aes in [:color, :fill]
+                    plottable_data[aes] = as_color(plottable_data[aes])
+                end
             else
                 plottable_data = as_is(aes, [aes_dict[a]], plot_data)
             end

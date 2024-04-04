@@ -29,9 +29,7 @@ function make_aes_extractor(required_aes)
         if !isnothing(transforms)
             rev_aes_dict = Dict([v => k for (k, v) in aes_dict])
             transforms = Dict([Symbol(rev_aes_dict[k]) => [Symbol(rev_aes_dict[k])] => v for (k, v) in transforms])
-            println(transforms)
         else
-            println("TRANSFORMS EMPTY")
             transforms = Dict{Symbol, Pair{Vector{Symbol}, AesTransform}}()
         end
 

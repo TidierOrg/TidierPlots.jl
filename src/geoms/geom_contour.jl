@@ -11,7 +11,7 @@ end
 geom_tile = geom_template("geom_tile", ["x", "y", "z"], :Heatmap)
 geom_contour = geom_template("geom_contour", ["x", "y"], :Contour; 
     aes_function = stat_density_2d,
-    column_transformations = Dict{Symbol, Pair{Vector{Symbol}, Function}}(
+    column_transformations = Dict{Symbol, Pair{Vector{Symbol}, AesTransform}}(
         :x => [:x]=>discard,
         :y => [:y]=>discard,
         :z => [:x, :y]=>kernel_density_2d))

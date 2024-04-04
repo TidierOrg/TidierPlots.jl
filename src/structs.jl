@@ -21,6 +21,7 @@ end
 struct Aesthetics
     positional::AbstractArray
     named::Dict
+    column_transformations::Dict
 end
 
 struct AxisOptions

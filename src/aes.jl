@@ -1,7 +1,32 @@
 function aes(args...; kwargs...)
+    col_transforms = Dict()
+    aes_args = Symbol[]
+    aes_kwargs = Dict{String, Symbol}()
+
+    for arg in args
+        if arg isa Pair
+            push!(col_transforms, arg)
+            push!(aes_args, arg[1])
+        else
+            push!(aes_args, Symbol(arg))
+        end
+    end
+
     d = Dict(kwargs)
-    return Aesthetics(Symbol.([args...]),
-        Dict([String(key) => Symbol(d[key]) for key in keys(d)]))
+
+    for (k, v) in d
+        if v isa Pair
+            push!(col_transforms, v)
+            push!(aes_kwargs, String(k) => Symbol(v[1]))
+        else
+            push!(aes_kwargs, String(k) => Symbol(v))
+        end
+    end
+        
+    return Aesthetics(
+            aes_args,
+            aes_kwargs,
+            col_transforms)
 end
 
 macro aes(exprs...)
@@ -22,7 +47,7 @@ macro aes(exprs...)
             push!(positional, Symbol(aes_ex))
         end
     end
-    return Aesthetics(positional, aes_dict)
+    return Aesthetics(positional, aes_dict, Dict())
 end
 
 @eval const $(Symbol("@es")) = $(Symbol("@aes"))

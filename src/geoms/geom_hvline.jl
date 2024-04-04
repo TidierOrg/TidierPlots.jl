@@ -1,5 +1,5 @@
 function geom_hline(args...; kwargs...)
-    aes_dict, args_dict = extract_aes(args, kwargs)
+    aes_dict, args_dict, transforms = extract_aes(args, kwargs)
     
     args_dict["geom_name"] = "geom_hline"
 
@@ -11,7 +11,8 @@ function geom_hline(args...; kwargs...)
     return build_geom(aes_dict, args_dict, 
         ["yintercept"], # required aesthetics
         :HLines,
-        do_nothing, Dict{Symbol, Pair{Vector{Symbol}, Function}}()) # function for visual layer  
+        do_nothing, 
+        transforms) # function for visual layer  
 end
 
 function geom_vline(args...; kwargs...)
@@ -27,7 +28,8 @@ function geom_vline(args...; kwargs...)
     return build_geom(aes_dict, args_dict, 
         ["xintercept"], # required aesthetics
         :VLines,
-        do_nothing, Dict{Symbol, Pair{Vector{Symbol}, Function}}()) # function for visual layer   
+        do_nothing, 
+        transforms) # function for visual layer   
 end
 
 function geom_hline(plot::GGPlot, args...; kwargs...)

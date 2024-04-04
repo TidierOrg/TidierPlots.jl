@@ -31,7 +31,7 @@ function geom_smooth(plot::GGPlot, args...; kwargs...)
 end
 
 function geom_smooth(args...; kwargs...)
-    aes_dict, args_dict = extract_aes(args, kwargs)
+    aes_dict, args_dict, transforms = extract_aes(args, kwargs)
     args_dict["geom_name"] = "geom_smooth"
 
     if haskey(args_dict, "method")
@@ -41,13 +41,13 @@ function geom_smooth(args...; kwargs...)
                         ["x", "y"],
                         :Lines, 
                         stat_linear,
-                        Dict{Symbol, Pair{Vector{Symbol}, Function}}()),
+                        transforms),
                     build_geom(aes_dict,
                         args_dict, 
                         ["x", "lower", "upper"],
                         :Band, 
                         stat_linear,
-                        Dict{Symbol, Pair{Vector{Symbol}, Function}}())]
+                        transforms)]
         end
     end
 
@@ -56,7 +56,7 @@ function geom_smooth(args...; kwargs...)
                       ["x", "y"],
                       :Lines, 
                       stat_loess,
-                      Dict{Symbol, Pair{Vector{Symbol}, Function}}())
+                      transforms)
 end
 
 function stat_loess(aes_dict::Dict{String, Symbol}, 

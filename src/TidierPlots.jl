@@ -99,6 +99,11 @@ export scale_colour_continuous, scale_color_continuous
 export scale_colour_discrete, scale_color_discrete
 export scale_colour_manual, scale_color_manual
 
+# transforms
+
+export cat_inseq, cat_inorder, number_on_axis, as_is, discard, verbatim, kernel_density_2d
+export as_color
+
 const plot_log = Ref{Bool}(true)
 const plot_show = Ref{Bool}(true)
 const plot_pluto = Ref{Bool}(true)

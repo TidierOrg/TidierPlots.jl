@@ -1,5 +1,5 @@
 function geom_errorbar(args...; kwargs...)
-    aes_dict, args_dict = extract_aes(args, kwargs)
+    aes_dict, args_dict, transforms = extract_aes(args, kwargs)
 
     args_dict["geom_name"] = "geom_errorbar"
     
@@ -7,12 +7,12 @@ function geom_errorbar(args...; kwargs...)
         ["x", "ymin", "ymax"], # required aesthetics
         :Rangebars, # function for visual layer
         do_nothing,
-        Dict{Symbol, Pair{Vector{Symbol}, Function}}();
+        transforms;
         special_aes = Dict("width" => "whiskerwidth")) 
 end
 
 function geom_errorbarh(args...; kwargs...)
-    aes_dict, args_dict = extract_aes(args, kwargs)
+    aes_dict, args_dict, transforms = extract_aes(args, kwargs)
 
     args_dict["geom_name"] = "geom_errorbarh"
     args_dict["errorbar_direction"] = :x
@@ -21,7 +21,7 @@ function geom_errorbarh(args...; kwargs...)
         ["y", "xmin", "xmax"], # required aesthetics
         :Rangebars, # function for visual layer
         do_nothing,
-        Dict{Symbol, Pair{Vector{Symbol}, Function}}();
+        transforms;
         special_aes = Dict("width" => "whiskerwidth")) 
 
 end

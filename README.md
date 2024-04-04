@@ -102,8 +102,8 @@ Sort your categorical variables in order of appearance with a single keyword rat
 @chain cars begin
     @count(manufacturer)
     @arrange(n)
-    ggplot(cat_inorder = true, xticklabelrotation = .5)
-        geom_col(@aes(y = n, x = manufacturer))
+    ggplot(xticklabelrotation = .5)
+        geom_col(aes(y = :n, x = cat_inorder(:manufacturer)))
 end
 ```
 ![](assets/in_order.png)

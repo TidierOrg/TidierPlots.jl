@@ -148,6 +148,27 @@ end
 
 discard = AesTransform(discard_fn)
 
+# generic function -> AesTransform creator
+
+function aesthetics_function(generic_fn::Function)
+    function aes_fn(target::Symbol, source::Vector{Symbol}, data::DataFrame)
+        return Dict{Symbol, PlottableData}(
+            target => PlottableData(
+                data[!, source[1]],        # get the column out of the dataframe
+                generic_fn,                # apply generic_fn to it
+                nothing,            
+                nothing                   
+            )
+        )
+    end
+    
+    return AesTransform(aes_fn)
+end
+
+import Base.:>> 
+
+Base.:>>(sym::Symbol, fn::Function) = aesthetics_function(fn)(sym)
+
 # tweaks
 # takes an existing PlottableData object and modifies the makie_function
 

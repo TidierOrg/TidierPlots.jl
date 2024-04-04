@@ -103,6 +103,7 @@ export scale_colour_manual, scale_color_manual
 
 export cat_inseq, cat_inorder, number_on_axis, as_is, discard, verbatim, kernel_density_2d
 export as_color
+export aesthetics_function
 
 const plot_log = Ref{Bool}(true)
 const plot_show = Ref{Bool}(true)

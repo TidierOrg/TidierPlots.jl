@@ -80,7 +80,7 @@ function Makie.SpecApi.Axis(plot::GGPlot)
                 axis_options[plottable_data[aes].label_target] = plottable_data[aes].label_function(plottable_data[aes].raw)
             end
 
-            # add the transformed data to list to eventually be passed to the plots kwargs
+            # add the transformed data to list to eventually be passed to the plot args/kwargs
             merge!(given_aes, plottable_data)
         end
 

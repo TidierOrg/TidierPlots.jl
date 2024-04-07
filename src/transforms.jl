@@ -28,8 +28,8 @@ end
 # When called with a string or symbol, as would happen in an aes() call
 # returns a dict of the same type used in column_transformations
 
-(at::AesTransform)(sym::Symbol) = sym         => at
-(at::AesTransform)(str::String) = Symbol(str) => at
+(at::AesTransform)(sym::Symbol) = [sym]         => at
+(at::AesTransform)(str::String) = [Symbol(str)] => at
 
 # simplest one is as_is, which just gets a column 
 # exactly as it is in the DataFrame
@@ -168,6 +168,46 @@ end
 import Base.:>> 
 
 Base.:>>(sym::Symbol, fn::Function) = aesthetics_function(fn)(sym)
+
+# 'rithm'tic (dubious implementation)
+
+import Base.:+
+
+function add_cols_fn(target::Symbol, source::Vector{Symbol}, data::DataFrame)
+    result = data[!, source[1]] .+ data[!, source[2]]
+    return Dict{Symbol, PlottableData}(
+        target => PlottableData(
+            result,        
+            identity,                
+            nothing,            
+            nothing                   
+        )
+    )
+end
+
+function make_add_const_function(constant::Real)
+    return function add_const_fn(target::Symbol, source::Vector{Symbol}, data::DataFrame)
+        result = data[!, source[1]] .+ constant
+        return Dict{Symbol, PlottableData}(
+            target => PlottableData(
+                result,        # get the column out of the dataframe
+                identity,      # apply generic_fn to it
+                nothing,            
+                nothing                   
+            )
+        )
+    end
+end
+
+Base.:+(s1::Symbol, s2::Symbol) = [s1, s2] => AesTransform(add_cols_fn)
+Base.:+(s1::Symbol, s2::Real) = s1 => AesTransform(make_add_const_function(s2))
+Base.:+(s2::Real, s1::Symbol) = s1 => AesTransform(make_add_const_function(s2))
+#import Base.:-
+#import Base.:/
+#import Base.:*
+
+
+
 
 # tweaks
 # takes an existing PlottableData object and modifies the makie_function

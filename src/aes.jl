@@ -5,8 +5,7 @@ function aes(args...; kwargs...)
 
     for arg in args
         if arg isa Pair
-            push!(col_transforms, arg)
-            push!(aes_args, arg[1])
+            @error "Calculated columns currently do not support positional aes specification."
         else
             push!(aes_args, Symbol(arg))
         end
@@ -16,8 +15,13 @@ function aes(args...; kwargs...)
 
     for (k, v) in d
         if v isa Pair
-            push!(col_transforms, v)
-            push!(aes_kwargs, String(k) => Symbol(v[1]))
+            replace_v = Symbol[]
+            for (source_index, source_colname) in enumerate(v[1])
+                push!(aes_kwargs, String(k) * string(source_index) => Symbol(source_colname))
+                push!(replace_v, Symbol(String(k) * string(source_index)))
+            end
+            push!(col_transforms, Symbol(k) => replace_v => v[2])
+            push!(aes_kwargs, String(k) => :Calculated)
         else
             push!(aes_kwargs, String(k) => Symbol(v))
         end

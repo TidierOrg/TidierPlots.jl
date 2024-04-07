@@ -81,14 +81,10 @@ You will likely want to disable both of these if you are working in a notebook e
 
 ## Differences from ggplot2
 
-The goal of this package is to allow you to write code that is as similar to ggplot2 code as possible. The only difference in basic usage is in the `aes()` function. TidierPlots.jl accepts multiple forms for aes specification, none of which is *exactly* the same as ggplot2.
+The goal of this package is to allow you to write code that is as similar to ggplot2 code as possible. The only difference in basic usage is in the `aes()` function. TidierPlots.jl accepts two forms for aes specification, neither of which is *exactly* the same as ggplot2.
 
-- Option 1: `@aes` macro, aes as in ggplot, e.g. `@aes(x = x, y = y)`
-- Option 2: `@es` macro, aes as in ggplot, e.g. `@es(x = x, y = y)`
-- Option 3: `aes` function, julia-style columns, e.g. `aes(x = :x, y = :y)`
-- Option 4: `aes` function, strings for columns, e.g. `aes(x = "x", y = "y")`
-
-Specifying aes options positionally, e.g. `aes("x", "y")` is also supported for required aesthetics.
+- Option 1: `@aes` macro, aes as in ggplot, e.g. `@aes(x = x, y = y)` or `@aes(x, y)`
+- Option 2: `aes` function, julia-style columns, e.g. `aes(x = :x, y = :y)` or `aes(:x, :y)`
 
 ## Why would I use this instead of ggplot2? 
 

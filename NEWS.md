@@ -1,5 +1,14 @@
 # TidierPlots.jl updates
 
+# v0.6.3 - 2024-04-07
+
+- Support for `+`, `-`, `*`, and `/` inside `aes` function to specify calculated aesthetics
+- Experimental support for functions applied to symbols in `aes` to allow arbitrarily complex calculated aesthetics (use `>>` operator to "pipe" the aes symbol to the function, or use `aesthetics_function(your_function::Function)` to create a version of the function that will work inside `aes` "normally", e.g. `aes(your_function(:x))`)
+
+# v0.6.2 - 2024-04-03
+
+- Custom labelling functions or formatting strings from Format.jl can now be passed to scales
+
 # v0.6.1 - 2024-04-02
 - Tests have been added for all currently supported geom_* functions
 - Bug Fix: Repairs geoms that were broken by removal of AlgebraOfGraphics

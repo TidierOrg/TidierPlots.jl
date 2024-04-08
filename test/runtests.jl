@@ -32,6 +32,7 @@ set_theme!(theme_ggplot2())
 # see files for tests
 
 include("test_aes.jl")
+include("test_aes_ops.jl")
 include("test_geoms.jl")
 include("test_labs.jl")
 include("test_lims.jl")

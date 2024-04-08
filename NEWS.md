@@ -1,5 +1,10 @@
 # TidierPlots.jl updates
 
+# v0.6.4 - 2024-04-08
+
+- Bug Fix: Implementations of subtract and divide in 0.6.3 were not correct
+- Functions wrapped with `aesthetics_function` can now be applied to multiple columns in aes
+
 # v0.6.3 - 2024-04-07
 
 - Support for `+`, `-`, `*`, and `/` inside `aes` function to specify calculated aesthetics

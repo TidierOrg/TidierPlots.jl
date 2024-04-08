@@ -98,7 +98,7 @@ geom_point(aes(x = :x >> my_fn))
 geom_point(aes(x = my_aes_fn(:x)))
 ```
 
-Functions can take multiple columns as input (up to two, currently). The following `geom_point` specifications are equivalent, and result in `x / y` being plotted as the x axis of the graph: 
+Functions can take multiple columns as input (up to two, currently). The following `geom_point` specifications are equivalent, and result in `x / y` (where `x` and `y` are the names of columns in a DataFrame) being plotted as the x axis of the graph: 
 
 ```
 my_new_fn(x, y) = x ./ y

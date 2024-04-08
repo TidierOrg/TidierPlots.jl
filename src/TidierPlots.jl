@@ -27,6 +27,7 @@ include("structs.jl")
 
 include("addplots.jl")
 include("aes.jl")
+include("aes_ops.jl")
 include("draw.jl")
 include("extract_aes.jl")
 #include("facets.jl")

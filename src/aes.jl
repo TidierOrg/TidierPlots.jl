@@ -38,7 +38,10 @@ macro aes(exprs...)
     positional = Symbol[]
     for aes_ex in exprs
         if aes_ex isa Expr
-            if aes_ex.args[2] isa QuoteNode
+            if aes_ex.args[2] isa Expr
+                
+                
+            elseif aes_ex.args[2] isa QuoteNode
                 aes_dict[String(aes_ex.args[1])] = aes_ex.args[2].value
             elseif aes_ex.args[2] isa String
                 aes_dict[String(aes_ex.args[1])] = Symbol(aes_ex.args[2])

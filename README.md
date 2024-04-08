@@ -105,7 +105,7 @@ my_new_fn(x, y) = x ./ y
 my_new_aes_fn = aesthetics_function(my_new_fn)
 
 geom_point(aes(x = :x/:y))
-geom_point(aes(x = my_aes_fn(:x, :y)))
+geom_point(aes(x = my_new_aes_fn(:x, :y)))
 ```
 
 ## Why would I use this instead of ggplot2? 

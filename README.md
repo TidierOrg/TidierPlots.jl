@@ -83,8 +83,20 @@ You will likely want to disable both of these if you are working in a notebook e
 
 The goal of this package is to allow you to write code that is as similar to ggplot2 code as possible. The only difference in basic usage is in the `aes()` function. TidierPlots.jl accepts two forms for aes specification, neither of which is *exactly* the same as ggplot2.
 
-- Option 1: `@aes` macro, aes as in ggplot, e.g. `@aes(x = x, y = y)` or `@aes(x, y)`
-- Option 2: `aes` function, julia-style columns, e.g. `aes(x = :x, y = :y)` or `aes(:x, :y)`
+- Option 1: `aes` function, julia-style columns, e.g. `aes(x = :x, y = :y)` or `aes(:x, :y)`
+- Option 2: `@aes` (or `@es`) macro, aes as in ggplot, e.g. `@aes(x = x, y = y)` or `@aes(x, y)`
+- Option 3 (Deprecated): `aes` function, column names as strings, e.g. `aes(x = "x", y = "y")` or `aes("x", "y")`
+
+If you use Option 1, you get experimental support for calculations inside aes, including `+`, `-`, `*`, `/` and function application. Functions can be applied to columns with the `>>` operator, or wrapped for aes use with the `aesthetics_function()` command. The following geom_point specifications are equivalent: 
+
+```
+my_func(x) = x ./ 10
+my_aes_func = aesthetics_function(my_func)
+
+geom_point(aes(x = :x/10))
+geom_point(aes(x = :x >> my_func))
+geom_point(aes(x = my_aes_func(:x)))
+```
 
 ## Why would I use this instead of ggplot2? 
 

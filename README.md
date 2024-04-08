@@ -90,12 +90,22 @@ The goal of this package is to allow you to write code that is as similar to ggp
 If you use Option 1, you get experimental support for calculations inside aes, including `+`, `-`, `*`, `/` and function application. Functions can be applied to columns with the `>>` operator, or wrapped for aes use with the `aesthetics_function()` command. The following geom_point specifications are equivalent: 
 
 ```
-my_func(x) = x ./ 10
-my_aes_func = aesthetics_function(my_func)
+my_fn(x) = x ./ 10
+my_aes_fn = aesthetics_function(my_fn)
 
 geom_point(aes(x = :x/10))
-geom_point(aes(x = :x >> my_func))
-geom_point(aes(x = my_aes_func(:x)))
+geom_point(aes(x = :x >> my_fn))
+geom_point(aes(x = my_aes_fn(:x)))
+```
+
+Functions can take multiple columns as input (up to two, currently). The following `geom_point` specifications are equivalent, and result in `x / y` being plotted as the x axis of the graph: 
+
+```
+my_new_fn(x, y) = x ./ y
+my_new_aes_fn = aesthetics_function(my_new_fn)
+
+geom_point(aes(x = :x/:y))
+geom_point(aes(x = my_aes_fn(:x, :y)))
 ```
 
 ## Why would I use this instead of ggplot2? 

@@ -31,6 +31,9 @@ end
 (at::AesTransform)(sym::Symbol) = [sym]         => at
 (at::AesTransform)(str::String) = [Symbol(str)] => at
 
+(at::AesTransform)(s1::Symbol, s2::Symbol) = [s1, s2]                 => at
+(at::AesTransform)(s1::String, s2::String) = [Symbol(s1), Symbol(s2)] => at
+
 # simplest one is as_is, which just gets a column 
 # exactly as it is in the DataFrame
 
@@ -152,10 +155,12 @@ discard = AesTransform(discard_fn)
 
 function aesthetics_function(generic_fn::Function)
     function aes_fn(target::Symbol, source::Vector{Symbol}, data::DataFrame)
+        result = generic_fn([data[!, s] for s in source]...)
+
         return Dict{Symbol, PlottableData}(
             target => PlottableData(
-                data[!, source[1]],        # get the column out of the dataframe
-                generic_fn,                # apply generic_fn to it
+                result,        # put the result in raw
+                identity,      # do nothing
                 nothing,            
                 nothing                   
             )

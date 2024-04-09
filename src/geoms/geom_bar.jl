@@ -70,6 +70,18 @@ function handle_position(aes_dict::Dict{String, Symbol},
                 @ungroup
             end
         end
+    else # this is for geom_col
+        if haskey(args_dict, "direction")
+
+        else if plot_data[!, aes_dict["x"]] <: Union{AbstractString, AbstractChar}
+        grouping_var = Symbol(aes_dict["x"])
+        aes_dict["y"] = :count
+        required_aes = ["x", "y"]
+        elseif haskey(aes_dict, "y") && !haskey(aes_dict, "x")
+            grouping_var = Symbol(aes_dict["y"])
+            aes_dict["x"] = :count
+            args_dict["direction"] = "x"
+            required_aes = ["y", "x"]
     end
 
     return (aes_dict, args_dict, required_aes, plot_data)

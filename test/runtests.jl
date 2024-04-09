@@ -18,7 +18,7 @@ include("difference_hash.jl")
 
 # load the penguins dataset
 
-penguins = DataFrame(JDF.load(joinpath(@__DIR__, "penguins.jdf")))
+penguins = dropmissing(DataFrame(JDF.load(joinpath(@__DIR__, "penguins19.jdf"))))
 
 # configure TidierPlots to not show the plot and not output logs
 

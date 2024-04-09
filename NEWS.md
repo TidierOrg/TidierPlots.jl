@@ -1,6 +1,7 @@
 # TidierPlots.jl updates
 
-# v0.6.5
+# v0.6.5 - 2024-04-09
+
 - Allow use of Julia 1.9 (1.10 is still the recommended version)
 
 # v0.6.4 - 2024-04-08
@@ -18,6 +19,7 @@
 - Custom labelling functions or formatting strings from Format.jl can now be passed to scales
 
 # v0.6.1 - 2024-04-02
+
 - Tests have been added for all currently supported geom_* functions
 - Bug Fix: Repairs geoms that were broken by removal of AlgebraOfGraphics
 - Basic functionality from {patchwork} (`+`, `|`, and `/` operators for plot composition) is now supported
@@ -27,6 +29,7 @@
 - Adds functionality to automatically convert arguments to Types expected by Makie.jl
 
 # v0.6.0 - 2024-02-27
+
 - Dependency on AlgebraOfGraphics.jl removed
 - Support for positional aes specification (e.g. @aes(x, y) instead of @aes(x = x, y = y))
 - Support for horizontal bars in geom_bar and geom_col
@@ -34,18 +37,22 @@
 - Breaks: geom_smooth, geom_contour, facet_wrap, facet_grid, all tests
 
 # v0.5.5 - 2024-02-20
+
 - Bug fix: Documentation now deploys correctly
 - Documentation has been expanded to include an initial "How To" section
 - Bug fix: geom_hline() and geom_vline() now work as expected
 - Bug fix: linewidth option for geom_line() now works
 
 # v0.5.4 - 2024-01-25
+
 - Bug fix: geom_density now works in Julia v1.10
 - Bug fix: plots now display inside of Pluto.jl
 
 # v0.5.3 - 2023-11-28
+
 - Bug fix: `labs()` and themes work with piping interface
 - Added Chain as dependency and re-export `@chain` - this will make it easier to use the piping interface.
 
 # v0.5.2
+
 - Function-based interface has completely replaced the macro-based interface. 

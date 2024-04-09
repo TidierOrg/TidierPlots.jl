@@ -60,7 +60,7 @@ function geom_smooth(args...; kwargs...)
 end
 
 function stat_loess(aes_dict::Dict{String, Symbol}, 
-    args_dict::Dict{Any, Any}, required_aes::Vector{String}, plot_data::DataFrame)
+    args_dict::Dict{String, Any}, required_aes::Vector{String}, plot_data::DataFrame)
 
     x = plot_data[!, aes_dict["x"]]
     y = plot_data[!, aes_dict["y"]]

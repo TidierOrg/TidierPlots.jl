@@ -4,7 +4,7 @@ using DataFrames
 using Makie
 using TidierData
 using Images
-using JDF
+using Parquet2
 using CategoricalArrays
 using GLM
 using Loess
@@ -18,7 +18,7 @@ include("difference_hash.jl")
 
 # load the penguins dataset
 
-penguins = dropmissing(DataFrame(JDF.load(joinpath(@__DIR__, "penguins19.jdf"))))
+penguins = DataFrame(Parquet2.readfile(joinpath(@__DIR__, "penguins.parq")))
 
 # configure TidierPlots to not show the plot and not output logs
 

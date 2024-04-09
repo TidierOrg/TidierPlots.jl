@@ -1,5 +1,8 @@
 # TidierPlots.jl updates
 
+# v0.6.5
+- Allow use of Julia 1.9 (1.10 is still the recommended version)
+
 # v0.6.4 - 2024-04-08
 
 - Bug Fix: Implementations of subtract and divide in 0.6.3 were not correct

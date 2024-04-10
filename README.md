@@ -7,7 +7,7 @@
 <img src="/assets/logo.png" align="right" style="padding-left:10px;" width="150"/>
 
 ## What is TidierPlots.jl?
-TidierPlots.jl is a 100% Julia implementation of the R package ggplot in Julia. Powered by AlgebraOfGraphics.jl, Makie.jl, and Julia’s extensive meta-programming capabilities, TidierPlots.jl is an R user’s love letter to data visualization in Julia.
+TidierPlots.jl is a 100% Julia implementation of the R package ggplot in Julia powered by [Makie.jl](https://github.com/MakieOrg/Makie.jl).
 
 `TidierPlots.jl` has three goals, which differentiate it from other plotting packages in Julia:
 
@@ -100,7 +100,7 @@ geom_point(aes(x = my_aes_fn(:x)))
 
 Functions can take multiple columns as input (up to two, currently). The following `geom_point` specifications are equivalent, and result in `x / y` (where `x` and `y` are the names of columns in a DataFrame) being plotted as the x axis of the graph: 
 
-```
+```julia
 my_new_fn(x, y) = x ./ y
 my_new_aes_fn = aesthetics_function(my_new_fn)
 
@@ -116,7 +116,7 @@ geom_point(aes(x = my_new_aes_fn(:x, :y)))
 
 Sort your categorical variables in order of appearance with a single keyword rather than wrestle with factor ordering!
 
-```
+```julia
 @chain cars begin
     @count(manufacturer)
     @arrange(n)
@@ -130,7 +130,7 @@ end
 
 Access to all axis and plot options from `Makie` let you take advantage of nice features like easy `bar_labels`: 
 
-```
+```julia
 df = DataFrame(
     cat = ["left", "left", "left",
            "middle", "middle", "middle",

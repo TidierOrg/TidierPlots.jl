@@ -7,7 +7,7 @@
 <img src="/assets/logo.png" align="right" style="padding-left:10px;" width="150"/>
 
 ## What is TidierPlots.jl?
-TidierPlots.jl is a 100% Julia implementation of the R package ggplot in Julia powered by [Makie.jl](https://github.com/MakieOrg/Makie.jl).
+TidierPlots.jl is a 100% Julia implementation of the R package [ggplot2](https://ggplot2.tidyverse.org/) powered by [Makie.jl](https://github.com/MakieOrg/Makie.jl).
 
 `TidierPlots.jl` has three goals, which differentiate it from other plotting packages in Julia:
 

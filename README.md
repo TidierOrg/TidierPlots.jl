@@ -89,7 +89,7 @@ The goal of this package is to allow you to write code that is as similar to ggp
 
 If you use Option 1, you get experimental support for calculations inside aes, including `+`, `-`, `*`, `/` and function application. Functions can be applied to columns with the `>>` operator, or wrapped for aes use with the `aesthetics_function()` command. The following geom_point specifications are equivalent: 
 
-```
+```julia
 my_fn(x) = x ./ 10
 my_aes_fn = aesthetics_function(my_fn)
 

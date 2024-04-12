@@ -56,7 +56,7 @@ end
 
 function make_color_lookup_binned(args_dict)
     function color_lookup_binned(input)
-        binned_input = floor.(Int, input ./ (maximum(input) / 5))
+        binned_input = floor.(Int, 1 .+ 4 .* ((input .- minimum(input)) ./ (maximum(input) - minimum(input))))
     
         palette = haskey(args_dict, :palette) ? args_dict[:palette] : 
             haskey(args_dict, :values) ? args_dict[:values][1] : nothing
@@ -79,7 +79,7 @@ function make_color_lookup_binned(args_dict)
     return color_lookup_binned
 end
 
-function colour_scale_to_ggoptions(args_dict::Dict)
+function color_scale_to_ggoptions(args_dict::Dict)
 
     lookup = args_dict[:type] == "manual"     ? make_color_lookup_manual(args_dict)     : 
              args_dict[:type] == "discrete"   ? make_color_lookup_discrete(args_dict)   : 
@@ -102,7 +102,7 @@ function colour_scale_to_ggoptions(args_dict::Dict)
                         nothing
                     )
                 )     
-            elseif typeof(input) <: AbstractVector{Int}
+            elseif typeof(input) <: Union{Vector{Int}, Vector{Float64}, Vector{Float32}}
                 return Dict{Symbol, PlottableData}(
                     target => PlottableData(
                         input,
@@ -111,9 +111,9 @@ function colour_scale_to_ggoptions(args_dict::Dict)
                         nothing
                     )
                 ) 
-            else # try to parse whatever it is as an int
+            else # try to parse whatever it is as an int, error if not successful
                 try
-                    int_array = floor.(Int, input)
+                    int_array = parse.(Int, input)
                 catch
                     scale = args_dict[:scale]
                     @error "Column is not compatible with scale: $scale"
@@ -140,7 +140,7 @@ function colour_scale_to_ggoptions(args_dict::Dict)
     )
 end
 
-function colour_scale_template(scale, f, type)
+function color_scale_template(scale, f, type)
     function scale_function(args...; scale = scale, f = f, type = type, kwargs...)
         args_dict = merge(Dict(kwargs), Dict())
         args_dict[:scale] = scale
@@ -164,11 +164,11 @@ end
 
 # scale definitions
 
-scale_colour_manual =     colour_scale_template("colour", colour_scale_to_ggoptions, "manual")
-scale_color_manual =      colour_scale_template("color",  colour_scale_to_ggoptions, "manual")
-scale_colour_discrete =   colour_scale_template("colour", colour_scale_to_ggoptions, "discrete")
-scale_color_discrete =    colour_scale_template("color",  colour_scale_to_ggoptions, "discrete")
-scale_colour_continuous = colour_scale_template("colour", colour_scale_to_ggoptions, "continuous")
-scale_color_continuous =  colour_scale_template("color",  colour_scale_to_ggoptions, "continuous")
-scale_colour_binned =     colour_scale_template("colour", colour_scale_to_ggoptions, "binned")
-scale_color_binned =      colour_scale_template("color",  colour_scale_to_ggoptions, "binned")
+scale_colour_manual =     color_scale_template("color", color_scale_to_ggoptions, "manual")
+scale_color_manual =      color_scale_template("color", color_scale_to_ggoptions, "manual")
+scale_colour_discrete =   color_scale_template("color", color_scale_to_ggoptions, "discrete")
+scale_color_discrete =    color_scale_template("color", color_scale_to_ggoptions, "discrete")
+scale_colour_continuous = color_scale_template("color", color_scale_to_ggoptions, "continuous")
+scale_color_continuous =  color_scale_template("color", color_scale_to_ggoptions, "continuous")
+scale_colour_binned =     color_scale_template("color", color_scale_to_ggoptions, "binned")
+scale_color_binned =      color_scale_template("color", color_scale_to_ggoptions, "binned")

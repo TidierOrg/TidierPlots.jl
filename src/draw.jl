@@ -60,22 +60,22 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         # inherit any unspecified column transforms
         col_transforms = merge(geom.column_transformations, plot.column_transformations)
         
-        for a in keys(aes_dict)
+        for (aes_string, column_name) in aes_dict
             # the name of the aes is translated to the makie term if needed
-            aes = haskey(ggplot_to_makie_geom, a) ? Symbol(ggplot_to_makie_geom[a]) : Symbol(a)
+            aes = haskey(ggplot_to_makie_geom, aes_string) ? Symbol(ggplot_to_makie_geom[aes_string]) : Symbol(aes_string)
 
             # if there is a specified column transformation, use it
             # otherwise use cat_inseq for string-like columns and as_is for everything else
             if haskey(col_transforms, aes)
                 source_cols = [aes_dict[String(source)] for source in col_transforms[aes][1]]
                 plottable_data = col_transforms[aes][2](aes, source_cols, plot_data)
-            elseif eltype(plot_data[!, aes_dict[a]]) <: Union{AbstractString, AbstractChar}
-                plottable_data = cat_inseq(aes, [aes_dict[a]], plot_data)
+            elseif eltype(plot_data[!, column_name]) <: Union{AbstractString, AbstractChar}
+                plottable_data = cat_inseq(aes, [column_name], plot_data)
                 if aes in [:color, :fill]
                     plottable_data[aes] = as_color(plottable_data[aes])
                 end
             else
-                plottable_data = as_is(aes, [aes_dict[a]], plot_data)
+                plottable_data = as_is(aes, [column_name], plot_data)
             end
 
             # if the transform has a label associated with it, pass that into axis_options

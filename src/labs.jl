@@ -8,7 +8,7 @@ function labs(args...; kwargs...)
         "subtitle" => :subtitle
     )
 
-    return AxisOptions(Dict(ggplot_to_makie[k] => v for (k, v) in args_dict))
+    return AxisOptions(Dict(ggplot_to_makie[k] => v for (k, v) in args_dict), Dict())
 end
 
 function labs(plot::GGPlot, args...; kwargs...)
@@ -46,7 +46,7 @@ function lims(args...; kwargs...)
         end
     end
 
-    return AxisOptions(lims_dict)
+    return AxisOptions(lims_dict, Dict())
 end
 
 function lims(plot::GGPlot, args...; kwargs...)

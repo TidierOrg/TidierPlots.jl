@@ -16,6 +16,7 @@ struct GGPlot
     data::Union{Nothing, DataFrame}
     axis_options::Dict
     theme::Attributes
+    column_transformations::Dict
 end
 
 struct Aesthetics
@@ -26,6 +27,7 @@ end
 
 struct AxisOptions
     opt::Dict{Symbol, Any}
+    column_transformations::Dict
 end
 
 struct GGPlotGrid

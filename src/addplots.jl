@@ -27,7 +27,9 @@ function Base.:+(x::GGPlot, y...)::GGPlot
             [i.axis_options for i in y if i isa Geom]...,
             [get_options(i) for i in y if i isa Vector{Geom}]...,
             [i.opt          for i in y if i isa AxisOptions]...),
-        theme
+        theme,
+        merge(x.column_transformations, 
+            [i.column_transformations for i in y if i isa AxisOptions]...)
     )
 
     return result

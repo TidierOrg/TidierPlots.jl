@@ -19,39 +19,10 @@ function continuous_scale_to_ggoptions(args_dict::Dict)
     end
 
     return AxisOptions(
-        Dict(Symbol(k) => v for (k, v) in options_dict)
+        Dict(Symbol(k) => v for (k, v) in options_dict), Dict()
     )
 
 end 
-
-function colour_scale_to_ggoptions(args_dict::Dict)
-    
-    options_dict = Dict()
-
-    if args_dict["scale"] == "colour_discrete"
-        if haskey(args_dict, "palette")
-            options_dict["palettes"] = Symbol(args_dict["palette"])
-            options_dict["color_palette_type"] = "discrete"
-        end
-    elseif args_dict["scale"] == "colour_manual"
-        if haskey(args_dict, "values")
-            v = args_dict["values"]
-            if v isa Expr
-                v = [value for value in v.args[2:end]]
-            end  
-            colors = (x -> parse(Colors.Colorant, x)).(v)
-            options_dict["palettes"] = (color = colors,)
-            options_dict["color_palette_type"] = "manual"
-        end
-    elseif args_dict["scale"] == "colour_continuous"
-        if haskey(args_dict, "palette")
-            options_dict["colormap"] = Symbol(args_dict["palette"])
-            options_dict["color_palette_type"] = "continuous"
-        end
-    end
-
-    return AxisOptions(Dict(Symbol(k) => v for (k, v) in options_dict))
-end
 
 # Generator - generates two function signatures
 
@@ -67,7 +38,6 @@ function scale_template(scale, f; trans = nothing, reverse = nothing)
         if !isnothing(reverse)
             args_dict["reversed"] = reverse
         end
-        println(args_dict)
         return f(args_dict)
     end
     function scale_function(plot::GGPlot, args...; trans = trans, reverse = reverse, scale = scale, f = f, kwargs...)
@@ -81,20 +51,12 @@ function scale_template(scale, f; trans = nothing, reverse = nothing)
         if !isnothing(reverse)
             args_dict["reversed"] = reverse
         end
-        println(args_dict)
         return plot + f(args_dict)
     end
     return scale_function
 end
 
 # Definitions
-
-scale_colour_manual = scale_template("colour_manual", colour_scale_to_ggoptions)
-scale_color_manual = scale_template("colour_manual", colour_scale_to_ggoptions)
-scale_colour_discrete = scale_template("colour_discrete", colour_scale_to_ggoptions)
-scale_color_discrete = scale_template("colour_discrete", colour_scale_to_ggoptions)
-scale_colour_continuous = scale_template("colour_continuous", colour_scale_to_ggoptions)
-scale_color_continuous = scale_template("colour_continuous", colour_scale_to_ggoptions)
 
 scale_x_continuous = scale_template("x", continuous_scale_to_ggoptions)
 scale_y_continuous = scale_template("y", continuous_scale_to_ggoptions)

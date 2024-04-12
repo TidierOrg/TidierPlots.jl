@@ -18,7 +18,8 @@ function ggplot(args...; kwargs...)
            aes_dict, 
            plot_data,
            args_dict, 
-           theme_ggplot2()) 
+           theme_ggplot2(),
+           Dict()) 
 end
 
 function ggplot(data::DataFrame, args...; kwargs...)
@@ -28,5 +29,6 @@ function ggplot(data::DataFrame, args...; kwargs...)
            aes_dict, 
            data,
            args_dict, 
-           theme_ggplot2()) 
+           theme_ggplot2(),
+           Dict()) 
 end

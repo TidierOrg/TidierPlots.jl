@@ -1,3 +1,4 @@
+@testset "color scales" verbose = true begin
 @testset "discrete" begin
     t = ggplot(penguins) + 
            geom_point(aes(x = :bill_depth_mm, y = :bill_length_mm, color = :species)) +
@@ -99,4 +100,5 @@ end
         ) 
     
     @test plot_images_equal(t, m)
+end
 end

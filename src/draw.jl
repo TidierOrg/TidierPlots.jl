@@ -56,6 +56,9 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         
         # which aesthetics were given?
         given_aes = Dict{Symbol, PlottableData}()
+
+        # inherit any unspecified column transforms
+        col_transforms = merge(geom.column_transformations, plot.column_transformations)
         
         for a in keys(aes_dict)
             # the name of the aes is translated to the makie term if needed
@@ -63,9 +66,9 @@ function Makie.SpecApi.Axis(plot::GGPlot)
 
             # if there is a specified column transformation, use it
             # otherwise use cat_inseq for string-like columns and as_is for everything else
-            if haskey(geom.column_transformations, aes)
-                source_cols = [aes_dict[String(source)] for source in geom.column_transformations[aes][1]]
-                plottable_data = geom.column_transformations[aes][2](aes, source_cols, plot_data)
+            if haskey(col_transforms, aes)
+                source_cols = [aes_dict[String(source)] for source in col_transforms[aes][1]]
+                plottable_data = col_transforms[aes][2](aes, source_cols, plot_data)
             elseif eltype(plot_data[!, aes_dict[a]]) <: Union{AbstractString, AbstractChar}
                 plottable_data = cat_inseq(aes, [aes_dict[a]], plot_data)
                 if aes in [:color, :fill]

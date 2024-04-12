@@ -11,6 +11,7 @@ using Reexport
 
 # Needed for color scales to work correctly
 using Colors
+using ColorSchemes
 
 # For handling categorical data types
 using CategoricalArrays

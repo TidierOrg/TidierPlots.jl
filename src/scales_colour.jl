@@ -8,11 +8,11 @@ end
 
 function make_color_lookup_discrete(args_dict)
     function color_lookup_discrete(input)
-        palette = has_key(args_dict, :palette) ? args_dict[:palette] : 
-            has_key(args_dict, :values) ? args_dict[:values][1] : nothing
+        palette = haskey(args_dict, :palette) ? args_dict[:palette] : 
+            haskey(args_dict, :values) ? args_dict[:values][1] : nothing
     
         if isnothing(palette)
-            @error "Invalid palette specification in continuous color scale."
+            @error "Invalid palette specification in discrete color scale."
         end
 
         scheme = palette isa Symbol ? ColorSchemes.colorschemes[palette] :
@@ -33,8 +33,8 @@ function make_color_lookup_continuous(args_dict)
     function color_lookup_continuous(input)
         scaled_input = input ./ maximum(input)
     
-        palette = has_key(args_dict, :palette) ? args_dict[:palette] : 
-            has_key(args_dict, :values) ? args_dict[:values][1] : nothing
+        palette = haskey(args_dict, :palette) ? args_dict[:palette] : 
+            haskey(args_dict, :values) ? args_dict[:values][1] : nothing
     
         if isnothing(palette)
             @error "Invalid palette specification in continuous color scale."
@@ -58,11 +58,11 @@ function make_color_lookup_binned(args_dict)
     function color_lookup_binned(input)
         binned_input = floor.(Int, input ./ (maximum(input) / 5))
     
-        palette = has_key(args_dict, :palette) ? args_dict[:palette] : 
-            has_key(args_dict, :values) ? args_dict[:values][1] : nothing
+        palette = haskey(args_dict, :palette) ? args_dict[:palette] : 
+            haskey(args_dict, :values) ? args_dict[:values][1] : nothing
     
         if isnothing(palette)
-            @error "Invalid palette specification in continuous color scale."
+            @error "Invalid palette specification in binned color scale."
         end
 
         scheme = palette isa Symbol ? ColorSchemes.colorschemes[palette] :

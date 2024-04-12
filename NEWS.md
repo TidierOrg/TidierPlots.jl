@@ -1,5 +1,9 @@
 # TidierPlots.jl updates
 
+# v0.7.0 - 2024-04-12
+
+- Fixes color scales (manual, binned, discrete, and continuous). 
+
 # v0.6.5 - 2024-04-09
 
 - Allow use of Julia 1.9 (1.10 is still the recommended version)

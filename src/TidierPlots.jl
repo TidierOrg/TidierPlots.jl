@@ -98,9 +98,8 @@ export scale_x_log10, scale_y_log10, scale_x_log2, scale_y_log2, scale_x_log, sc
 export scale_x_logit, scale_y_logit  
 export scale_x_pseudolog10, scale_y_pseudolog10, scale_x_Symlog10, scale_y_Symlog10 
 export scale_x_reverse, scale_y_reverse, scale_x_sqrt, scale_y_sqrt
-export scale_colour_continuous, scale_color_continuous
-export scale_colour_discrete, scale_color_discrete
-export scale_colour_manual, scale_color_manual
+#export scale_colour_continuous, scale_colour_discrete, scale_colour_manual, scale_colour_binned
+export scale_color_continuous, scale_color_discrete, scale_color_manual, scale_color_binned
 
 # transforms
 

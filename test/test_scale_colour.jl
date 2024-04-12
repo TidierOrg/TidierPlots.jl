@@ -1,7 +1,7 @@
 @testset "discrete" begin
     t = ggplot(penguins) + 
            geom_point(aes(x = :bill_depth_mm, y = :bill_length_mm, color = :species)) +
-           scale_colour_discrete(palette = "julia")
+           scale_color_discrete(palette = "julia")
 
     colours = ColorSchemes.colorschemes[:julia]
 
@@ -19,13 +19,15 @@
                     )]
                 )
             )
-        ) 
+        )
+
+    @test plot_images_equal(t, m) 
 end
 
 @testset "manual" begin
     t = ggplot(penguins) + 
            geom_point(aes(x = :bill_depth_mm, y = :bill_length_mm, color = :species)) +
-           scale_colour_manual("red", "white", "blue")
+           scale_color_manual("red", "white", "blue")
 
     colours = parse.(Colorant, ["red", "white", "blue"])
 
@@ -44,12 +46,14 @@ end
                 )
             )
         ) 
+
+    @test plot_images_equal(t, m)
 end
 
 @testset "continuous" begin
     t = ggplot(penguins) + 
            geom_point(aes(x = :bill_depth_mm, y = :bill_length_mm, color = :bill_depth_mm)) +
-           scale_colour_continuous(:Purples_5)
+           scale_color_continuous(:Purples_5)
 
     colours = get(ColorSchemes.colorschemes[:Purples_5],
         penguins.bill_depth_mm ./ maximum(penguins.bill_depth_mm))
@@ -67,12 +71,14 @@ end
                 )
             )
         ) 
+    
+    @test plot_images_equal(t, m)
 end
 
 @testset "binned" begin
     t = ggplot(penguins) + 
            geom_point(aes(x = :bill_depth_mm, y = :bill_length_mm, color = :bill_depth_mm)) +
-           scale_colour_continuous(:Purples_5)
+           scale_color_continuous(:Purples_5)
 
     input = penguins.bill_depth_mm
 
@@ -91,4 +97,6 @@ end
                 )
             )
         ) 
+    
+    @test plot_images_equal(t, m)
 end

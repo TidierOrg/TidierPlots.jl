@@ -60,14 +60,19 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         # inherit any unspecified column transforms
         col_transforms = merge(geom.column_transformations, plot.column_transformations)
         
+        aes_dict_makie = Dict{Symbol, Symbol}()
+
         for (aes_string, column_name) in aes_dict
             # the name of the aes is translated to the makie term if needed
             aes = haskey(ggplot_to_makie_geom, aes_string) ? Symbol(ggplot_to_makie_geom[aes_string]) : Symbol(aes_string)
+            push!(aes_dict_makie, aes => column_name)
+        end
 
+        for (aes, column_name) in aes_dict_makie
             # if there is a specified column transformation, use it
             # otherwise use cat_inseq for string-like columns and as_is for everything else
             if haskey(col_transforms, aes)
-                source_cols = [aes_dict[String(source)] for source in col_transforms[aes][1]]
+                source_cols = [aes_dict_makie[source] for source in col_transforms[aes][1]]
                 plottable_data = col_transforms[aes][2](aes, source_cols, plot_data)
             elseif eltype(plot_data[!, column_name]) <: Union{AbstractString, AbstractChar}
                 plottable_data = cat_inseq(aes, [column_name], plot_data)

@@ -164,11 +164,11 @@ end
 
 # scale definitions
 
-#scale_colour_manual =     color_scale_template("color", color_scale_to_ggoptions, "manual")
+scale_colour_manual =     color_scale_template("color", color_scale_to_ggoptions, "manual")
 scale_color_manual =      color_scale_template("color", color_scale_to_ggoptions, "manual")
-#scale_colour_discrete =   color_scale_template("color", color_scale_to_ggoptions, "discrete")
+scale_colour_discrete =   color_scale_template("color", color_scale_to_ggoptions, "discrete")
 scale_color_discrete =    color_scale_template("color", color_scale_to_ggoptions, "discrete")
-#scale_colour_continuous = color_scale_template("color", color_scale_to_ggoptions, "continuous")
+scale_colour_continuous = color_scale_template("color", color_scale_to_ggoptions, "continuous")
 scale_color_continuous =  color_scale_template("color", color_scale_to_ggoptions, "continuous")
-#scale_colour_binned =     color_scale_template("color", color_scale_to_ggoptions, "binned")
+scale_colour_binned =     color_scale_template("color", color_scale_to_ggoptions, "binned")
 scale_color_binned =      color_scale_template("color", color_scale_to_ggoptions, "binned")

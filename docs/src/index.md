@@ -38,6 +38,7 @@ Geoms:
 - `geom_smooth`
 - `geom_errorbar`
 - `geom_path`, `geom_line`, and `geom_step`
+- `geom_vline` and `geom_hline`
 - `geom_bar`, `geom_col`, and `geom_histogram`
 - `geom_boxplot` and `geom_violin`
 - `geom_contour` and `geom_tile`
@@ -99,8 +100,8 @@ using PalmerPenguins
 
 penguins = dropmissing(DataFrame(PalmerPenguins.load()))
 
-@ggplot(data = penguins) + 
-    @geom_bar(aes(x = species)) +
-    @labs(x = "Species")
+ggplot(data = penguins) + 
+    geom_bar(@aes(x = species)) +
+    labs(x = "Species")
 ```
 ![](assets/example_col.png)

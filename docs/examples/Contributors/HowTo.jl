@@ -20,7 +20,7 @@
 #     Install the following dependencies in your system via pip, i.e.
 #     - `pip install mkdocs pygments python-markdown-math`
 #     - `pip install mkdocs-material pymdown-extensions mkdocstrings`
-#     - `pip mknotebooks pytkdocs_tweaks mkdocs_include_exclude_files jinja2 mkdocs-video`
+#     - `pip install mknotebooks pytkdocs_tweaks mkdocs_include_exclude_files jinja2 mkdocs-video`
 
 # Then simply go to your `docs` env and activate it, i.e.
 

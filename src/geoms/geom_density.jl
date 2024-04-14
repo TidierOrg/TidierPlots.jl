@@ -1,28 +1,29 @@
 """
-    @geom_density(aes(...), ...)
-    
-    Represent data as a smooth density curve. 
+    geom_density(aes(...), ...)
+    geom_density(plot::GGPlot, aes(...), ...)
 
-    # Arguments
+Represent data as a smooth density curve.
 
-    - `aes(...)`: the names of the columns in the plot DataFrame and their corresponding aesthetic.
-    - `...`: options that are not mapped to a column 
+# Arguments
 
-    # Required Aesthetics
+- `plot::GGPlot` (optional): a plot object to "add" this geom to
+- `aes(...)`: the names of the columns in the plot DataFrame and their corresponding aesthetic.
+- `...`: options that are not mapped to a column (passed to Makie.Density)
 
-    - x
+# Required Aesthetics
 
-    # Supported Optional Aesthetics
+- `x`
 
-    - alpha
-    - stroke
-    - colour/color
+# Supported Optional Aesthetics
 
-    # Supported Options
+- alpha
+- stroke
+- colour/color
 
-    - alpha
-    - stroke
-    - colour/color
+# Supported Options
 
+- alpha
+- stroke
+- colour/color
 """
 geom_density = geom_template("geom_density", ["x"], :Density)

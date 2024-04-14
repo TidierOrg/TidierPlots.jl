@@ -1,4 +1,4 @@
-function handle_position(aes_dict::Dict{String, Symbol}, 
+function handle_position(aes_dict::Dict{String, Symbol},
     args_dict::Dict{Any, Any}, required_aes::Vector{String}, plot_data::DataFrame)
     # handles defaults and grouping for geom_bar/col
 
@@ -79,78 +79,101 @@ end
 """
     geom_col(aes(...), ...)
     geom_col(plot::GGPlot, aes(...), ...)
-    
-    Represent data as bars. 
 
-    # Arguments
+Represent data as bars.
 
-    - plot::GGPlot (optional): a plot object to "add" this geom to
-    - `aes(...)`: the names of the columns in the plot DataFrame that will be used to decide where the points are plotted.
-    - `position::String`: "stack" (the default) or "dodge"
-    - `...`: options that are not mapped to a column (passed to Makie.BarPlot) 
+# Arguments
 
-    # Required Aesthetics
+- `plot::GGPlot` (optional): a plot object to "add" this geom to
+- `aes(...)`: the names of the columns in the plot DataFrame that will be used to decide where the points are plotted.
+- `position::String`: "stack" (the default) or "dodge"
+- `...`: options that are not mapped to a column (passed to Makie.BarPlot)
 
-    - x
-    - y
+# Required Aesthetics
 
-    # Supported Optional Aesthetics
+- `x`
+- `y`
 
-    - alpha
-    - colour/color
-    - fill
-    - group
-    - linetype
-    - linewidth
+# Supported Optional Aesthetics
 
-    # Supported Options
+- alpha
+- colour/color
+- fill
+- group
+- linetype
+- linewidth
 
-    - alpha
-    - colour/color
-    - fill
-    - group
-    - linetype
-    - linewidth
+# Supported Options
+
+- alpha
+- colour/color
+- fill
+- group
+- linetype
+- linewidth
 
 """
 geom_col = geom_template("geom_col", ["x", "y"], :BarPlot; aes_function = handle_position)
+
 """
     geom_col(aes(...), ...)
     geom_col(plot::GGPlot, aes(...), ...)
-    
-    Represent data as bars. 
 
-    # Arguments
+Represent data as bars.
 
-    - plot::GGPlot (optional): a plot object to "add" this geom to
-    - `aes(...)`: the names of the columns in the plot DataFrame that will be used to decide where the points are plotted.
-    - `...`: options that are not mapped to a column (passed to Makie.BarPlot)
+# Arguments
 
-    # Required Aesthetics
+- plot::GGPlot (optional): a plot object to "add" this geom to
+- `aes(...)`: the names of the columns in the plot DataFrame that will be used to decide where the points are plotted.
+- `...`: options that are not mapped to a column (passed to Makie.BarPlot)
 
-    - x OR y
+# Required Aesthetics
 
-    # Supported Optional Aesthetics (See aes() for specification options)
+- x OR y
 
-    - alpha
-    - colour/color
-    - fill
-    - group
-    - linetype
-    - linewidth
+# Supported Optional Aesthetics (See aes() for specification options)
 
-    # Supported Options
+- alpha
+- colour/color
+- fill
+- group
+- linetype
+- linewidth
 
-    - alpha::Float32
-    - position::String - "stack" (the default) or "dodge"
-    - colour/color
-    - fill
-    - group
-    - linetype
-    - linewidth
+# Supported Options
 
+- alpha::Float32
+- position::String - "stack" (the default) or "dodge"
+- colour/color
+- fill
+- group
+- linetype
+- linewidth
 """
 geom_bar = geom_template("geom_bar", String[], :BarPlot; aes_function = handle_position)
 
-geom_histogram = geom_template("geom_histogram", ["x"], :Hist)
+"""
+    geom_histogram(aes(...), ...)
+    geom_histogram(plot::GGPlot, aes(...), ...)
 
+Represents data as a histogram.
+
+# Arguments
+
+- plot::GGPlot (optional): a plot object to "add" this geom to
+- `aes(...)`: the names of the columns in the plot DataFrame that will be used to decide where the points are plotted.
+- `...`: options that are not mapped to a column (passed to Makie.Hist)
+
+# Required Aesthetics
+
+TBD
+
+# Supported Optional Aesthetics (See aes() for specification options)
+
+TBD
+
+# Supported Options
+
+TBD
+"""
+geom_histogram = geom_template("geom_histogram", ["x"], :Hist)

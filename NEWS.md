@@ -1,5 +1,10 @@
 # TidierPlots.jl updates
 
+# v0.7.1 - 2024-04-14
+
+- Re-enables scale_colour_*
+- Bug fix in `geom_vline` and unit tests for `geom_vline` and `geom_hline` (thanks @adknudson) 
+
 # v0.7.0 - 2024-04-12
 
 - Fixes color scales (manual, binned, discrete, and continuous). 

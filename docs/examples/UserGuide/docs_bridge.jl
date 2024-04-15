@@ -7,13 +7,15 @@ penguins = dropmissing(DataFrame(PalmerPenguins.load()));
 
 # ## `ggplot()`
 # `ggplot()` is the starting point of any plot. It sets up the initial plot with default settings that can be later customized with geoms, scales, theme settings and other specifications. `ggplot` usually used with a data source as an argument, and optionally, a set of aesthetics specified by @aes(). The data source is typically a DataFrame.
-#If a set of aesthetics is specified in the initial ggplot call, these aesthetics apply to all layers added to the plot, unless they are overridden in subsequent layers.
 
-ggplot(penguins, @aes(x=bill_length_mm, y=bill_depth_mm, color = species))+
+# If a set of aesthetics is specified in the initial ggplot call, these aesthetics apply to all layers added to the plot, unless they are overridden in subsequent layers.
+
+ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm, color = species)) +
     geom_point()
-    
+
 # ## `@aes()`
 # `aes()` is used to map variables in your data to visual properties (aesthetics) of the plot. These aesthetics can include things like position (x and y coordinates), color, shape, size, etc. Each aesthetic is a way of visualizing a variable or a statistical transformation of a variable.
+
 # Aesthetics are specified in the form aes(aesthetic = variable), where aesthetic is the name of the aesthetic, and variable is the column name in your data that you want to map to the aesthetic. The variable names do not need to be preceded by a colon.
 
 # Of note, TidierPlots.jl accepts multiple forms for aes specification, none of which is *exactly* the same as ggplot2.
@@ -32,11 +34,11 @@ ggplot(penguins, @aes(x=bill_length_mm, y=bill_depth_mm, color = species))+
 # Moving from general rules, to specific plots, let us first explore `geom_point()`
 
 # `geom_point()`
-# `geom_point` is used to create a scatter plot. It is typically used with aesthetics mapping variables to x and y positions, and optionally to other aesthetics like color, shape, and size. `geom_point` can be used to visualize the relationship between two continuous variables, or a continuous and a discrete variable. The following visuals features can be changed within `geom_point()`, shape, size, stroke, strokecolour, and alpha . 
+# `geom_point` is used to create a scatter plot. It is typically used with aesthetics mapping variables to x and y positions, and optionally to other aesthetics like color, shape, and size. `geom_point` can be used to visualize the relationship between two continuous variables, or a continuous and a discrete variable. The following visuals features can be changed within `geom_point()`, shape, size, stroke, strokecolour, and alpha .
 
-ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm, color = species)) + 
-    geom_point( size = 20, 
-                stroke = 1, 
+ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm, color = species)) +
+    geom_point( size = 20,
+                stroke = 1,
                 strokecolor = "black",
                 alpha = 0.2) +
     labs(x = "Bill Length (mm)", y = "Bill Width (mm)") +
@@ -44,12 +46,12 @@ ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm, color = species)) +
     theme_minimal()
 
 # In the example above, a scatter plot is created with the variable bill_length_mm mapped to the x position, and bill_depth_mm mapped to the y position with color mapped to species. Supported optional arguements include:
-       # - size - this is the size of the marker
-       # - alpha (or transparency), is set to a value between 0 and 1. 
-       # - strokecolor is the stroke color around the marker. https://juliagraphics.github.io/Colors.jl/stable/namedcolors/ colors can be chosen from any name on this list
-       # - stroke this is the thickeness of the stroke around the marker
+# - size - this is the size of the marker
+# - alpha (or transparency), is set to a value between 0 and 1.
+# - strokecolor is the stroke color around the marker. https://juliagraphics.github.io/Colors.jl/stable/namedcolors/ colors can be chosen from any name on this list
+# - stroke this is the thickeness of the stroke around the marker
 
-# ## `lims`  
+# ## `lims`
 # `lims` allows the user to set the ranges for the x and y axises as shown in the example above.
 
 # ## `geom_bar`, `geom_col`, and `geom_histogram`
@@ -63,10 +65,11 @@ ggplot(data=penguins, @aes(x=species)) +
          # - position, when set to "dodge," bar charts will not stack
 
 
-ggplot(data=penguins, @aes(x = island, y=species)) + geom_col()
-
+ggplot(data=penguins, @aes(x = island, y=species)) +
+    geom_col()
+#-
 ggplot() +
-  geom_histogram(data=penguins, @aes(x=bill_length_mm))
+  geom_histogram(data=penguins, @aes(x = bill_length_mm))
 
 # In the first example, a bar plot is created with the variable CategoricalVar mapped to the x position, and the count of each category is represented by the height of the bars.
 
@@ -102,18 +105,18 @@ ggplot()+
 
 # In this example, a boxplot is created where different island of penguins are mapped to the x position, and the bill length is mapped to the y position. Finally, the each species will be mapped to a different color
 
-# geom_boxplot supported optinal arguements currently include:  
+# geom_boxplot supported optinal arguements currently include:
        # - color - if used within the aes() with a categorical variable it will make each category a different color as shown above. When used outside of the aes() and selected with a color, it will make each boxplot that color.
        # - alpha - transaparency as above, used outside of the aes()
 
 # ## `geom_violin`
 # `geom_violin`  creates a violin plot, which is a combination of a boxplot and a kernel density plot.
 
-  ggplot(penguins, @aes(x=species, y=bill_depth_mm)) + 
+ggplot(penguins, @aes(x = species, y = bill_depth_mm)) +
     geom_violin()
 
 # In this example, a violin plot is created where different species of penguins are mapped to the x position, and the bill depth is mapped to the y position. geom_violin does not currently support mapping a categorical variable to colors.
-    
+
 # ## `geom_tile`
 # The `geom_tile` creates a tile plot, also known as a heatmap.
 
@@ -132,10 +135,10 @@ ggplot(df_tile, @aes(x = X, y = Y, z = Value)) +
 # ## `scale_x_log10`,  `scale_y_log10`
 # `scale_x_log10` and `scale_y_log10` apply a base 10 logarithmic transformation to the x and y axes, respectively.
 
-ggplot(penguins, @aes(x=body_mass_g, y=bill_length_mm)) + 
-  geom_point() +
-  scale_x_log10()
-  
+ggplot(penguins, @aes(x = body_mass_g, y = bill_length_mm)) +
+    geom_point() +
+    scale_x_log10()
+
 # In this example, a scatter plot is created where the body mass of penguins is mapped to the x position and the bill length to the y position. A base 10 logarithmic transformation is then applied to the x-axis.
 
 # ## `scale_x_log2`, `scale_y_log2`, `scale_x_log`, `scale_y_log`
@@ -150,7 +153,7 @@ ggplot(penguins, @aes(x=body_mass_g, y=bill_length_mm)) +
 # ## `scale_x_reverse`, `scale_y_reverse`
 # `scale_x_reverse` and `scale_y_reverse`  reverse the direction of the x and y axes, respectively.
 
-ggplot(penguins, @aes(x=body_mass_g, y=bill_length_mm, color = species)) + 
+ggplot(penguins, @aes(x = body_mass_g, y = bill_length_mm, color = species)) +
    geom_point() +
    scale_y_reverse() +
    theme_minimal()
@@ -160,11 +163,11 @@ ggplot(penguins, @aes(x=body_mass_g, y=bill_length_mm, color = species)) +
 # ## `scale_x_sqrt`, `scale_y_sqrt`
 #  `scale_x_sqrt` and `scale_y_sqrt`  apply a square root transformation to the x and y axes, respectively.
 
-ggplot(penguins, @aes(x=body_mass_g, y=bill_length_mm, color = species)) + 
+ggplot(penguins, @aes(x = body_mass_g, y = bill_length_mm, color = species)) +
    geom_point() +
    scale_x_sqrt() +
    theme_minimal()
-   
+
 # In this example, a scatter plot is created where the body mass of penguins is mapped to the x position and the bill length to the y position. A square root transformation is then applied to the x-axis
 
 # ## `geom_errorbar`

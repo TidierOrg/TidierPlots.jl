@@ -1,30 +1,30 @@
 """
     geom_smooth(aes(...), ...)
     geom_smooth(plot::GGPlot, aes(...), ...)
-    
-    Represent data as a smoothed or linear fit. 
 
-    # Arguments
+Represent data as a smoothed or linear fit.
 
-    - `aes(...)`: the names of the columns in the plot DataFrame that will be used to decide where the points are plotted.
-    - `...`: options that are not mapped to a column 
+# Arguments
 
-    # Required Aesthetics
+- `plot::GGPlot` (optional): a plot object to "add" this geom to
+- `aes(...)`: the names of the columns in the plot DataFrame that will be used to decide where the points are plotted.
+- `...`: options that are not mapped to a column (passed to Makie.Lines)
 
-    - x
-    - y
+# Required Aesthetics
 
-    # Supported Optional Aesthetics
+- `x`
+- `y`
 
-    - alpha
-    - colour/color
+# Supported Optional Aesthetics (See [`aes`](@ref) for specification options)
 
-    # Supported Options
+- alpha
+- colour/color
 
-    - method: "smooth" (loess fit) or "lm" (linear fit)
-    - alpha
-    - colour/color
+# Supported Options
 
+- method: "smooth" (loess fit) or "lm" (linear fit)
+- alpha
+- colour/color
 """
 function geom_smooth(plot::GGPlot, args...; kwargs...)
     return plot + geom_smooth(args...; kwargs...)
@@ -36,30 +36,30 @@ function geom_smooth(args...; kwargs...)
 
     if haskey(args_dict, "method")
         if args_dict["method"] == "lm"
-            return [build_geom(aes_dict, 
-                        args_dict, 
+            return [build_geom(aes_dict,
+                        args_dict,
                         ["x", "y"],
-                        :Lines, 
+                        :Lines,
                         stat_linear,
                         transforms),
                     build_geom(aes_dict,
-                        args_dict, 
+                        args_dict,
                         ["x", "lower", "upper"],
-                        :Band, 
+                        :Band,
                         stat_linear,
                         transforms)]
         end
     end
 
-    return build_geom(aes_dict, 
-                      args_dict, 
+    return build_geom(aes_dict,
+                      args_dict,
                       ["x", "y"],
-                      :Lines, 
+                      :Lines,
                       stat_loess,
                       transforms)
 end
 
-function stat_loess(aes_dict::Dict{String, Symbol}, 
+function stat_loess(aes_dict::Dict{String, Symbol},
     args_dict::Dict{String, Any}, required_aes::Vector{String}, plot_data::DataFrame)
 
     x = plot_data[!, aes_dict["x"]]
@@ -71,13 +71,13 @@ function stat_loess(aes_dict::Dict{String, Symbol},
 
     return_data = DataFrame(
         String(aes_dict["x"]) => x̂,
-        String(aes_dict["y"]) => ŷ 
+        String(aes_dict["y"]) => ŷ
     )
 
     return (aes_dict, args_dict, required_aes, return_data)
 end
 
-function stat_linear(aes_dict::Dict{String, Symbol}, 
+function stat_linear(aes_dict::Dict{String, Symbol},
     args_dict::Dict{String, Any}, required_aes::Vector{String}, plot_data::DataFrame)
 
     x = plot_data[!, aes_dict["x"]]
@@ -94,7 +94,7 @@ function stat_linear(aes_dict::Dict{String, Symbol},
     lin_model = GLM.lm(add_intercept_column(x), y)
     x̂ = range(extrema(x)..., length = 100)
     pred = DataFrame(GLM.predict(lin_model, add_intercept_column(x̂); interval = :confidence))
-    
+
     aes_dict["upper"] = :upper
     aes_dict["lower"] = :lower
 

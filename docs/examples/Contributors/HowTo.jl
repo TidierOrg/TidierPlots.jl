@@ -1,44 +1,60 @@
-# ## Contribute to Documentation
-# Contributing with examples can be done by first creating a new file example
-# [here](https://tidierorg.github.io/TidierPlots.jl/tree/main/docs/examples/UserGuide)
+md"""
+## Contribute to Documentation
 
-# !!! info
-#     - `your_new_file.jl` at `docs/examples/UserGuide/`
+Examples are written and rendered using [Literate.jl](https://github.com/fredrikekre/Literate.jl).
+This allows you to write your example in a `.jl` file and annotate it with markdown.
 
-# Once this is done you need to add a new entry [here](https://tidierorg.github.io/TidierPlots.jl/blob/main/docs/mkdocs.yml)
-# at the bottom and the appropriate level.
+Contributing with examples can be done by first creating a new example file in the
+[docs/examples/UserGuide](https://github.com/TidierOrg/TidierPlots.jl/tree/main/docs/examples/UserGuide)
+directory:
 
-# !!! info
-#     Your new entry should look like:
-#     - `"Your title example" : "examples/generated/UserGuide/your_new_file.md"`
+!!! info
+    - `your_new_file.jl` at `docs/examples/UserGuide/`
 
-# ## Build docs locally
-# If you want to take a look at the docs locally before doing a PR
-# follow the next steps:
+Once this is done you need to add a new nav entry to the
+[mkdocs.yml](https://github.com/TidierOrg/TidierPlots.jl/blob/main/docs/mkdocs.yml) file
+at the bottom at the appropriate level:
 
-# !!! warning "build docs locally"
-#     Install the following dependencies in your system via pip, i.e.
-#     - `pip install mkdocs pygments python-markdown-math`
-#     - `pip install mkdocs-material pymdown-extensions mkdocstrings`
-#     - `pip mknotebooks pytkdocs_tweaks mkdocs_include_exclude_files jinja2 mkdocs-video`
+!!! info
+    Your new entry should look like:
+    - `"Your title example" : "examples/generated/UserGuide/your_new_file.md"`
 
-# Then simply go to your `docs` env and activate it, i.e.
 
-# `docs> julia`
+## Build docs locally
 
-# `julia> ]`
+If you want to take a look at the docs locally before doing a PR, then follow the next steps:
 
-# `(docs) pkg> activate .`
+!!! warning "Build docs locally"
+    Install the following dependencies in your system via pip, i.e.
+    - `pip install mkdocs pygments python-markdown-math`
+    - `pip install mkdocs-material pymdown-extensions mkdocstrings`
+    - `pip install mknotebooks pytkdocs_tweaks mkdocs_include_exclude_files jinja2 mkdocs-video`
 
-# Next, run the scripts:
-# !!! info
-#     Generate files and build docs by running:
-#     - `genfiles.jl`
-#     - `make.jl`
+Next you will need to activate the `docs` environment:
 
-# Now go to your `terminal` in the same path `docs>` and run:
+```
+TidierPlots.jl> julia --project=docs/ -e 'using Pkg; pkg"dev ."; Pkg.instantiate()'
+```
 
-# `mkdocs serve`
+Generate files and build the docs by running the following in your terminal:
 
-# This should output `http://127.0.0.1:8000`, copy/paste this into your
-# browser and you are all set.
+```
+TidierPlots.jl> julia --project=docs/ --color=yes docs/genfiles.jl
+TidierPlots.jl> julia --project=docs/ --color=yes docs/make.jl
+```
+
+!!! info "Set environment variables"
+    You may want to set additional Julia environment variables before running `make.jl`.
+    This will enable additional debugging messages while building the docs.
+    - `ENV["JULIA_DEBUG"] = "Documenter"`
+
+Finally, in your `terminal`, change directory to the `docs` folder and run:
+
+```
+docs> mkdocs serve
+```
+
+This should output `http://127.0.0.1:8000`, copy/paste this into your browser and you are
+all set. You can leave this server running while making changes to the docs. You can open
+a new terminal and re-run `genfiles.jl` and `make.jl` to see the changes.
+"""

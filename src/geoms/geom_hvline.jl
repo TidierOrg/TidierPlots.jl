@@ -14,7 +14,7 @@ Plot a horizontal line at the given y-intercept.
 
 - `yintercept`
 
-# Supported Optional Aesthetics (See aes() for specification options)
+# Supported Optional Aesthetics (See [`aes`](@ref) for specification options)
 
 TBD
 
@@ -57,7 +57,7 @@ Plot a vertical line at the given x-intercept.
 
 - `xintercept`
 
-# Supported Optional Aesthetics (See aes() for specification options)
+# Supported Optional Aesthetics (See [`aes`](@ref) for specification options)
 
 TBD
 

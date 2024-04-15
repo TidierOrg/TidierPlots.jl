@@ -15,7 +15,7 @@ Represents data as a violin plot.
 - `x`
 - `y`
 
-# Supported Optional Aesthetics (See aes() for specification options)
+# Supported Optional Aesthetics (See [`aes`](@ref) for specification options)
 
 TBD
 

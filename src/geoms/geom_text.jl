@@ -16,7 +16,7 @@ Plot text on a graph.
 - `y`
 - `text`
 
-# Supported Optional Aesthetics (See aes() for specification options)
+# Supported Optional Aesthetics (See [`aes`](@ref) for specification options)
 
 TBD
 
@@ -45,7 +45,7 @@ Plot text on a graph.
 - `y`
 - `text`
 
-# Supported Optional Aesthetics (See aes() for specification options)
+# Supported Optional Aesthetics (See [`aes`](@ref) for specification options)
 
 TBD
 

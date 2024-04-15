@@ -14,7 +14,7 @@ Represent data as a smooth density curve.
 
 - `x`
 
-# Supported Optional Aesthetics
+# Supported Optional Aesthetics (See [`aes`](@ref) for specification options)
 
 - alpha
 - stroke

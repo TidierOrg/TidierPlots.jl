@@ -14,7 +14,7 @@ Represents data as a vertical interval.
 
 TBD
 
-# Supported Optional Aesthetics (See aes() for specification options)
+# Supported Optional Aesthetics (See [`aes`](@ref) for specification options)
 
 TBD
 
@@ -57,7 +57,7 @@ Represents data as a horizontal interval.
 
 TBD
 
-# Supported Optional Aesthetics (See aes() for specification options)
+# Supported Optional Aesthetics (See [`aes`](@ref) for specification options)
 
 TBD
 

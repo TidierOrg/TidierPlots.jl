@@ -80,7 +80,7 @@ end
     geom_col(aes(...), ...)
     geom_col(plot::GGPlot, aes(...), ...)
 
-Represent data as bars.
+Represent data as columns.
 
 # Arguments
 
@@ -94,7 +94,7 @@ Represent data as bars.
 - `x`
 - `y`
 
-# Supported Optional Aesthetics
+# Supported Optional Aesthetics (See [`aes`](@ref) for specification options)
 
 - alpha
 - colour/color
@@ -116,8 +116,8 @@ Represent data as bars.
 geom_col = geom_template("geom_col", ["x", "y"], :BarPlot; aes_function = handle_position)
 
 """
-    geom_col(aes(...), ...)
-    geom_col(plot::GGPlot, aes(...), ...)
+    geom_bar(aes(...), ...)
+    geom_bar(plot::GGPlot, aes(...), ...)
 
 Represent data as bars.
 
@@ -129,9 +129,9 @@ Represent data as bars.
 
 # Required Aesthetics
 
-- x OR y
+- `x` OR `y`
 
-# Supported Optional Aesthetics (See aes() for specification options)
+# Supported Optional Aesthetics (See [`aes`](@ref) for specification options)
 
 - alpha
 - colour/color
@@ -142,8 +142,8 @@ Represent data as bars.
 
 # Supported Options
 
-- alpha::Float32
-- position::String - "stack" (the default) or "dodge"
+- alpha
+- position: "stack" (the default) or "dodge"
 - colour/color
 - fill
 - group
@@ -166,9 +166,9 @@ Represents data as a histogram.
 
 # Required Aesthetics
 
-TBD
+- `x`
 
-# Supported Optional Aesthetics (See aes() for specification options)
+# Supported Optional Aesthetics (See [`aes`](@ref) for specification options)
 
 TBD
 

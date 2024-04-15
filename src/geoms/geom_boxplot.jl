@@ -14,7 +14,7 @@ Compactly displays the distribution of continuous data.
 
 - `x` OR `y`
 
-# Supported Optional Aesthetics (See aes() for specification options)
+# Supported Optional Aesthetics (See [`aes`](@ref) for specification options)
 
 TBD
 

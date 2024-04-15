@@ -24,7 +24,7 @@ Represents data as...
 
 TBD
 
-# Supported Optional Aesthetics (See aes() for specification options)
+# Supported Optional Aesthetics (See [`aes`](@ref) for specification options)
 
 TBD
 
@@ -50,7 +50,7 @@ Represents a grid of data as smooth curves of a surface.
 
 TBD
 
-# Supported Optional Aesthetics (See aes() for specification options)
+# Supported Optional Aesthetics (See [`aes`](@ref) for specification options)
 
 TBD
 

@@ -15,7 +15,7 @@ Represents data as pairs of (x, y) points.
 - `x`
 - `y`
 
-# Supported Optional Aesthetics (See aes() for specification options)
+# Supported Optional Aesthetics (See [`aes`](@ref) for specification options)
 
 - size
 - alpha

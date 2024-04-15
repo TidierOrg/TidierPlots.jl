@@ -15,7 +15,7 @@ Represents data as connected points in the order of the variable on the x-axis.
 - `x`
 - `y`
 
-# Supported Optional Aesthetics (See aes() for specification options)
+# Supported Optional Aesthetics (See [`aes`](@ref) for specification options)
 
 TBD
 
@@ -42,7 +42,7 @@ Represents data as a stairstep plot.
 - `x`
 - `y`
 
-# Supported Optional Aesthetics (See aes() for specification options)
+# Supported Optional Aesthetics (See [`aes`](@ref) for specification options)
 
 TBD
 
@@ -69,7 +69,7 @@ Represents data as connected points in the order in which they appear in the dat
 - `x`
 - `y`
 
-# Supported Optional Aesthetics (See aes() for specification options)
+# Supported Optional Aesthetics (See [`aes`](@ref) for specification options)
 
 TBD
 

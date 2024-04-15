@@ -15,7 +15,7 @@ Represent data as a smoothed or linear fit.
 - `x`
 - `y`
 
-# Supported Optional Aesthetics (See aes() for specification options)
+# Supported Optional Aesthetics (See [`aes`](@ref) for specification options)
 
 - alpha
 - colour/color

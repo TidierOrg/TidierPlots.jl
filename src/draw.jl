@@ -155,10 +155,11 @@ end
 
 function draw_ggplot(plot::GGPlot)
     axis = Makie.SpecApi.Axis(plot)
+    legend = build_legend(plot)
 
     Makie.plot(
         Makie.SpecApi.GridLayout(
-            axis
+            [axis legend]
         )
     )
 end

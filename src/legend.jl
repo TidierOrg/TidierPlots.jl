@@ -4,7 +4,7 @@ function build_legend(plot::GGPlot)
 
 
     # what element by default for each geom?
-    geom_elements = Dict{String, Any}(
+    geom_elements = Dict{String, DataType}(
         "geom_point" => MarkerElement,
         "geom_line" => LineElement
     )
@@ -15,7 +15,6 @@ function build_legend(plot::GGPlot)
         "geom_line" => Dict(:linestyle => nothing)
     )
 
-    
 
     if haskey(plot.column_transformations, :color)
         palette_function = plot.column_transformations[:color][2]
@@ -27,15 +26,10 @@ function build_legend(plot::GGPlot)
     title = nothing
 
     for geom in plot.geoms
-        color_colname = nothing
         
-        if haskey(geom.aes, "colour")
-            color_colname = geom.aes["colour"]
-        end
-
-        if haskey(geom.aes, "color") 
-            color_colname = geom.aes["color"]
-        end
+        color_colname = haskey(geom.aes, "colour") ? geom.aes["colour"] :
+            haskey(geom.aes, "color") ? geom.aes["color"] :
+            nothing
         
         if !isnothing(color_colname)
             plot_data = isnothing(geom.data) ? plot.data : geom.data
@@ -51,6 +45,8 @@ function build_legend(plot::GGPlot)
             title = titlecase(string(color_colname))
         end
     end
+
+    println(legend)
 
     #return legend
 

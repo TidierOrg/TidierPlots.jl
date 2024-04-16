@@ -10,7 +10,7 @@
 
     m = Makie.plot(
         Makie.SpecApi.GridLayout(
-            Makie.SpecApi.Axis(
+            [Makie.SpecApi.Axis(
                 plots = [
                     Makie.PlotSpec(
                         :Scatter,
@@ -18,8 +18,7 @@
                         penguins.bill_length_mm;
                         color = (x -> colours[x]).(levelcode.(cat_array))
                     )]
-                )
-            )
+                ) TidierPlots.build_legend(t)])
         )
 
     @test plot_images_equal(t, m) 
@@ -36,7 +35,7 @@ end
 
     m = Makie.plot(
         Makie.SpecApi.GridLayout(
-            Makie.SpecApi.Axis(
+            [Makie.SpecApi.Axis(
                 plots = [
                     Makie.PlotSpec(
                         :Scatter,
@@ -44,8 +43,7 @@ end
                         penguins.bill_length_mm;
                         color = (x -> colours[x]).(levelcode.(cat_array))
                     )]
-                )
-            )
+                ) TidierPlots.build_legend(t)])
         ) 
 
     @test plot_images_equal(t, m)

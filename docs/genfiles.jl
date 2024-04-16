@@ -22,7 +22,11 @@ srcsfiles = getfiles()
 
 for (d, paths) in (("tutorial", srcsfiles),)
     for p in paths
-    Literate.markdown(get_example_path(p), joinpath(OUTPUT, dirname(p));
-            documenter=true, mdstrings=true)
+        Literate.markdown(
+            get_example_path(p),
+            joinpath(OUTPUT, dirname(p));
+            documenter=true,
+            mdstrings=true
+        )
     end
 end

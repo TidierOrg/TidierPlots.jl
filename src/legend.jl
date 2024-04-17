@@ -31,7 +31,7 @@ function build_legend(plot::GGPlot)
         plot_data = isnothing(geom.data) ? plot.data : geom.data
 
         if isnothing(palette_function)
-            if typeof(plot_data[!, color_colname]) <: Union{AbstractVector{String}, AbstractVector{Char}, CategoricalArray}
+            if eltype(plot_data[!, color_colname]) <: Union{AbstractString, AbstractChar, CategoricalValue}
                 plot = plot + scale_colour_manual(values = c(
                     RGB(0/255, 114/255, 178/255), # blue
                     RGB(230/255, 159/255, 0/255), # orange

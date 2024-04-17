@@ -90,7 +90,7 @@ function color_scale_to_ggoptions(args_dict::Dict)
         function color_transform_fn(target::Symbol, source::Vector{Symbol}, data::DataFrame)
             input = data[!, source[1]]
 
-            if typeof(input) <: Union{AbstractVector{String}, Vector{AbstractString}, AbstractVector{Char}, CategoricalArray}
+            if eltype(input) <: Union{AbstractString, AbstractChar, CategoricalValue}
             
                 cat_array = CategoricalArray(input)
 
@@ -102,7 +102,7 @@ function color_scale_to_ggoptions(args_dict::Dict)
                         nothing
                     )
                 )     
-            elseif typeof(input) <: Union{Vector{Int}, Vector{Float64}, Vector{Float32}}
+            elseif eltype(input) <: Union{Integer, AbstractFloat}
                 return Dict{Symbol, PlottableData}(
                     target => PlottableData(
                         input,
@@ -111,23 +111,10 @@ function color_scale_to_ggoptions(args_dict::Dict)
                         nothing
                     )
                 ) 
-            else # try to parse whatever it is as an int, error if not successful
-                try
-                    int_array = parse.(Int, input)
-                catch
-                    scale = args_dict[:scale]
-                    @error "Column is not compatible with scale: $scale"
-                end
-
-                return Dict{Symbol, PlottableData}(
-                    target => PlottableData(
-                        int_array,
-                        x -> lookup(x),
-                        nothing,
-                        nothing
-                    )
-                )
-            end          
+            else 
+                scale = args_dict[:scale]
+                throw(@error "Column is not compatible with scale: $scale")
+            end       
         end
         return color_transform_fn
     end

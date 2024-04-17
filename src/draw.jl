@@ -102,9 +102,11 @@ function draw_ggplot(plot_grid::GGPlotGrid)
     Makie.plot(plot_grid.grid)
 end
 
+try_convert(::Type{Any}, v, ::Any, ::Any) = v
+
 function try_convert(T::Type, v::S, arg, fname) where {S}
     try
-        retvalue = convert(T, v)
+        retvalue = T(v)
         return retvalue
     catch
         msg = "Argument '$arg' in '$fname' has value '$v' and type '$S' which cannot be " *

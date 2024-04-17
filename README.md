@@ -145,6 +145,16 @@ ggplot(df, yticks = (1:3, ["bottom", "middle", "top"])) +
 ```
 ![](assets/bar_labels.png)
 
+### Easy Extensions with Makie
+
+Add basic support for any Makie plot using `geom_template(name, required_aes, makie_plot)`:
+
+```julia
+geom_raincloud = geom_template("geom_raincloud", ["x", "y"], :RainClouds)
+ggplot(penguins) + geom_raincloud(aes(x = :species, y = :bill_depth_mm))
+```
+![](assets/raincloud.png)
+
 See the [documentation](https://tidierorg.github.io/TidierPlots.jl/latest) for more information and examples. 
 
 # What's New

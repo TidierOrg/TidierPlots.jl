@@ -2,21 +2,13 @@ function build_legend(plot::GGPlot)
     # what aes will automatically have a legend built for them?
     auto_legend = [:color]
 
+    palette_function = nothing
+
     if haskey(plot.column_transformations, :color)
         palette_function = plot.column_transformations[:color][2]
-    elseif any([haskey("color", geom.aes) || haskey("color", geom.aes) for geom in plot.geoms]) || 
-        haskey("color", plot.default_aes) || haskey("color", plot.default_aes)
-        plot = plot + scale_colour_manual(
-            RGB(0/255, 114/255, 178/255), # blue
-            RGB(230/255, 159/255, 0/255), # orange
-            RGB(0/255, 158/255, 115/255), # green
-            RGB(204/255, 121/255, 167/255), # reddish purple
-            RGB(86/255, 180/255, 233/255), # sky blue
-            RGB(213/255, 94/255, 0/255), # vermillion
-            RGB(240/255, 228/255, 66/255)) # yellow)
+    elseif !(any([haskey(geom.aes, "color") || haskey(geom.aes, "color") for geom in plot.geoms]) || 
+        haskey(plot.default_aes, "color") || haskey(plot.default_aes, "color"))
         
-        palette_function = plot.column_transformations[:color][2]
-    else
         return nothing
     end  
 
@@ -30,12 +22,32 @@ function build_legend(plot::GGPlot)
 
     for geom in plot.geoms
         
-        color_colname = haskey(geom.aes, "colour") ? geom.aes["colour"] :
-            haskey(geom.aes, "color") ? geom.aes["color"] :
+        all_aes = merge(plot.default_aes, geom.aes)
+
+        color_colname = haskey(all_aes, "colour") ? all_aes["colour"] :
+            haskey(all_aes, "color") ? all_aes["color"] :
             nothing
         
+        plot_data = isnothing(geom.data) ? plot.data : geom.data
+
+        if isnothing(palette_function)
+            if typeof(plot_data[!, color_colname]) <: Union{AbstractVector{String}, AbstractVector{Char}, CategoricalArray}
+                plot = plot + scale_colour_manual(values = c(
+                    RGB(0/255, 114/255, 178/255), # blue
+                    RGB(230/255, 159/255, 0/255), # orange
+                    RGB(0/255, 158/255, 115/255), # green
+                    RGB(204/255, 121/255, 167/255), # reddish purple
+                    RGB(86/255, 180/255, 233/255), # sky blue
+                    RGB(213/255, 94/255, 0/255), # vermillion
+                    RGB(240/255, 228/255, 66/255))) # yellow)
+            else 
+                plot = plot + scale_colour_continuous(palette = :viridis)
+            end
+            palette_function = plot.column_transformations[:color][2]
+        end
+
         if !isnothing(color_colname) && plot.legend_options[:color][:type] in ["manual", "discrete"]
-            plot_data = isnothing(geom.data) ? plot.data : geom.data
+
             plottable_data = palette_function(:color, [color_colname], plot_data)
             labels = unique(plottable_data[:color].raw)
 
@@ -49,7 +61,7 @@ function build_legend(plot::GGPlot)
         end
 
         if !isnothing(color_colname) && plot.legend_options[:color][:type] in ["continuous", "binned"]
-            plot_data = isnothing(geom.data) ? plot.data : geom.data
+            
             plottable_data = palette_function(:color, [color_colname], plot_data)
             
             colorbar_kwargs[:colormap] = plot.legend_options[:color][:type] == "continuous" ? Symbol(plot.legend_options[:color][:palette]) :

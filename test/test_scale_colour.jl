@@ -52,13 +52,13 @@ end
 @testset "continuous" begin
     t = ggplot(penguins) + 
            geom_point(aes(x = :bill_depth_mm, y = :bill_length_mm, color = :bill_depth_mm)) +
-           scale_color_continuous(:Purples_5)
+           scale_color_continuous(palette = :Purples_5)
 
     colours = get(ColorSchemes.colorschemes[:Purples_5],
         penguins.bill_depth_mm ./ maximum(penguins.bill_depth_mm))
 
     m = Makie.plot(
-        Makie.SpecApi.GridLayout(
+        Makie.SpecApi.GridLayout([
             Makie.SpecApi.Axis(
                 plots = [
                     Makie.PlotSpec(
@@ -67,8 +67,7 @@ end
                         penguins.bill_length_mm;
                         color = colours
                     )]
-                )
-            )
+                ) TidierPlots.build_legend(t)])
         ) 
     
     @test plot_images_equal(t, m)
@@ -77,14 +76,14 @@ end
 @testset "binned" begin
     t = ggplot(penguins) + 
            geom_point(aes(x = :bill_depth_mm, y = :bill_length_mm, color = :bill_depth_mm)) +
-           scale_color_continuous(:Purples_5)
+           scale_color_binned(palette = :Purples_5)
 
     input = penguins.bill_depth_mm
 
     colours = floor.(Int, 1 .+ 4 .* ((input .- minimum(input)) ./ (maximum(input) - minimum(input))))
 
     m = Makie.plot(
-        Makie.SpecApi.GridLayout(
+        Makie.SpecApi.GridLayout([
             Makie.SpecApi.Axis(
                 plots = [
                     Makie.PlotSpec(
@@ -93,8 +92,7 @@ end
                         penguins.bill_length_mm;
                         color = ColorSchemes.colorschemes[:Purples_5][colours]
                     )]
-                )
-            )
+                ) TidierPlots.build_legend(t)])
         ) 
     
     @test plot_images_equal(t, m)

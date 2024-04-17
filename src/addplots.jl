@@ -21,7 +21,7 @@ function Base.:+(x::GGPlot, y...)::GGPlot
             [i              for i in y if i isa Geom], 
             [i              for i in y if i isa Vector{Geom}]...), 
         merge(x.default_aes, # if there are aes specs, make them the ggplot's defaults
-            [i.aes          for i in y if i isa Aesthetics]...),
+            [i.named        for i in y if i isa Aesthetics]...),
         x.data, # the default data is passed on to the final ggplot
         merge(x.axis_options, # get any axis options out of the geoms into one location
             [i.axis_options for i in y if i isa Geom]...,

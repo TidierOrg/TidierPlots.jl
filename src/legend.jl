@@ -2,20 +2,6 @@ function build_legend(plot::GGPlot)
     # what aes will automatically have a legend built for them?
     auto_legend = [:color]
 
-
-    # what element by default for each geom?
-    geom_elements = Dict{String, DataType}(
-        "geom_point" => MarkerElement,
-        "geom_line" => LineElement
-    )
-
-    # what options by default for each geom? 
-    geom_symbols = Dict{String, Dict}(
-        "geom_point" => Dict(:marker => :circle, :markersize => 12),
-        "geom_line" => Dict(:linestyle => nothing)
-    )
-
-
     if haskey(plot.column_transformations, :color)
         palette_function = plot.column_transformations[:color][2]
     else
@@ -38,15 +24,13 @@ function build_legend(plot::GGPlot)
 
             append!(legend, sort(DataFrame(labels = labels,
                 colors = unique(plottable_data[:color].makie_function(plottable_data[:color].raw)),
-                options = geom_symbols[geom.args["geom_name"]],
-                element = geom_elements[geom.args["geom_name"]]), 
+                options = _legend_geom_symbols[geom.args["geom_name"]],
+                element = _legend_geom_elements[geom.args["geom_name"]]), 
                 :labels))
             
             title = titlecase(string(color_colname))
         end
     end
-
-    println(legend)
 
     #return legend
 

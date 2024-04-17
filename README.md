@@ -61,7 +61,7 @@ Makie Themes:
 
 Colour Scales:
 
-- `scale_color_manual()` - arguments should be given directly in order, accepts anything that can be parsed as a color by Colors.jl (named colors, hex values, etc.)
+- `scale_color_manual()` - set `values = c(c1, c2, c3, ...)`, accepts anything that can be parsed as a color by Colors.jl (named colors, hex values, etc.)
 - `scale_color_[discrete|continuous|binned]()` - set `palette =` a [ColorSchemes.jl palette](https://juliagraphics.github.io/ColorSchemes.jl/stable/catalogue/) as a string or symbol. Also accepts ColorSchemes.jl color scheme objects. 
 
 Additional Elements:

@@ -16,8 +16,8 @@ function make_color_lookup_discrete(args_dict)
         end
 
         scheme = palette isa Symbol ? ColorSchemes.colorschemes[palette] :
-                palette isa String ? ColorSchemes.colorschemes[Symbol(palette)] :
-                palette isa ColorScheme ? palette : nothing
+                 palette isa String ? ColorSchemes.colorschemes[Symbol(palette)] :
+                 palette isa ColorScheme ? palette : nothing
 
         if isnothing(scheme)
             palette_type = typeof(palette)
@@ -136,7 +136,8 @@ function color_scale_to_ggoptions(args_dict::Dict)
     
     return AxisOptions(
         Dict(), 
-        Dict(Symbol(args_dict[:scale]) => [Symbol(args_dict[:scale])]=>color_transform)
+        Dict(Symbol(args_dict[:scale]) => [Symbol(args_dict[:scale])]=>color_transform),
+        Dict(:color => args_dict) # pass the full args dict for use by legend
     )
 end
 

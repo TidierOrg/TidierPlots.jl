@@ -19,6 +19,7 @@ function ggplot(args...; kwargs...)
            plot_data,
            args_dict, 
            theme_ggplot2(),
+           Dict(),
            Dict()) 
 end
 
@@ -30,5 +31,6 @@ function ggplot(data::DataFrame, args...; kwargs...)
            data,
            args_dict, 
            theme_ggplot2(),
+           Dict(),
            Dict()) 
 end

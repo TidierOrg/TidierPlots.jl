@@ -1,21 +1,13 @@
 ## What is TidierPlots.jl?
-TidierPlots.jl is a 100% Julia implementation of the R package ggplot in Julia. Powered by AlgebraOfGraphics.jl, Makie.jl, and Julia’s extensive meta-programming capabilities, TidierPlots.jl is an R user’s love letter to data visualization in Julia.
+`TidierPlots.jl` is a 100% Julia implementation of the R package [ggplot2](https://ggplot2.tidyverse.org) in Julia. Powered by [Makie.jl](https://docs.makie.org/stable/), `TidierPlots.jl` is an R user’s love letter to data visualization in Julia.
 
-`TidierPlots.jl` has three goals, which differentiate it from other plotting packages in Julia:
+`TidierPlots.jl` has three goals that differentiate it from other plotting packages in Julia:
 
-1.  **Stick as closely to tidyverse syntax and behaviour as possible:** Whereas other
-    meta-packages introduce Julia-centric idioms for working with
-    plots, this package’s goal is to reimplement ggplot
-    in Julia. This currently just means that `TidierPlots.jl` gives the option for specifying `aes` with the macro `@es` to allow unquoted column references, but the use of macros may need to expand as more features are added. 
+1.  **Stick as closely to tidyverse syntax and behaviour as possible:** Whereas other meta-packages introduce Julia-centric idioms for working with plots, this package’s goal is to reimplement ggplot in Julia. This currently just means that `TidierPlots.jl` gives the option for specifying `aes` with the macro `@es` to allow unquoted column references, but the use of macros may need to expand as more features are added. 
 
-2.  **Stay as compatible as possible with Makie.jl** This package is meant
-    to be a thin wrapper around Makie's SpecApi syntax to help introduce R users to plotting in 
-    Julia. 
+2.  **Stay as compatible as possible with Makie.jl** This package is meant to be a thin wrapper around Makie's SpecApi syntax to help introduce R users to plotting in Julia. 
 
-3. **To Extend ggplot using julia-specific features where appropriate** as long as this does
-    not confict with the first two goals. The package aims to behave exactly like ggplot
-    unless told otherwise. Additional options and parameters that are not present in ggplot 
-    may be added, but options that are present in R's ggplot should behave the way they do in R. 
+3. **To Extend ggplot using julia-specific features where appropriate** as long as this does not confict with the first two goals. The package aims to behave exactly like ggplot unless told otherwise. Additional options and parameters that are not present in ggplot may be added, but options that are present in R's ggplot should behave the way they do in R.
 
 ## Installation
 
@@ -38,6 +30,7 @@ Geoms:
 - `geom_smooth`
 - `geom_errorbar`
 - `geom_path`, `geom_line`, and `geom_step`
+- `geom_vline` and `geom_hline`
 - `geom_bar`, `geom_col`, and `geom_histogram`
 - `geom_boxplot` and `geom_violin`
 - `geom_contour` and `geom_tile`
@@ -99,8 +92,8 @@ using PalmerPenguins
 
 penguins = dropmissing(DataFrame(PalmerPenguins.load()))
 
-@ggplot(data = penguins) + 
-    @geom_bar(aes(x = species)) +
-    @labs(x = "Species")
+ggplot(data = penguins) + 
+    geom_bar(@aes(x = species)) +
+    labs(x = "Species")
 ```
 ![](assets/example_col.png)

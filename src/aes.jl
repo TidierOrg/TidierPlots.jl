@@ -1,3 +1,10 @@
+"""
+    aes(args...; kwargs...)
+
+# Details
+
+TBD
+"""
 function aes(args...; kwargs...)
     col_transforms = Dict()
     aes_args = Symbol[]
@@ -26,7 +33,7 @@ function aes(args...; kwargs...)
             push!(aes_kwargs, String(k) => Symbol(v))
         end
     end
-        
+
     return Aesthetics(
             aes_args,
             aes_kwargs,
@@ -39,14 +46,14 @@ macro aes(exprs...)
     for aes_ex in exprs
         if aes_ex isa Expr
             if aes_ex.args[2] isa Expr
-                
-                
+
+
             elseif aes_ex.args[2] isa QuoteNode
                 aes_dict[String(aes_ex.args[1])] = aes_ex.args[2].value
             elseif aes_ex.args[2] isa String
                 aes_dict[String(aes_ex.args[1])] = Symbol(aes_ex.args[2])
             else
-                aes_dict[String(aes_ex.args[1])] = aes_ex.args[2] 
+                aes_dict[String(aes_ex.args[1])] = aes_ex.args[2]
             end
         elseif aes_ex isa Symbol
             push!(positional, aes_ex)

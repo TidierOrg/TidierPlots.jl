@@ -153,7 +153,7 @@ Add basic support for any Makie plot using `geom_template(name, required_aes, ma
 geom_raincloud = geom_template("geom_raincloud", ["x", "y"], :RainClouds)
 
 ggplot(penguins) + 
-    geom_raincloud(aes(x = :species, y = :bill_depth_mm, color = :species), size = 4) +
+    geom_raincloud(aes(x = :species, y = :bill_depth_mm/10, color = :species), size = 4) +
     scale_y_continuous(labels = "{:.1f} cm") + 
     labs(title = "Bill Depth by Species", x = "Species", y = "Bill Depth") +
     theme_minimal()

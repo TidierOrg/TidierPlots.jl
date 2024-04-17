@@ -21,7 +21,12 @@ function build_legend(plot::GGPlot)
     colorbar = false
 
     for geom in plot.geoms
-        
+        if !(geom.args["geom_name"] in keys(_legend_geom_symbols)) || !(geom.args["geom_name"] in keys(_legend_geom_elements))
+            no_default = geom.args["geom_name"]
+            @warn "Legend defaults are not set for $no_default."
+            continue
+        end
+
         all_aes = merge(plot.default_aes, geom.aes)
 
         color_colname = haskey(all_aes, "colour") ? all_aes["colour"] :

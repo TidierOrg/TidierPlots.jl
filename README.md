@@ -151,7 +151,9 @@ Add basic support for any Makie plot using `geom_template(name, required_aes, ma
 
 ```julia
 geom_raincloud = geom_template("geom_raincloud", ["x", "y"], :RainClouds)
-raincloud = ggplot(penguins) + geom_raincloud(aes(x = :species, y = :bill_depth_mm, color = :species), size = 4)
+
+ggplot(penguins) + 
+    geom_raincloud(aes(x = :species, y = :bill_depth_mm, color = :species), size = 4)
 ```
 ![](assets/raincloud.png)
 

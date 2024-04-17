@@ -26,7 +26,6 @@ using KernelDensity
 
 include("structs.jl")
 
-include("attributes.jl")
 include("addplots.jl")
 include("aes_ops.jl")
 include("aes.jl")

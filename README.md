@@ -147,11 +147,11 @@ ggplot(df, yticks = (1:3, ["bottom", "middle", "top"])) +
 
 ### Easy Extensions with Makie
 
-Add basic support for any Makie plot using `geom_template(name, required_aes, makie_plot)`. It will inherit support most optional aesthetics and arguments automatically:
+Add basic support for any Makie plot using `geom_template(name, required_aes, makie_plot)`. It will inherit support for most optional aesthetics and arguments automatically:
 
 ```julia
 geom_raincloud = geom_template("geom_raincloud", ["x", "y"], :RainClouds)
-ggplot(penguins) + geom_raincloud(aes(x = :species, y = :bill_depth_mm, color = :species))
+raincloud = ggplot(penguins) + geom_raincloud(aes(x = :species, y = :bill_depth_mm, color = :species), size = 4)
 ```
 ![](assets/raincloud.png)
 

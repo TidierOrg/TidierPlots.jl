@@ -80,7 +80,7 @@ end
 
     input = penguins.bill_depth_mm
 
-    colours = floor.(Int, 1 .+ 4 .* ((input .- minimum(input)) ./ (maximum(input) - minimum(input))))
+    colours = ceil.(Int, 1 .+ 4 .* ((input .- minimum(input)) ./ (maximum(input) - minimum(input))))
 
     m = Makie.plot(
         Makie.SpecApi.GridLayout([

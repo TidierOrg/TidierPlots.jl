@@ -1,42 +1,6 @@
 import Makie.SpecApi
 
 function Makie.SpecApi.Axis(plot::GGPlot)
-     # translation dict for GGPlot term => Makie Term
-    # terms that aren't on this list won't be translated, just passed directly to Makie
-    ggplot_to_makie = Dict{String, String}(
-        "colour" => "color",
-        "shape" => "marker",
-        "size" => "markersize",
-        "stroke" => "strokewidth",
-        "strokecolour" => "strokecolor",
-        "linetype" => "linestyle",
-        "glow" => "glowwidth",
-        "glowcolour" => "glowcolor",
-        "errorbar_direction" => "direction",
-        "label" => "text",
-        "palette" => "colormap"
-    )
-
-    # What type does the Makie argument expect? 
-    # without a specified type here, arguments will pass "as is"
-    
-    expected_type = Dict{String, Type}(
-        # Symbol
-        "marker"        => Symbol,
-        "strokecolor"   => Symbol,
-        "glowcolor"     => Symbol,
-        "colormap"      => Symbol,
-        "yaxisposition" => Symbol,
-        "direction"     => Symbol,
-        # Float
-        "alpha"         => Float32,
-        "markersize"    => Float32,
-        "strokewidth"   => Float32,
-        "glowwidth"     => Float32,
-        # Integer
-        "bins"          => Int64
-    )
-
     plot_list = Makie.PlotSpec[]
     axis_options = Dict{Symbol, Any}()
 
@@ -48,24 +12,24 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         aes_dict = merge(plot.default_aes, geom.aes)
 
         # apply function if required to edit the aes/args/data
-        aes_dict, args_dict, required_aes, plot_data = 
+        aes_dict, args_dict, required_aes, plot_data =
             geom.aes_function(aes_dict, geom.args, geom.required_aes, plot_data)
-        
+
         # make a master list of all possible accepted optional aesthetics and args
-        ggplot_to_makie_geom = merge(ggplot_to_makie, geom.special_aes)
-        
+        ggplot_to_makie_geom = merge(_ggplot_to_makie, geom.special_aes)
+
         # which aesthetics were given?
         given_aes = Dict{Symbol, PlottableData}()
 
         # inherit any unspecified column transforms
         col_transforms = merge(geom.column_transformations, plot.column_transformations)
-        
+
         aes_dict_makie = Dict{Symbol, Symbol}()
 
         for (aes_string, column_name) in aes_dict
             # the name of the aes is translated to the makie term if needed
-            aes = haskey(ggplot_to_makie_geom, aes_string) ? Symbol(ggplot_to_makie_geom[aes_string]) : Symbol(aes_string)
-            push!(aes_dict_makie, aes => column_name)
+            aes = get(ggplot_to_makie_geom, aes_string, aes_string)
+            push!(aes_dict_makie, Symbol(aes) => column_name)
         end
 
         for (aes, column_name) in aes_dict_makie
@@ -92,26 +56,13 @@ function Makie.SpecApi.Axis(plot::GGPlot)
             merge!(given_aes, plottable_data)
         end
 
-        # which ones were given as arguments? 
-
         args_dict_makie = Dict{Symbol, Any}()
 
         for (arg, value) in args_dict
-            if haskey(expected_type, arg)
-                try
-                    if haskey(ggplot_to_makie_geom, arg)
-                        args_dict_makie[Symbol(ggplot_to_makie_geom[arg])] = expected_type[arg](value)
-                    else
-                        args_dict_makie[Symbol(arg)] = expected_type[arg](value)
-                    end
-                catch
-                    ex_type = expected_type[arg]
-                    given_type = typeof(args_dict[arg])
-                    geom_name = geom.args["geom_name"]
-                    @error "Argument $arg in $geom_name given as type $given_type, 
-                            which cannot be converted to expected type $ex_type."
-                end
-            end
+            ex_type = get(_makie_expected_type, arg, Any)
+            converted_value = try_convert(ex_type, value, arg, geom.args["geom_name"])
+            makie_attr = get(ggplot_to_makie_geom, arg, arg)
+            args_dict_makie[Symbol(makie_attr)] = converted_value
         end
 
         required_aes_data = [p.makie_function(p.raw) for p in [given_aes[a] for a in Symbol.(required_aes)]]
@@ -121,36 +72,20 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         kwargs = merge(args_dict_makie, Dict(optional_aes_data))
 
         # push completed PlotSpec (type, args, and kwargs) to the list of plots
-
         push!(plot_list, Makie.PlotSpec(args...; kwargs...))
     end
 
     # rename and correct types on all axis options
-
     for (arg, value) in plot.axis_options
-        if haskey(expected_type, arg)
-            value = expected_type[arg](value)
-        end
-
-        try
-            if haskey(ggplot_to_makie, arg)
-                axis_options[Symbol(ggplot_to_makie[arg])] = value
-            else
-                axis_options[Symbol(arg)] = value
-            end
-        catch
-            ex_type = expected_type[arg]
-            given_type = typeof(args_dict[arg])
-            @error "Argument $arg in ggplot() given as type $given_type, which cannot be converted to expected type $ex_type."
-        end
+        ex_type = get(_makie_expected_type, arg, Any)
+        converted_value = try_convert(ex_type, value, arg, "ggplot")
+        makie_attr = get(_ggplot_to_makie, arg, arg)
+        axis_options[Symbol(makie_attr)] = converted_value
     end
 
-    return length(axis_options) == 0 ? 
+    return length(axis_options) == 0 ?
         Makie.SpecApi.Axis(plots = plot_list) :
-        Makie.SpecApi.Axis(
-                plots = plot_list; 
-                axis_options...
-            )
+        Makie.SpecApi.Axis(plots = plot_list; axis_options...)
 end
 
 function draw_ggplot(plot::GGPlot)
@@ -165,4 +100,17 @@ end
 
 function draw_ggplot(plot_grid::GGPlotGrid)
     Makie.plot(plot_grid.grid)
+end
+
+try_convert(::Type{Any}, v, ::Any, ::Any) = v
+
+function try_convert(T::Type, v::S, arg, fname) where {S}
+    try
+        retvalue = T(v)
+        return retvalue
+    catch
+        msg = "Argument '$arg' in '$fname' has value '$v' and type '$S' which cannot be " *
+        "converted to the expected type '$T'."
+        throw(ArgumentError(msg))
+    end
 end

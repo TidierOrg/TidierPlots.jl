@@ -90,7 +90,7 @@ function color_scale_to_ggoptions(args_dict::Dict)
         function color_transform_fn(target::Symbol, source::Vector{Symbol}, data::DataFrame)
             input = data[!, source[1]]
 
-            if typeof(input) <: Union{AbstractVector{String}, AbstractVector{Char}, CategoricalArray}
+            if typeof(input) <: Union{AbstractVector{String}, Vector{AbstractString}, AbstractVector{Char}, CategoricalArray}
             
                 cat_array = CategoricalArray(input)
 

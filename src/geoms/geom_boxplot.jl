@@ -14,7 +14,7 @@ function boxplot_groups(aes_dict::Dict{String, Symbol},
     dodge_aes = [aes for aes in factor_aes if aes_dict[aes] != aes_dict[main_factor_aes]]
 
     if length(dodge_aes) > 1
-        @warn "Too many categorical aes specified"
+        @warn "Too many categorical aes specified, can't select dodge automatically"
     end
 
     if length(dodge_aes) != 0

@@ -4,5 +4,7 @@ using PalmerPenguins
 
 penguins = dropmissing(DataFrame(PalmerPenguins.load()));
 
-ggplot(penguins) +
-    geom_histogram(@aes(x = bill_length_mm))
+#-
+
+ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) +
+    geom_contour(levels = 10)

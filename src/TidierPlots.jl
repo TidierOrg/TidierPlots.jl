@@ -57,6 +57,7 @@ include("geoms/geom_path.jl")
 include("geoms/geom_point.jl")
 include("geoms/geom_smooth.jl")
 include("geoms/geom_text.jl")
+include("geoms/geom_tile.jl")
 include("geoms/geom_violin.jl")
 
 @reexport using Makie: theme_black, theme_dark, theme_ggplot2, theme_light, theme_minimal

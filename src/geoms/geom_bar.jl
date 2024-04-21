@@ -192,7 +192,7 @@ ggplot(penguins) + geom_bar(@aes(x = species))
 # horizontal bar plot
 ggplot(penguins) + geom_bar(@aes(y = species))
 
-# ggplot(penguins, @aes(x = species, color=sex, dodge=sex)) + geom_bar()
+ggplot(penguins, @aes(x = species, color=sex, dodge=sex)) + geom_bar()
 ```
 """
 geom_bar = geom_template("geom_bar", String[], :BarPlot; aes_function = handle_position)

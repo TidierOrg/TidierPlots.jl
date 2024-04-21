@@ -6,8 +6,8 @@ Represents data as pairs of (x, y) points.
 
 # Arguments
 
-- `plot::GGPlot` (optional): a plot object to "add" this geom to
-- `aes(...)`: the names of the columns in the plot DataFrame that will be used to decide where the points are plotted.
+- `plot::GGPlot` (optional): a plot object to add this geom to
+- `aes(...)`: the names of the columns in the DataFrame that will be used in the mapping
 - `...`: options that are not mapped to a column (passed to Makie.Scatter)
 
 # Required Aesthetics
@@ -15,16 +15,29 @@ Represents data as pairs of (x, y) points.
 - `x`
 - `y`
 
-# Supported Optional Aesthetics (See [`aes`](@ref) for specification options)
+# Optional Aesthetics (see [`aes`](@ref))
 
-- size
-- alpha
-- stroke
-- shape
-- colour/color
+- `color` / `color`
 
-# Supported Options
+# Optional Arguments
 
-TBD
+- `color` / `colour`
+- `colormap` / `palette`
+- `marker` / `shape`
+- `markersize` / `size`
+- `strokewidth` / `stroke`
+- `strokecolor` / `strokecolour`
+- `glowwidth` / `glow`
+- `glowcolor` / `glowcolour`
+- `alpha`
+
+# Examples
+
+```julia
+ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) + geom_point()
+
+ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) +
+    geom_point(@aes(color = sex), size=20, stroke=1, alpha=0.6)
+```
 """
 geom_point = geom_template("geom_point", ["x", "y"], :Scatter)

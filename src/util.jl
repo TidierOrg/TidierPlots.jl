@@ -11,7 +11,8 @@ function TidierPlots_set(option::AbstractString, value::Bool)
 end
 
 function c(args...)
-    return [v for v in args]
+    @warn "The julia equivalent of 'c(1, 2, 3)' in R is `[1, 2, 3]`." maxlog=2
+    return reduce(vcat, args)
 end
 
 function check_aes(required_aes, aes_dict, geom_name)

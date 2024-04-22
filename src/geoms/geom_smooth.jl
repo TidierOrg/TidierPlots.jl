@@ -6,8 +6,8 @@ Represent data as a smoothed or linear fit.
 
 # Arguments
 
-- `plot::GGPlot` (optional): a plot object to "add" this geom to
-- `aes(...)`: the names of the columns in the plot DataFrame that will be used to decide where the points are plotted.
+- `plot::GGPlot` (optional): a plot object to add this geom to
+- `aes(...)`: the names of the columns in the DataFrame that will be used in the mapping
 - `...`: options that are not mapped to a column (passed to Makie.Lines)
 
 # Required Aesthetics
@@ -15,16 +15,30 @@ Represent data as a smoothed or linear fit.
 - `x`
 - `y`
 
-# Supported Optional Aesthetics (See [`aes`](@ref) for specification options)
+# Optional Aesthetics (see [`aes`](@ref))
 
-- alpha
-- colour/color
+- NA
 
-# Supported Options
+# Optional Arguments
 
-- method: "smooth" (loess fit) or "lm" (linear fit)
-- alpha
-- colour/color
+- `method`: either "smooth" (default, loess fit) or "lm" (linear fit)
+- `color` / `colour`
+- `linewidth`
+- `alpha`
+- `linestyle` / `linetype`
+
+# Examples
+
+```julia
+xs = range(0, 2pi, length=30)
+ys = sin.(xs) .+ randn(length(xs)) * 0.5
+df = DataFrame(x = xs, y = ys)
+
+ggplot(df, @aes(x = x, y = y)) + geom_smooth() + geom_point()
+
+ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) +
+    geom_smooth(color=:red, linewidth=10, alpha=0.5)
+```
 """
 function geom_smooth(plot::GGPlot, args...; kwargs...)
     return plot + geom_smooth(args...; kwargs...)
@@ -34,21 +48,19 @@ function geom_smooth(args...; kwargs...)
     aes_dict, args_dict, transforms = extract_aes(args, kwargs)
     args_dict["geom_name"] = "geom_smooth"
 
-    if haskey(args_dict, "method")
-        if args_dict["method"] == "lm"
-            return [build_geom(aes_dict,
-                        args_dict,
-                        ["x", "y"],
-                        :Lines,
-                        stat_linear,
-                        transforms),
-                    build_geom(aes_dict,
-                        args_dict,
-                        ["x", "lower", "upper"],
-                        :Band,
-                        stat_linear,
-                        transforms)]
-        end
+    if get(args_dict, "method", "smooth") == "lm"
+        return [build_geom(aes_dict,
+                    args_dict,
+                    ["x", "y"],
+                    :Lines,
+                    stat_linear,
+                    transforms),
+                build_geom(aes_dict,
+                    args_dict,
+                    ["x", "lower", "upper"],
+                    :Band,
+                    stat_linear,
+                    transforms)]
     end
 
     return build_geom(aes_dict,
@@ -59,9 +71,12 @@ function geom_smooth(args...; kwargs...)
                       transforms)
 end
 
-function stat_loess(aes_dict::Dict{String, Symbol},
-    args_dict::Dict{String, Any}, required_aes::Vector{String}, plot_data::DataFrame)
-
+function stat_loess(
+    aes_dict,
+    args_dict,
+    required_aes::Vector{String},
+    plot_data::DataFrame
+)
     x = plot_data[!, aes_dict["x"]]
     y = plot_data[!, aes_dict["y"]]
 
@@ -77,9 +92,12 @@ function stat_loess(aes_dict::Dict{String, Symbol},
     return (aes_dict, args_dict, required_aes, return_data)
 end
 
-function stat_linear(aes_dict::Dict{String, Symbol},
-    args_dict::Dict{String, Any}, required_aes::Vector{String}, plot_data::DataFrame)
-
+function stat_linear(
+    aes_dict,
+    args_dict,
+    required_aes::Vector{String},
+    plot_data::DataFrame
+)
     x = plot_data[!, aes_dict["x"]]
     y = plot_data[!, aes_dict["y"]]
 

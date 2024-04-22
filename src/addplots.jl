@@ -29,7 +29,9 @@ function Base.:+(x::GGPlot, y...)::GGPlot
             [i.opt          for i in y if i isa AxisOptions]...),
         theme,
         merge(x.column_transformations, 
-            [i.column_transformations for i in y if i isa AxisOptions]...)
+            [i.column_transformations for i in y if i isa AxisOptions]...),
+        merge(x.legend_options,
+            [i.legend_options for i in y if i isa AxisOptions]...)    
     )
 
     return result

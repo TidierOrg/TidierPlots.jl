@@ -17,6 +17,7 @@ struct GGPlot
     axis_options::Dict
     theme::Attributes
     column_transformations::Dict
+    legend_options::Dict
 end
 
 struct Aesthetics
@@ -28,6 +29,7 @@ end
 struct AxisOptions
     opt::Dict{Symbol, Any}
     column_transformations::Dict
+    legend_options::Dict
 end
 
 struct GGPlotGrid

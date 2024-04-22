@@ -61,7 +61,7 @@ Makie Themes:
 
 Colour Scales:
 
-- `scale_color_manual()` - arguments should be given directly in order, accepts anything that can be parsed as a color by Colors.jl (named colors, hex values, etc.)
+- `scale_color_manual()` - set `values = c(c1, c2, c3, ...)`, accepts anything that can be parsed as a color by Colors.jl (named colors, hex values, etc.)
 - `scale_color_[discrete|continuous|binned]()` - set `palette =` a [ColorSchemes.jl palette](https://juliagraphics.github.io/ColorSchemes.jl/stable/catalogue/) as a string or symbol. Also accepts ColorSchemes.jl color scheme objects. 
 
 Additional Elements:
@@ -144,6 +144,21 @@ ggplot(df, yticks = (1:3, ["bottom", "middle", "top"])) +
         position = "dodge", direction = "x") + labs(title = "Dodged Bars") + theme_dark()
 ```
 ![](assets/bar_labels.png)
+
+### Easy Extensions with Makie
+
+Add basic support for any Makie plot using `geom_template(name, required_aes, makie_plot)`. It will inherit support for most optional aesthetics and arguments automatically:
+
+```julia
+geom_raincloud = geom_template("geom_raincloud", ["x", "y"], :RainClouds)
+
+ggplot(penguins) + 
+    geom_raincloud(aes(x = :species, y = :bill_depth_mm/10, color = :species), size = 4) +
+    scale_y_continuous(labels = "{:.1f} cm") + 
+    labs(title = "Bill Depth by Species", x = "Species", y = "Bill Depth") +
+    theme_minimal()
+```
+![](assets/raincloud.png)
 
 See the [documentation](https://tidierorg.github.io/TidierPlots.jl/latest) for more information and examples. 
 

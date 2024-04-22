@@ -90,12 +90,21 @@ end
 
 function draw_ggplot(plot::GGPlot)
     axis = Makie.SpecApi.Axis(plot)
+    legend = build_legend(plot)
 
-    Makie.plot(
-        Makie.SpecApi.GridLayout(
-            axis
+    if isnothing(legend)
+        Makie.plot(
+            Makie.SpecApi.GridLayout(
+                axis
+            )
         )
-    )
+    else
+        Makie.plot(
+            Makie.SpecApi.GridLayout(
+                [axis legend]
+            )
+        )
+    end
 end
 
 function draw_ggplot(plot_grid::GGPlotGrid)

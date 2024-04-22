@@ -11,7 +11,7 @@ function TidierPlots_set(option::AbstractString, value::Bool)
 end
 
 function c(args...)
-    @warn "The julia equivalent of 'c(1, 2, 3)' in R is `[1, 2, 3]`." maxlog=2
+    @warn "The julia equivalent of 'c(1, 2, 3)' in R is '[1, 2, 3]'." maxlog=2
     return reduce(vcat, args)
 end
 

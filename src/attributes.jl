@@ -89,7 +89,7 @@ const _makie_expected_type = Dict{String, Type}(
     "strokearound" => Bool,
 
     # Marker Attributes
-    "marker" => Symbol,
+    "marker" => Any,
     "markersize" => Real,
     "markerspace" => Symbol,
     "glowwidth" => Real,

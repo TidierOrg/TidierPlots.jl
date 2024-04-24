@@ -82,11 +82,17 @@ end
 
 Represent data as columns.
 
+# Details
+
+The columns are stacked by default, and the behavior can be changed with the "position"
+argument. The position can either be "stack" or "dodge". If the argument is "dodge", then a
+a grouping variable will also need to be supplied to `aes`. Alternatively you can supply the
+grouping variable to `dodge` within the aesthetic.
+
 # Arguments
 
-- `plot::GGPlot` (optional): a plot object to "add" this geom to
-- `aes(...)`: the names of the columns in the plot DataFrame that will be used to decide where the points are plotted.
-- `position::String`: "stack" (the default) or "dodge"
+- `plot::GGPlot` (optional): a plot object to add this geom to
+- `aes(...)`: the names of the columns in the DataFrame that will be used in the mapping
 - `...`: options that are not mapped to a column (passed to Makie.BarPlot)
 
 # Required Aesthetics
@@ -94,24 +100,47 @@ Represent data as columns.
 - `x`
 - `y`
 
-# Supported Optional Aesthetics (See [`aes`](@ref) for specification options)
+# Optional Aesthetics (see [`aes`](@ref))
 
-- alpha
-- colour/color
-- fill
-- group
-- linetype
-- linewidth
+- `color` / `colour`
+- `strokecolor` / `strokecolour`
+- `dodge`
+- `group`
 
-# Supported Options
+# Optional Arguments
 
-- alpha
-- colour/color
-- fill
-- group
-- linetype
-- linewidth
+- `position`: "stack" (default) or "dodge"
+- `stroke` / `strokewidth`
+- `strokecolor` / `strokecolour`
+- `direction`: `:y` (default) or :x
+- `dodge_gap`
+- `gap`
 
+# Examples
+
+```julia
+df = @chain penguins begin
+    @group_by(species, sex)
+    @summarize(mean_bill_length_mm = mean(bill_length_mm))
+    @ungroup()
+end
+
+ggplot(df) +
+    geom_col(@aes(x = species, y = mean_bill_length_mm))
+
+# dodge using the group and position arguments
+ggplot(df) +
+    geom_col(@aes(x = species, y = mean_bill_length_mm, group = sex),
+             position="dodge")
+
+# dodge using the dodge aesthetic
+ggplot(df) +
+    geom_col(@aes(x = species, y = mean_bill_length_mm, dodge = sex))
+
+# color based on grouping variable
+ggplot(df) +
+    geom_col(@aes(x = species, y = mean_bill_length_mm, color = sex))
+```
 """
 geom_col = geom_template("geom_col", ["x", "y"], :BarPlot; aes_function = handle_position)
 
@@ -119,61 +148,51 @@ geom_col = geom_template("geom_col", ["x", "y"], :BarPlot; aes_function = handle
     geom_bar(aes(...), ...)
     geom_bar(plot::GGPlot, aes(...), ...)
 
-Represent data as bars.
+Represent the counts of a grouping variable as columns.
+
+# Details
+
+The columns are stacked by default, and the behavior can be changed with the "position"
+argument. The position can either be "stack" or "dodge". If the argument is "dodge", then a
+a grouping variable will also need to be supplied to `aes`. Alternatively you can supply the
+grouping variable to `dodge` within the aesthetic.
 
 # Arguments
 
-- plot::GGPlot (optional): a plot object to "add" this geom to
-- `aes(...)`: the names of the columns in the plot DataFrame that will be used to decide where the points are plotted.
+- `plot::GGPlot` (optional): a plot object to add this geom to
+- `aes(...)`: the names of the columns in the DataFrame that will be used in the mapping
 - `...`: options that are not mapped to a column (passed to Makie.BarPlot)
 
 # Required Aesthetics
 
-- `x` OR `y`
+- `x` OR `y` (not both)
 
-# Supported Optional Aesthetics (See [`aes`](@ref) for specification options)
+# Optional Aesthetics (see [`aes`](@ref))
 
-- alpha
-- colour/color
-- fill
-- group
-- linetype
-- linewidth
+- `color` / `colour`
+- `strokecolor` / `strokecolour`
+- `dodge`
+- `group`
 
-# Supported Options
+# Optional Arguments
 
-- alpha
-- position: "stack" (the default) or "dodge"
-- colour/color
-- fill
-- group
-- linetype
-- linewidth
+- `position`: "stack" (default) or "dodge"
+- `stroke` / `strokewidth`
+- `strokecolor` / `strokecolour`
+- `direction`: `:y` (default) or :x
+- `dodge_gap`
+- `gap`
+
+# Examples
+
+```julia
+# vertical bar plot
+ggplot(penguins) + geom_bar(@aes(x = species))
+
+# horizontal bar plot
+ggplot(penguins) + geom_bar(@aes(y = species))
+
+ggplot(penguins, @aes(x = species, color=sex, dodge=sex)) + geom_bar()
+```
 """
 geom_bar = geom_template("geom_bar", String[], :BarPlot; aes_function = handle_position)
-
-"""
-    geom_histogram(aes(...), ...)
-    geom_histogram(plot::GGPlot, aes(...), ...)
-
-Represents data as a histogram.
-
-# Arguments
-
-- plot::GGPlot (optional): a plot object to "add" this geom to
-- `aes(...)`: the names of the columns in the plot DataFrame that will be used to decide where the points are plotted.
-- `...`: options that are not mapped to a column (passed to Makie.Hist)
-
-# Required Aesthetics
-
-- `x`
-
-# Supported Optional Aesthetics (See [`aes`](@ref) for specification options)
-
-TBD
-
-# Supported Options
-
-TBD
-"""
-geom_histogram = geom_template("geom_histogram", ["x"], :Hist)

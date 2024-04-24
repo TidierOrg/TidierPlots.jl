@@ -158,7 +158,7 @@ ggplot(df, xminorticksvisible=true, xminorgridvisible=true,
     scale_color_continuous(palette = "Hiroshige", name = "") +
     beautiful_makie_theme
 ```
-![](assets/beautiful_makie.svg)
+![](assets/beautiful_makie.png)
 
 ### Easy Extensions with Makie
 

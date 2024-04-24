@@ -128,7 +128,7 @@ end
 
 ### Flexible access to Makie options
 
-Access to all axis and plot options from `Makie` let you take advantage of nice features:
+Access to all axis and plot options from `Makie` let you use Makie's extensive capabilities for plot customization (example adapted from [beautiful.makie.org](https://beautiful.makie.org/examples/2d/scatters/bubble_plot_logxy)):
 
 ```julia
 using CairoMakie, Random, DataFrames

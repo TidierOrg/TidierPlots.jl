@@ -13,6 +13,10 @@ using Reexport
 using Colors
 using ColorSchemes
 
+# Needed for label functions
+using Format
+using Dates
+
 # For handling categorical data types
 using CategoricalArrays
 
@@ -36,6 +40,7 @@ include("geom.jl")
 include("ggplot.jl")
 include("ggsave.jl")
 include("labs.jl")
+include("label_functions.jl")
 include("scales_colour.jl")
 include("scales_numeric.jl")
 include("themes.jl")
@@ -76,7 +81,7 @@ export geom_point
 export geom_path
 export geom_line
 export geom_step
-export geom_smooth 
+export geom_smooth
 export geom_errorbar
 export geom_errorbarh
 export geom_violin
@@ -89,14 +94,15 @@ export geom_density
 export geom_hline
 export geom_vline
 
-# scales 
+# scales
 
 export labs, lims, c
+export label_bytes, label_currency, label_date, label_log, label_number, label_ordinal, label_percent, label_pvalue, label_scientific, label_wrap
 #export facet_wrap, facet_grid
 export scale_x_continuous, scale_y_continuous
-export scale_x_log10, scale_y_log10, scale_x_log2, scale_y_log2, scale_x_log, scale_y_log  
-export scale_x_logit, scale_y_logit  
-export scale_x_pseudolog10, scale_y_pseudolog10, scale_x_Symlog10, scale_y_Symlog10 
+export scale_x_log10, scale_y_log10, scale_x_log2, scale_y_log2, scale_x_log, scale_y_log
+export scale_x_logit, scale_y_logit
+export scale_x_pseudolog10, scale_y_pseudolog10, scale_x_Symlog10, scale_y_Symlog10
 export scale_x_reverse, scale_y_reverse, scale_x_sqrt, scale_y_sqrt
 export scale_colour_continuous, scale_colour_discrete, scale_colour_manual, scale_colour_binned
 export scale_color_continuous, scale_color_discrete, scale_color_manual, scale_color_binned

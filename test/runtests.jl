@@ -11,6 +11,8 @@ using Loess
 using KernelDensity
 using Colors
 using ColorSchemes
+using Format
+using Dates
 
 # functions to compare two images using a difference hash
 # essentially copied from ImageHashes.jl, but package is out of date
@@ -36,6 +38,7 @@ set_theme!(theme_ggplot2())
     include("test_aes_ops.jl")
     include("test_geoms.jl")
     include("test_labs.jl")
+    include("test_label_functions.jl")
     include("test_lims.jl")
     include("test_scale_colour.jl")
 end

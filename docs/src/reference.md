@@ -1,8 +1,3 @@
-```@meta
-DocTestSetup= quote
-using TidierPlots
-end
-```
 ## Index
 ```@index
 Modules = [TidierPlots]

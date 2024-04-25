@@ -9,54 +9,45 @@ function stat_density_2d(aes_dict::Dict{String, Symbol},
 end
 
 """
-    geom_tile(aes(...), ...)
-    geom_tile(plot::GGPlot, aes(...), ...)
-
-Represents data as...
-
-# Arguments
-
-- `plot::GGPlot` (optional): a plot object to "add" this geom to
-- `aes(...)`: the names of the columns in the plot DataFrame that will be used to decide where the points are plotted.
-- `...`: options that are not mapped to a column (passed to Makie.Heatmap)
-
-# Required Aesthetics
-
-TBD
-
-# Supported Optional Aesthetics (See [`aes`](@ref) for specification options)
-
-TBD
-
-# Supported Options
-
-TBD
-"""
-geom_tile = geom_template("geom_tile", ["x", "y", "z"], :Heatmap)
-
-"""
     geom_contour(aes(...), ...)
     geom_contour(plot::GGPlot, aes(...), ...)
 
 Represents a grid of data as smooth curves of a surface.
 
+# Details
+
+This is geom is equivalent to `ggplot2::ggplot(df, aes(x, y, z = density))`. Only the `x`
+and `y` aesthetics are required.
+
 # Arguments
 
-- `plot::GGPlot` (optional): a plot object to "add" this geom to
-- `aes(...)`: the names of the columns in the plot DataFrame that will be used to decide where the points are plotted.
+- `plot::GGPlot` (optional): a plot object to add this geom to
+- `aes(...)`: the names of the columns in the DataFrame that will be used in the mapping
 - `...`: options that are not mapped to a column (passed to Makie.Contour)
 
 # Required Aesthetics
 
-TBD
+- `x`
+- `y`
 
-# Supported Optional Aesthetics (See [`aes`](@ref) for specification options)
+# Optional Aesthetics (see [`aes`](@ref))
 
-TBD
+- NA
 
-# Supported Options
+# Optional Arguments
 
-TBD
+- `color` / `colour`
+- `colormap` / `palette`
+- `levels`
+- `linewidth`
+- `linestyle` / `linetype`
+
+# Examples
+
+```julia
+ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) +
+    geom_contour(levels = 10)
+```
 """
 geom_contour = geom_template("geom_contour", ["x", "y"], :Contour;
     aes_function = stat_density_2d,

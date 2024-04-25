@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/TidierOrg/Tidier.jl/blob/main/LICENSE)
 [![Docs: Latest](https://img.shields.io/badge/Docs-Latest-blue.svg)](https://tidierorg.github.io/TidierPlots.jl/latest)
-[![Downloads](https://shields.io/endpoint?url=https://pkgs.genieframework.com/api/v1/badge/TidierPlots&label=Downloads)](https://pkgs.genieframework.com?packages=TidierPlots)
+[![Downloads](https://img.shields.io/badge/dynamic/json?url=http%3A%2F%2Fjuliapkgstats.com%2Fapi%2Fv1%2Fmonthly_downloads%2FTidierPlots&query=total_requests&suffix=%2Fmonth&label=Downloads)](http://juliapkgstats.com/pkg/TidierPlots)
 
 <img src="/assets/logo.png" align="right" style="padding-left:10px;" width="150"/>
 
@@ -61,7 +61,7 @@ Makie Themes:
 
 Colour Scales:
 
-- `scale_color_manual()` - arguments should be given directly in order, accepts anything that can be parsed as a color by Colors.jl (named colors, hex values, etc.)
+- `scale_color_manual()` - set `values = c(c1, c2, c3, ...)`, accepts anything that can be parsed as a color by Colors.jl (named colors, hex values, etc.)
 - `scale_color_[discrete|continuous|binned]()` - set `palette =` a [ColorSchemes.jl palette](https://juliagraphics.github.io/ColorSchemes.jl/stable/catalogue/) as a string or symbol. Also accepts ColorSchemes.jl color scheme objects. 
 
 Additional Elements:
@@ -126,24 +126,54 @@ end
 ```
 ![](assets/in_order.png)
 
-### Simple Bar Labels
+### Flexible access to Makie options
 
-Access to all axis and plot options from `Makie` let you take advantage of nice features like easy `bar_labels`: 
+Access to all axis and plot options from `Makie` lets you use Makie's extensive capabilities for plot customization (example adapted from [beautiful.makie.org](https://beautiful.makie.org/examples/2d/scatters/bubble_plot_logxy)):
 
 ```julia
-df = DataFrame(
-    cat = ["left", "left", "left",
-           "middle", "middle", "middle",
-           "right", "right", "right"],
-    height = 0.1:0.1:0.9,
-    grp = [1, 2, 3, 1, 2, 3, 1, 2, 3]
+using CairoMakie, Random, DataFrames
+using TidierPlots
+
+Random.seed!(123)
+
+df = DataFrame(x = 10 .^ (range(-1, stop=1, length=100)),
+    y = x .^ 2 .+ abs.(2 * randn(length(x))),
+    size = (x .^ 2/3)[end:-1:1] .+ 6)
+
+
+beautiful_makie_theme = Attributes(
+    fonts=(;regular="CMU Serif"),
 )
 
-ggplot(df, yticks = (1:3, ["bottom", "middle", "top"])) + 
-    geom_col(@aes(cat, height, color = grp, bar_labels = height), 
-        position = "dodge", direction = "x") + labs(title = "Dodged Bars") + theme_dark()
+ggplot(df, xminorticksvisible=true, xminorgridvisible=true, 
+       yminorticksvisible=true, yminorgridvisible=true, 
+       xminorticks=IntervalsBetween(9), yminorticks=IntervalsBetween(9),
+       backgroundcolor = :transparent, xgridstyle=:dash,
+       ygridstyle=:dash) + 
+    geom_point(aes(x = :x, y = :y, size = :size, color = :x), alpha = 0.8) +
+    scale_x_log10() + 
+    scale_y_log10() + 
+    labs(x = "x", y = "y") +
+    lims(y = c(.1, 100)) +
+    scale_color_continuous(palette = "Hiroshige", name = "") +
+    beautiful_makie_theme
 ```
-![](assets/bar_labels.png)
+![](assets/beautiful_makie.png)
+
+### Easy Extensions with Makie
+
+Add basic support for any Makie plot using `geom_template(name, required_aes, makie_plot)`. It will inherit support for most optional aesthetics and arguments automatically:
+
+```julia
+geom_raincloud = geom_template("geom_raincloud", ["x", "y"], :RainClouds)
+
+ggplot(penguins) + 
+    geom_raincloud(aes(x = :species, y = :bill_depth_mm/10, color = :species), size = 4) +
+    scale_y_continuous(labels = "{:.1f} cm") + 
+    labs(title = "Bill Depth by Species", x = "Species", y = "Bill Depth") +
+    theme_minimal()
+```
+![](assets/raincloud.png)
 
 See the [documentation](https://tidierorg.github.io/TidierPlots.jl/latest) for more information and examples. 
 

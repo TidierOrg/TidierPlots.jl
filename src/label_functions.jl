@@ -1,4 +1,18 @@
-# TODO: add :auto accuracy heuristic to determine how many digits are needed to distinguish numbers
+"""
+    label_bytes(;units=:si, kwargs...)
+
+Convert numeric values into human-readable strings representing byte sizes.
+
+# Arguments
+- `units`: Can be `:si` for SI units (powers of 10), `:binary` for binary units (powers of 1024), or a specific unit string (e.g., MB, GiB).
+- `kwargs...`: Additional keyword arguments passed to `label_number`.
+
+# Examples
+```julia
+labeler = label_bytes(units=:si)
+labeler([1024, 2048]) # ["1.02 KB", "2.05 KB"]
+```
+"""
 function label_bytes(;units=:si, kwargs...)
     si_scales = [
         "YB" => 10.0 ^24,
@@ -51,6 +65,22 @@ function label_bytes(;units=:si, kwargs...)
     return (values) -> labeler.(values)
 end
 
+"""
+    label_currency(;kwargs...)
+
+Convert numeric values into currency strings.
+
+# Arguments
+
+- `kwargs`: Additional keyword arguments passed to `label_number`.
+
+# Examples
+
+```julia
+labeler = label_currency()
+labeler([100, 200.75]) # ["\$100", "\$200.75"]
+```
+"""
 function label_currency(;kwargs...)
     function labeler(value::Real)
         lnum = label_number(; prefix="\$", kwargs...)
@@ -59,7 +89,22 @@ function label_currency(;kwargs...)
     return (values) -> labeler.(values)
 end
 
-# TODO: work for different timezones? May need TimeZones.jl
+"""
+    label_date(;format="m/d/Y")
+
+Convert Date or DateTime values into formatted strings.
+
+# Arguments
+
+- `format`: A date format string.
+
+# Examples
+
+```julia
+labeler = label_date(format="Y-m-d")
+labeler([Date(2020, 1, 1)]) # ["2020-1-1"]
+```
+"""
 function label_date(;format="m/d/Y")
     function labeler(value::T) where T <: TimeType
         Dates.format(value, format)
@@ -67,6 +112,23 @@ function label_date(;format="m/d/Y")
     return (values) -> labeler.(values)
 end
 
+"""
+    label_log(;base=10, kwargs...)
+
+Convert numeric values into logarithmic strings with a specified base.
+
+# Arguments
+
+- `base`: The logarithmic base.
+- `kwargs`: Additional keyword arguments passed to `label_number`.
+
+# Examples
+
+```julia
+labeler = label_log(base=10)
+labeler([10, 100]) # ["10^1", "10^2"]
+```
+"""
 function label_log(;base=10, kwargs...)
     function labeler(value::Real)
         exp = log(base, value)
@@ -76,6 +138,30 @@ function label_log(;base=10, kwargs...)
     return (values) -> labeler.(values)
 end
 
+"""
+    label_number(;precision=2, scale=1, prefix="", suffix="", decimal_mark=".", comma_mark=",", style_positive=:none, style_negative=:hyphen, kwargs...)
+
+Format numeric values as strings with various styling options.
+
+# Arguments
+
+- `precision`: Number of decimal places.
+- `scale`: Scaling factor applied to the numbers before formatting.
+- `prefix`: String to prepend to the number.
+- `suffix`: String to append to the number.
+- `decimal_mark`: Character to use as the decimal point.
+- `comma_mark`: Character to use as the thousands separator.
+- `style_positive`: Style for positive numbers (:none, :plus, :space).
+- `style_negative`: Style for negative numbers (:hyphen, :parens).
+- `kwargs`: Additional keyword arguments passed on to `format` from `Format.jl`
+
+# Examples
+
+```julia
+labeler = label_number(precision=0, suffix="kg")
+labeler([1500.12, -2000.12]) # ["1,500kg", "-2,000kg"]
+```
+"""
 function label_number(;
     precision=2,
     scale=1,
@@ -129,6 +215,22 @@ function label_number(;
     return (values) -> labeler.(values)
 end
 
+"""
+    label_ordinal(;kwargs...)
+
+Convert numeric values into ordinal strings (e.g., 1st, 2nd, 3rd).
+
+# Arguments
+
+- `kwargs`: Additional keyword arguments passed to `label_number`.
+
+# Examples
+
+```julia
+labeler = label_ordinal()
+labeler([1, 2, 3]) # ["1st", "2nd", "3rd"]
+```
+"""
 function label_ordinal(;kwargs...)
     labels = Dict(
         0 => "th",
@@ -161,6 +263,22 @@ function label_ordinal(;kwargs...)
     return (values) -> labeler.(values)
 end
 
+"""
+    label_percent(;kwargs...)
+
+Convert numeric values into percentage strings.
+
+# Arguments
+
+- `kwargs`: Additional keyword arguments passed to `label_number`.
+
+# Examples
+
+```julia
+labeler = label_percent()
+labeler([0.1, 0.256]) # ["10%", "25.6%"]
+```
+"""
 function label_percent(;kwargs...)
     function labeler(value::Real)
         lnum = label_number(;scale=100, suffix="%", kwargs...)
@@ -169,7 +287,23 @@ function label_percent(;kwargs...)
     return (values) -> labeler.(values)
 end
 
-# TODO: Option to add "p=" before the value?
+"""
+    label_pvalue(;precision=2, kwargs...)
+
+Format p-values, handling very small or large values with special notation.
+
+# Arguments
+
+- `precision`: Number of decimal places for thresholding small values.
+- `kwargs`: Additional keyword arguments passed to `label_number`.
+
+# Examples
+
+```julia
+labeler = label_pvalue()
+labeler([0.0001, 0.05, 0.9999]) # ["<0.01", "0.05", ">0.99"]
+```
+"""
 function label_pvalue(;precision=2, kwargs...)
     bottom = round(10.0^(-precision); digits=precision)
     top = 1-bottom
@@ -188,6 +322,22 @@ function label_pvalue(;precision=2, kwargs...)
     return (values) -> labeler.(values)
 end
 
+"""
+    label_scientific(;kwargs...)
+
+Convert numeric values into scientific notation strings.
+
+# Arguments
+
+- `kwargs`: Additional keyword arguments passed to `label_number`.
+
+# Examples
+
+```julia
+labeler = label_scientific()
+labeler([1000, 2000000]) # ["1e+03", "2e+06"]
+```
+"""
 function label_scientific(;kwargs...)
     function labeler(value::Real)
         lnum = label_number(; conversion="e", kwargs...)
@@ -196,6 +346,22 @@ function label_scientific(;kwargs...)
     return (values) -> labeler.(values)
 end
 
+"""
+    label_wrap(width)
+
+Wrap text strings to a specified width, breaking at spaces.
+
+# Arguments
+
+- `width`: The maximum number of characters in a line before wrapping.
+
+# Examples
+
+```julia
+labeler = label_wrap(10)
+labeler(["This is a long sentence."]) # ["This is a\nlong\nsentence."]
+```
+"""
 function label_wrap(width)
     function labeler(value::String)
         words = split(value, ' ')

@@ -193,3 +193,11 @@ ggplot(df_errorbar, @aes(x = Category, y = MeanValue, ymin = LowerBound, ymax = 
     labs(title = "Error Bar Plot Example", x = "Category", y = "Mean Value")
 
 # ## `ggsave`
+#  `ggsave` saves a GGPlot to the specified location.
+
+plot = ggplot(penguins, @aes(x = body_mass_g, y = bill_length_mm, color = species)) +
+           geom_point()
+
+ggsave(plot, "penguin_points.png")
+
+# In this example, `plot` is saved to `penguin_points.png`. Acceptable filetypes are all those supported by CairoMakie: `svg`, `pdf`, and `png`.

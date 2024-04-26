@@ -131,6 +131,26 @@ ggplot(df_tile, @aes(x = X, y = Y, z = Value)) +
 # ## `geom_text` and `geom_label`
 # `geom_text` and `geom_label`  are used to add text and labels to a plot.
 
+# ## Combining plots
+# Similar to the `patchwork` library in R, plots can be combined horizontally using the `+` and `|` operators and vertically with the `/` operator.
+
+plot = ggplot(df_tile, @aes(x = X, y = Y, z = Value)) +
+           geom_tile();
+
+plot | plot
+
+plot / plot
+
+# These extend beyond two plots, but must be used in functional form for `|` and `/`.
+
+plot + plot + plot
+
+/(plot, plot, plot)
+
+# Grids of plots can also be combined using parethesis to delimit grid boundaries.
+
+((plot + plot + plot) | plot) / (plot / plot)
+
 # ## `scale_x_log10`,  `scale_y_log10`
 # `scale_x_log10` and `scale_y_log10` apply a base 10 logarithmic transformation to the x and y axes, respectively.
 

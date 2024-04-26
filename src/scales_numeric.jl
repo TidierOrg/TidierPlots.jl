@@ -1,9 +1,9 @@
 function continuous_scale_to_ggoptions(args_dict::Dict)
-    
+
     options_dict = Dict()
-    
+
     if haskey(args_dict, "name")
-        options_dict[args_dict["scale"]] = args_dict["name"]
+        options_dict[args_dict["scale"] * "label"] = args_dict["name"]
     end
 
     if haskey(args_dict, "trans")
@@ -22,17 +22,17 @@ function continuous_scale_to_ggoptions(args_dict::Dict)
         Dict(Symbol(k) => v for (k, v) in options_dict), Dict(), Dict()
     )
 
-end 
+end
 
 # Generator - generates two function signatures
 
 function scale_template(scale, f; trans = nothing, reverse = nothing)
     function scale_function(args...; trans = trans, reverse = reverse, scale = scale, f = f, kwargs...)
         aes_dict, args_dict = extract_aes(args, kwargs)
-        if !isnothing(scale) 
+        if !isnothing(scale)
             args_dict["scale"] = scale
         end
-        if !isnothing(trans) 
+        if !isnothing(trans)
             args_dict["trans"] = trans
         end
         if !isnothing(reverse)
@@ -42,10 +42,10 @@ function scale_template(scale, f; trans = nothing, reverse = nothing)
     end
     function scale_function(plot::GGPlot, args...; trans = trans, reverse = reverse, scale = scale, f = f, kwargs...)
         aes_dict, args_dict = extract_aes(args, kwargs)
-        if !isnothing(scale) 
+        if !isnothing(scale)
             args_dict["scale"] = scale
         end
-        if !isnothing(trans) 
+        if !isnothing(trans)
             args_dict["trans"] = trans
         end
         if !isnothing(reverse)

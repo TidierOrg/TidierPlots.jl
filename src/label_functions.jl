@@ -199,20 +199,24 @@ end
 function label_wrap(width)
     function labeler(value::String)
         words = split(value, ' ')
-        wlen = length(words)
+        label_len = length(words)
         label = ""
         count = 0
         for (i,w) in enumerate(words)
-            label *= w
-            count += length(w)
-            if i != wlen
-                if (count+1) >= width
+            w_len = length(w)
+            if (count+length(w)) >= width
+                if i != 1
                     label *= "\n"
-                    count = 0
-                else
+                end
+                label *= w
+                count = w_len
+            else
+                if i != 1
                     label *= " "
                     count += 1
                 end
+                label *= w
+                count += w_len
             end
         end
         return label

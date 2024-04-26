@@ -1,22 +1,3 @@
-using Pkg
-Pkg.activate("..")
-using TidierPlots
-GGPlot = TidierPlots.GGPlot
-GGPlotGrid = TidierPlots.GGPlotGrid
-
-Pkg.activate(".")
-using Test
-using Makie
-SpecApi = Makie.SpecApi
-using Parquet2
-using DataFrames
-using Images
-
-include("difference_hash.jl")
-include("../src/patchwork.jl")
-
-penguins = DataFrame(Parquet2.readfile(joinpath(@__DIR__, "penguins.parq")))
-
 @testset "horizontal concatenation" begin
     t = ggplot(penguins) +
         geom_point(@aes(x = bill_length_mm, y = bill_depth_mm))

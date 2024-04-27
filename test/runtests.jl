@@ -40,5 +40,6 @@ set_theme!(theme_ggplot2())
     include("test_labs.jl")
     include("test_label_functions.jl")
     include("test_lims.jl")
+    include("test_patchwork.jl")
     include("test_scale_colour.jl")
 end

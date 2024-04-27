@@ -1,3 +1,4 @@
+@testset "patchwork" verbose = true begin
 @testset "horizontal concatenation" begin
     t = ggplot(penguins) +
         geom_point(@aes(x = bill_length_mm, y = bill_depth_mm))
@@ -63,4 +64,5 @@ end
     )
 
     @test plot_images_equal((t | t) / t, m21)
+end
 end

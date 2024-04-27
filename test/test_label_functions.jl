@@ -1,3 +1,4 @@
+@testset "label functions" verbose = true begin
 @testset "label_number" begin
     lf = label_number()
     @test lf(.1) == "0.1"
@@ -163,4 +164,5 @@ end
         )
 
    @test plot_images_equal(t, m)
+end
 end

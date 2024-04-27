@@ -130,15 +130,15 @@ end
     t2 = "this is another long label"
     t3 = "this a label this is even longer"
     lf = label_wrap(10)
-    lf(t1) == "this is a\nlong label"
-    lf(t2) == "this is\nanother\nlong label"
-    lf(t3) == "this a\nlabel this\nis even\nlonger"
+    @test lf(t1) == "this is a\nlong label"
+    @test lf(t2) == "this is\nanother\nlong label"
+    @test lf(t3) == "this a\nlabel this\nis even\nlonger"
     lf = label_wrap(20)
-    lf(t1) == "this is a long label"
-    lf(t2) == "this is another long\nlabel"
-    lf(t3) == "this a label this is\neven longer"
+    @test lf(t1) == "this is a long label"
+    @test lf(t2) == "this is another long\nlabel"
+    @test lf(t3) == "this a label this is\neven longer"
     lf = label_wrap(2)
-    lf(t1) == "this\nis\na\nlong\nlabel"
+    @test lf(t1) == "this\nis\na\nlong\nlabel"
 end
 
 @testset "scale_x/y_continuous" begin

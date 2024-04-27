@@ -13,6 +13,10 @@ using Reexport
 using Colors
 using ColorSchemes
 
+# Needed for label functions
+using Format
+using Dates
+
 # For handling categorical data types
 using CategoricalArrays
 
@@ -37,6 +41,7 @@ include("geom.jl")
 include("ggplot.jl")
 include("ggsave.jl")
 include("labs.jl")
+include("label_functions.jl")
 include("legend.jl")
 include("patchwork.jl")
 include("scales_colour.jl")
@@ -96,6 +101,7 @@ export geom_vline
 # scales
 
 export labs, lims, c
+export label_bytes, label_currency, label_date, label_log, label_number, label_ordinal, label_percent, label_pvalue, label_scientific, label_wrap
 #export facet_wrap, facet_grid
 export scale_x_continuous, scale_y_continuous
 export scale_x_log10, scale_y_log10, scale_x_log2, scale_y_log2, scale_x_log, scale_y_log

@@ -151,6 +151,35 @@ plot + plot + plot
 
 ((plot + plot + plot) | plot) / (plot / plot)
 
+# ## `scale_x_continuous`,  `scale_y_continuous`
+# `scale_x_continuous` and `scale_y_continuous` can apply labels and scales, reverse, or adjust the ticks for the axis.
+
+ggplot(penguins, @aes(x = body_mass_g, y = bill_length_mm)) +
+    geom_point() +
+    scale_x_continuous(
+        name="Mass (g)",
+        trans=log10
+    ) +
+    scale_y_continuous(
+        name="Length",
+        reversed = true,
+        labels=label_number(;suffix="mm")
+    )
+
+# The `trans` argument takes as input a function which takes in and outputs numerical values. and `labels` argument can be a string specification from `Format.jl` or a function which formats a list of strings.
+# Available label generators are:
+# - `label_bytes`
+# - `label_currency`
+# - `label_date`
+# - `label_log`
+# - `label_number`
+# - `label_ordinal`
+# - `label_percent`
+# - `label_pvalue`
+# - `label_scientific`
+# - `label_wrap`
+# Each of these will accept keywords arguments to generate a label function compatible with the `labels` argument.
+
 # ## `scale_x_log10`,  `scale_y_log10`
 # `scale_x_log10` and `scale_y_log10` apply a base 10 logarithmic transformation to the x and y axes, respectively.
 

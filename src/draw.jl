@@ -8,8 +8,12 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         # use the dataframe specified in the geom if present, otherwise use the ggplot one
         plot_data = isnothing(geom.data) ? plot.data : geom.data
 
-        # inherit any aes specified at the ggplot level
-        aes_dict = merge(plot.default_aes, geom.aes)
+        # inherit any aes specified at the ggplot level, unless inherit_aes is false
+        if get(geom.args, "inherit_aes", true)
+            aes_dict = merge(plot.default_aes, geom.aes)
+        else
+            aes_dict = geom.aes
+        end
 
         # apply function if required to edit the aes/args/data
         aes_dict, args_dict, required_aes, plot_data =
@@ -59,10 +63,12 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         args_dict_makie = Dict{Symbol, Any}()
 
         for (arg, value) in args_dict
-            ex_type = get(_makie_expected_type, arg, Any)
-            converted_value = try_convert(ex_type, value, arg, geom.args["geom_name"])
-            makie_attr = get(ggplot_to_makie_geom, arg, arg)
-            args_dict_makie[Symbol(makie_attr)] = converted_value
+            if !(arg in _internal_geom_options) 
+                ex_type = get(_makie_expected_type, arg, Any)
+                converted_value = try_convert(ex_type, value, arg, geom.args["geom_name"])
+                makie_attr = get(ggplot_to_makie_geom, arg, arg)
+                args_dict_makie[Symbol(makie_attr)] = converted_value
+            end
         end
 
         required_aes_data = [p.makie_function(p.raw) for p in [given_aes[a] for a in Symbol.(required_aes)]]
@@ -77,10 +83,12 @@ function Makie.SpecApi.Axis(plot::GGPlot)
 
     # rename and correct types on all axis options
     for (arg, value) in plot.axis_options
-        ex_type = get(_makie_expected_type, arg, Any)
-        converted_value = try_convert(ex_type, value, arg, "ggplot")
-        makie_attr = get(_ggplot_to_makie, arg, arg)
-        axis_options[Symbol(makie_attr)] = converted_value
+        if !(arg in _internal_geom_options) 
+            ex_type = get(_makie_expected_type, arg, Any)
+            converted_value = try_convert(ex_type, value, arg, "ggplot")
+            makie_attr = get(_ggplot_to_makie, arg, arg)
+            axis_options[Symbol(makie_attr)] = converted_value
+        end
     end
 
     return length(axis_options) == 0 ?

@@ -9,7 +9,7 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         plot_data = isnothing(geom.data) ? plot.data : geom.data
 
         # inherit any aes specified at the ggplot level, unless inherit_aes is false
-        if get(geom.args, :inherit_aes, true)
+        if get(geom.args, "inherit_aes", true)
             aes_dict = merge(plot.default_aes, geom.aes)
         else
             aes_dict = geom.aes

@@ -8,7 +8,6 @@ function build_legend(plot::GGPlot)
         palette_function = plot.column_transformations[:color][2]
     elseif !(any([haskey(geom.aes, "color") || haskey(geom.aes, "color") for geom in plot.geoms]) || 
         haskey(plot.default_aes, "color") || haskey(plot.default_aes, "color"))
-        
         return nothing
     end  
 
@@ -27,31 +26,39 @@ function build_legend(plot::GGPlot)
             continue
         end
 
-        all_aes = merge(plot.default_aes, geom.aes)
+        if get(geom.args, "inherit_aes", true) 
+            all_aes = merge(plot.default_aes, geom.aes)
+        else
+            all_aes = geom.aes
+        end
 
         color_colname = haskey(all_aes, "colour") ? all_aes["colour"] :
             haskey(all_aes, "color") ? all_aes["color"] :
             nothing
         
+        if isnothing(color_colname)
+            continue
+        end
+
         plot_data = isnothing(geom.data) ? plot.data : geom.data
 
         if isnothing(palette_function)
             if eltype(plot_data[!, color_colname]) <: Union{AbstractString, AbstractChar, CategoricalValue}
-                plot = plot + scale_colour_manual(values = c(
+                plot = plot + scale_colour_manual(values = [
                     RGB(0/255, 114/255, 178/255), # blue
                     RGB(230/255, 159/255, 0/255), # orange
                     RGB(0/255, 158/255, 115/255), # green
                     RGB(204/255, 121/255, 167/255), # reddish purple
                     RGB(86/255, 180/255, 233/255), # sky blue
                     RGB(213/255, 94/255, 0/255), # vermillion
-                    RGB(240/255, 228/255, 66/255))) # yellow)
+                    RGB(240/255, 228/255, 66/255)]) # yellow)
             else 
                 plot = plot + scale_colour_continuous(palette = :viridis)
             end
             palette_function = plot.column_transformations[:color][2]
         end
 
-        if !isnothing(color_colname) && plot.legend_options[:color][:type] in ["manual", "discrete"]
+        if plot.legend_options[:color][:type] in ["manual", "discrete"]
 
             plottable_data = palette_function(:color, [color_colname], plot_data)
             labels = unique(plottable_data[:color].raw)
@@ -65,7 +72,7 @@ function build_legend(plot::GGPlot)
             title = get(plot.legend_options[:color], :name, titlecase(string(color_colname)))
         end
 
-        if !isnothing(color_colname) && plot.legend_options[:color][:type] in ["continuous", "binned"]
+        if plot.legend_options[:color][:type] in ["continuous", "binned"]
             
             plottable_data = palette_function(:color, [color_colname], plot_data)
             

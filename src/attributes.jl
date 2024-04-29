@@ -144,3 +144,8 @@ const _makie_expected_type = Dict{String, Type}(
     "ymax" => Real,
 );
 
+# options that are not meant to go to Makie
+const _internal_geom_options = Symbol[
+    :inherit_aes
+]
+    

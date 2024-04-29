@@ -36,3 +36,11 @@ struct GGPlotGrid
     plots::Vector{GGPlot}
     grid::Any
 end
+
+struct GGPlotGridSpec
+    ncol::Int
+    nrow::Int
+    byrow::Bool
+    widths::Vector{Int}
+    heights::Vector{Int}
+end

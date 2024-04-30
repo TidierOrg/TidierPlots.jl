@@ -113,6 +113,30 @@
         @test plot_images_equal(t, m)
     end
 
+    @testset "geom_step" begin
+        xs = runif(30, 0, 2*pi)
+        df = DataFrame(x = xs, y = sin.(xs))
+
+        perm = sortperm(df.x)
+
+        t = ggplot(df, @aes(x = x, y = y)) + geom_step()
+
+        m = Makie.plot(
+            Makie.SpecApi.GridLayout(
+                Makie.SpecApi.Axis(
+                    plots = [
+                        Makie.PlotSpec(
+                            :Stairs,
+                            df.x[perm],
+                            df.y[perm])
+                    ]
+                )
+            )
+        )
+
+        @test plot_images_equal(t, m)
+    end
+
     @testset "geom_boxplot" begin
         t = ggplot(penguins) +
             geom_boxplot(@aes(x = species, y = bill_length_mm))

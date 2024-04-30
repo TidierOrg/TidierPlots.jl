@@ -49,7 +49,12 @@ df = DataFrame(x = xs, y = sin.(xs))
 ggplot(df, @aes(x = x, y = y)) + geom_line()
 ```
 """
-geom_line = geom_template("geom_line", ["x", "y"], :Lines)
+geom_line = geom_template("geom_line", ["x", "y"], :Lines; 
+    column_transformations = Dict{Symbol, Pair{Vector{Symbol}, AesTransform}}(
+        :y => [:y, :x]=>sort_by,
+        :x => [:x, :x]=>sort_by
+    )
+)
 
 
 """

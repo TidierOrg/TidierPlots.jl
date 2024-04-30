@@ -114,7 +114,7 @@
     end
 
     @testset "geom_step" begin
-        xs = runif(30, 0, 2*pi)
+        xs = collect(rand(30) * 2pi)
         df = DataFrame(x = xs, y = sin.(xs))
 
         perm = sortperm(df.x)

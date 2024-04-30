@@ -71,9 +71,9 @@
         @test plot_images_equal(t, m)
     end
 
-    @testset "geom_line" begin
+    @testset "geom_path" begin
         t = ggplot(penguins) +
-            geom_line(@aes(x = bill_length_mm, y = bill_depth_mm))
+            geom_path(@aes(x = bill_length_mm, y = bill_depth_mm))
 
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
@@ -83,6 +83,52 @@
                             :Lines,
                             penguins.bill_length_mm,
                             penguins.bill_depth_mm)
+                    ]
+                )
+            )
+        )
+
+        @test plot_images_equal(t, m)
+    end
+
+    @testset "geom_line" begin
+        t = ggplot(penguins) +
+            geom_line(@aes(x = bill_length_mm, y = bill_depth_mm))
+
+        perm = sortperm(penguins.bill_length_mm)
+
+        m = Makie.plot(
+            Makie.SpecApi.GridLayout(
+                Makie.SpecApi.Axis(
+                    plots = [
+                        Makie.PlotSpec(
+                            :Lines,
+                            penguins.bill_length_mm[perm],
+                            penguins.bill_depth_mm[perm])
+                    ]
+                )
+            )
+        )
+
+        @test plot_images_equal(t, m)
+    end
+
+    @testset "geom_step" begin
+        xs = collect(rand(30) * 2pi)
+        df = DataFrame(x = xs, y = sin.(xs))
+
+        perm = sortperm(df.x)
+
+        t = ggplot(df, @aes(x = x, y = y)) + geom_step()
+
+        m = Makie.plot(
+            Makie.SpecApi.GridLayout(
+                Makie.SpecApi.Axis(
+                    plots = [
+                        Makie.PlotSpec(
+                            :Stairs,
+                            df.x[perm],
+                            df.y[perm])
                     ]
                 )
             )

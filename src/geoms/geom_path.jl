@@ -4,19 +4,6 @@
 
 Represents data as connected points in the order of the variable on the x-axis.
 
-!!! warning "ggplot2 deviation"
-    Currently this method does not automatically sort observations in the order of the
-    variable on the x-axis as in ggplot2. To solve this, you can compute the sortperm
-    of the x-axis variable and order both the `x` and `y` variables according to this
-    permutation. E.g.
-
-    ```julia
-    p = sortperm(df.x)
-    df.xsorted = df.x[p]
-    df.ysorted = df.y[p]
-    ggplot(df, @aes(x=xsorted, y=ysorted)) + geom_line()
-    ```
-
 # Arguments
 
 - `plot::GGPlot` (optional): a plot object to add this geom to
@@ -49,7 +36,12 @@ df = DataFrame(x = xs, y = sin.(xs))
 ggplot(df, @aes(x = x, y = y)) + geom_line()
 ```
 """
-geom_line = geom_template("geom_line", ["x", "y"], :Lines)
+geom_line = geom_template("geom_line", ["x", "y"], :Lines; 
+    column_transformations = Dict{Symbol, Pair{Vector{Symbol}, AesTransform}}(
+        :y => [:y, :x]=>sort_by,
+        :x => [:x, :x]=>sort_by
+    )
+)
 
 
 """
@@ -57,19 +49,6 @@ geom_line = geom_template("geom_line", ["x", "y"], :Lines)
     geom_step(plot::GGPlot, aes(...), ...)
 
 Represents data as a stairstep plot.
-
-!!! warning "ggplot2 deviation"
-    Currently this method does not automatically sort observations in the order of the
-    variable on the x-axis as in ggplot2. To solve this, you can compute the sortperm
-    of the x-axis variable and order both the `x` and `y` variables according to this
-    permutation. E.g.
-
-    ```julia
-    p = sortperm(df.x)
-    df.xsorted = df.x[p]
-    df.ysorted = df.y[p]
-    ggplot(df, @aes(x=xsorted, y=ysorted)) + geom_step()
-    ```
 
 # Arguments
 
@@ -103,7 +82,12 @@ df = DataFrame(x = xs, y = sin.(xs))
 ggplot(df, @aes(x = x, y = y)) + geom_step()
 ```
 """
-geom_step = geom_template("geom_step", ["x", "y"], :Stairs)
+geom_step = geom_template("geom_step", ["x", "y"], :Stairs;
+    column_transformations = Dict{Symbol, Pair{Vector{Symbol}, AesTransform}}(
+        :y => [:y, :x]=>sort_by,
+        :x => [:x, :x]=>sort_by
+    )
+)
 
 
 """

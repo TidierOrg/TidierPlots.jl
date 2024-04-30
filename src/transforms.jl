@@ -146,14 +146,11 @@ kernel_density_2d = AesTransform(kernel_density_2d_fn)
 # sort arg 1 by arg 2
 
 function sort_by_fn(target::Symbol, source::Vector{Symbol}, data::DataFrame)
-    data_to_sort = source[1] == source[2] ? select(data, source[2]) :
-        select(data, source[1], source[2])
-        
-    sort!(data_to_sort, source[2])
+    perm = sortperm(data[!, source[2]])
 
     return Dict{Symbol, PlottableData}(
         target => PlottableData(
-            data_to_sort[!, source[1]],
+            data[perm, source[1]],
             identity,
             nothing,
             nothing

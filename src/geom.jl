@@ -5,7 +5,8 @@ function build_geom(
         spec_api_function,
         aes_function,
         column_transformations; 
-        special_aes = Dict())
+        special_aes = Dict(),
+        grouping_aes = Symbol[])
     
     if haskey(args_dict, "data")
         if args_dict["data"] isa DataFrame
@@ -30,6 +31,7 @@ function build_geom(
         spec_api_function,
         Dict(),
         aes_function,
-        column_transformations
+        column_transformations,
+        grouping_aes
     )
 end

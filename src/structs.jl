@@ -8,6 +8,7 @@ struct Geom
     axis_options::Dict
     aes_function::Function
     column_transformations::Dict
+    grouping_aes::Vector{Symbol}
 end
 
 struct GGPlot

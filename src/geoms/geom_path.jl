@@ -39,7 +39,9 @@ ggplot(df, @aes(x = x, y = y)) + geom_line()
 geom_line = geom_template("geom_line", ["x", "y"], :Lines; 
     column_transformations = Dict{Symbol, Pair{Vector{Symbol}, AesTransform}}(
         :y => [:y, :x]=>sort_by,
-        :x => [:x, :x]=>sort_by
+        :x => [:x, :x]=>sort_by,
+        :color => [:color, :x]=>sort_by,
+        :colour => [:colour, :x]=>sort_by
     ),
     grouping_aes = [:color, :colour]
 )
@@ -86,7 +88,9 @@ ggplot(df, @aes(x = x, y = y)) + geom_step()
 geom_step = geom_template("geom_step", ["x", "y"], :Stairs;
     column_transformations = Dict{Symbol, Pair{Vector{Symbol}, AesTransform}}(
         :y => [:y, :x]=>sort_by,
-        :x => [:x, :x]=>sort_by
+        :x => [:x, :x]=>sort_by,
+        :color => [:color, :x]=>sort_by,
+        :colour => [:colour, :x]=>sort_by
     )
 )
 

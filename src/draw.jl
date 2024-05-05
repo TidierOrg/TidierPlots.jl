@@ -71,14 +71,33 @@ function Makie.SpecApi.Axis(plot::GGPlot)
             end
         end
 
-        required_aes_data = [p.makie_function(p.raw) for p in [given_aes[a] for a in Symbol.(required_aes)]]
-        optional_aes_data = [a => p.makie_function(p.raw) for (a, p) in given_aes if !(String(a) in required_aes)]
+        if length(intersect(keys(given_aes), geom.grouping_aes)) == 0
+            # if there are no grouping_aes given, we only need one PlotSpec
+            required_aes_data = [p.makie_function(p.raw) for p in [given_aes[a] for a in Symbol.(required_aes)]]
+            optional_aes_data = [a => p.makie_function(p.raw) for (a, p) in given_aes if !(String(a) in required_aes)]
 
-        args = Tuple([geom.visual, required_aes_data...])
-        kwargs = merge(args_dict_makie, Dict(optional_aes_data))
+            args = Tuple([geom.visual, required_aes_data...])
+            kwargs = merge(args_dict_makie, Dict(optional_aes_data))
 
-        # push completed PlotSpec (type, args, and kwargs) to the list of plots
-        push!(plot_list, Makie.PlotSpec(args...; kwargs...))
+            # push completed PlotSpec (type, args, and kwargs) to the list of plots
+            push!(plot_list, Makie.PlotSpec(args...; kwargs...))
+        else
+            # if there is a aes in the grouping_aes list given, we will need multiple PlotSpecs
+            # make a list of modified given_aes objects which only include the points from their subsets
+            subgroup_given_aes = subgroup_split(given_aes, plot_data[!, intersect(keys(given_aes), geom.grouping_aes)])
+            
+            # push each one to the overall plot_list
+            for sub in subgroup_given_aes
+                required_aes_data = [p.makie_function(p.raw) for p in [sub[a] for a in Symbol.(required_aes)]]
+                optional_aes_data = [a => p.makie_function(p.raw) for (a, p) in sub if !(String(a) in required_aes)]
+
+                args = Tuple([geom.visual, required_aes_data...])
+                kwargs = merge(args_dict_makie, Dict(optional_aes_data))
+
+                # push completed PlotSpec (type, args, and kwargs) to the list of plots
+                push!(plot_list, Makie.PlotSpec(args...; kwargs...))
+            end
+        end
     end
 
     # rename and correct types on all axis options

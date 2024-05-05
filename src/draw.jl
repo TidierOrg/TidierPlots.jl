@@ -95,7 +95,10 @@ function Makie.SpecApi.Axis(plot::GGPlot)
                 args = Tuple([geom.visual, required_aes_data...])
                 kwargs = merge(args_dict_makie, Dict(optional_aes_data))
 
-                kwargs[:color] = first(kwargs[:color])
+                # if we are grouping, we only need a single value rather than a vector
+                for aes in [intersect(keys(given_aes), geom.grouping_aes)...]
+                    kwargs[aes] = first(kwargs[aes])
+                end
 
                 # push completed PlotSpec (type, args, and kwargs) to the list of plots
                 push!(plot_list, Makie.PlotSpec(args...; kwargs...))

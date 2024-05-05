@@ -84,7 +84,8 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         else
             # if there is a aes in the grouping_aes list given, we will need multiple PlotSpecs
             # make a list of modified given_aes objects which only include the points from their subsets
-            subgroup_given_aes = subgroup_split(given_aes, plot_data[!, intersect(keys(given_aes), geom.grouping_aes)])
+            grouping_columns = [aes_dict_makie[a] for a in [intersect(keys(given_aes), geom.grouping_aes)...]]
+            subgroup_given_aes = subgroup_split(given_aes, plot_data[!, grouping_columns])
             
             # push each one to the overall plot_list
             for sub in subgroup_given_aes
@@ -93,6 +94,8 @@ function Makie.SpecApi.Axis(plot::GGPlot)
 
                 args = Tuple([geom.visual, required_aes_data...])
                 kwargs = merge(args_dict_makie, Dict(optional_aes_data))
+
+                kwargs[:color] = first(kwargs[:color])
 
                 # push completed PlotSpec (type, args, and kwargs) to the list of plots
                 push!(plot_list, Makie.PlotSpec(args...; kwargs...))

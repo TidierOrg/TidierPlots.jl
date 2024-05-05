@@ -127,4 +127,5 @@ ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) +
     geom_path()
 ```
 """
-geom_path = geom_template("geom_path", ["x", "y"], :Lines)
+geom_path = geom_template("geom_path", ["x", "y"], :Lines;
+    grouping_aes = [:color, :colour])

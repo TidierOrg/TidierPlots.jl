@@ -3,7 +3,8 @@ function geom_template(name::AbstractString,
                        spec_api_function::Symbol;
                        aes_function::Function = do_nothing,
                        column_transformations::Dict{Symbol, Pair{Vector{Symbol}, AesTransform}} = Dict{Symbol, Pair{Vector{Symbol}, AesTransform}}(), 
-                       extra_args::Dict = Dict())
+                       extra_args::Dict = Dict(),
+                       grouping_aes::Vector{Symbol} = Symbol[])
 
     extract_geom_aes = make_aes_extractor(required_aes)
 
@@ -16,7 +17,8 @@ function geom_template(name::AbstractString,
             required_aes,
             spec_api_function,
             aes_function, 
-            merge(transforms, column_transformations))
+            merge(transforms, column_transformations);
+            grouping_aes = grouping_aes)
     end
 
     function geom_function(plot::GGPlot, args...; kwargs...)

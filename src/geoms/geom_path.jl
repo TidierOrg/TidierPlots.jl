@@ -1,3 +1,13 @@
+function stat_sort_by_x(aes_dict::Dict{String, Symbol},
+    args_dict::Dict{Any, Any}, required_aes::Vector{String}, plot_data::DataFrame)
+
+    x_column = aes_dict["x"]
+
+    perm = sortperm(plot_data[!, x_column])
+
+    return (aes_dict, args_dict, required_aes, plot_data[perm, :])
+end
+
 """
     geom_line(aes(...), ...)
     geom_line(plot::GGPlot, aes(...), ...)
@@ -36,11 +46,9 @@ df = DataFrame(x = xs, y = sin.(xs))
 ggplot(df, @aes(x = x, y = y)) + geom_line()
 ```
 """
-geom_line = geom_template("geom_line", ["x", "y"], :Lines; 
-    column_transformations = Dict{Symbol, Pair{Vector{Symbol}, AesTransform}}(
-        :y => [:y, :x]=>sort_by,
-        :x => [:x, :x]=>sort_by
-    )
+geom_line = geom_template("geom_line", ["x", "y"], :Lines;
+    aes_function = stat_sort_by_x,
+    grouping_aes = [:color, :colour]
 )
 
 
@@ -83,10 +91,8 @@ ggplot(df, @aes(x = x, y = y)) + geom_step()
 ```
 """
 geom_step = geom_template("geom_step", ["x", "y"], :Stairs;
-    column_transformations = Dict{Symbol, Pair{Vector{Symbol}, AesTransform}}(
-        :y => [:y, :x]=>sort_by,
-        :x => [:x, :x]=>sort_by
-    )
+    aes_function = stat_sort_by_x,
+    grouping_aes = [:color, :colour]
 )
 
 
@@ -126,4 +132,5 @@ ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) +
     geom_path()
 ```
 """
-geom_path = geom_template("geom_path", ["x", "y"], :Lines)
+geom_path = geom_template("geom_path", ["x", "y"], :Lines;
+    grouping_aes = [:color, :colour])

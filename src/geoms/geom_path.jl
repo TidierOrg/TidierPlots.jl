@@ -3,7 +3,7 @@ function stat_sort_by_x(aes_dict::Dict{String, Symbol},
 
     x_column = aes_dict["x"]
 
-    perm = sortperm(data[!, x_column])
+    perm = sortperm(plot_data[!, x_column])
 
     return (aes_dict, args_dict, required_aes, plot_data[perm, :])
 end

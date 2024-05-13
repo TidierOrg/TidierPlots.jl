@@ -90,9 +90,9 @@ end
         )
     )
     @test plot_images_equal(t + t2 + t + t2 + plot_layout(), m22)
-    @test plot_images_equal(t + t2 + t + t2 + plot_layout(;ncol=2,nrow=2), m22)
-    @test plot_images_equal(t + t + t2 + t2 + plot_layout(;ncol=2,nrow=2,byrow=true), m22)
-    @test plot_images_equal(t + t2 + t + t2 + plot_layout(;ncol=2,nrow=0), m22)
+    @test plot_images_equal(t + t2 + t + t2 + plot_layout(ncol=2,nrow=2), m22)
+    @test plot_images_equal(t + t + t2 + t2 + plot_layout(ncol=2,nrow=2,byrow=true), m22)
+    @test plot_images_equal(t + t2 + t + t2 + plot_layout(ncol=2,nrow=0), m22)
 
     # 2x2 grid (missing bottom right)
     m21 = Makie.plot(
@@ -116,7 +116,7 @@ end
             ]
         )
     )
-    @test plot_images_equal(t + t + t + plot_layout(;nrow=1), m13)
+    @test plot_images_equal(t + t + t + plot_layout(nrow=1), m13)
 end
 
 @testset "plot layout sizes" begin
@@ -143,7 +143,7 @@ end
             colsizes = [Relative(1/3), Relative(2/3)]
         )
     )
-    @test plot_images_equal(t + t2 + t + t2 + plot_layout(;widths=[1,2]), m22c)
+    @test plot_images_equal(t + t2 + t + t2 + plot_layout(widths=[1,2]), m22c)
 
     # 2x2 grid (missing bottom right)
     m21 = Makie.plot(
@@ -155,7 +155,7 @@ end
             colsizes = [Relative(1/3), Relative(2/3)]
         )
     )
-    @test plot_images_equal(t + t2 + t + plot_layout(;widths=[1,2]), m21)
+    @test plot_images_equal(t + t2 + t + plot_layout(widths=[1,2]), m21)
 
     # 2x2 grid (variable row heights)
     m22r = Makie.plot(
@@ -166,7 +166,7 @@ end
             rowsizes = [Relative(1/3), Relative(2/3)]
         )
     )
-    @test plot_images_equal(t + t2 + t + t2 + plot_layout(;heights=[1,2]), m22r)
+    @test plot_images_equal(t + t2 + t + t2 + plot_layout(heights=[1,2]), m22r)
 
     # 1x3 grid
     m13 = Makie.plot(
@@ -178,7 +178,7 @@ end
             colsizes = [Relative(1/6), Relative(2/6), Relative(3/6)]
         )
     )
-    @test plot_images_equal(t + t + t + plot_layout(;nrow=1, widths=[1,2,3]), m13)
+    @test plot_images_equal(t + t + t + plot_layout(nrow=1, widths=[1,2,3]), m13)
 
     # 2x3 grid variable height and width
     m23 = Makie.plot(
@@ -194,7 +194,7 @@ end
             rowsizes = [Relative(1/5), Relative(4/5)]
         )
     )
-    @test plot_images_equal(t + t + t + t2 + t2 + t2 + plot_layout(;nrow=2, widths=[1,2,3], heights=[1,4]), m23)
+    @test plot_images_equal(t + t + t + t2 + t2 + t2 + plot_layout(nrow=2, widths=[1,2,3], heights=[1,4]), m23)
 end
 
 @testset "plot layout grids" begin
@@ -220,6 +220,6 @@ end
             colsizes = [Relative(1/3), Relative(2/3)]
         )
     )
-    @test plot_images_equal((t | t) + t2 + t + t2 + plot_layout(;widths=[1,2]), m22c)
+    @test plot_images_equal((t | t) + t2 + t + t2 + plot_layout(widths=[1,2]), m22c)
 end
 end

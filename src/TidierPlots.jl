@@ -121,6 +121,8 @@ export cat_inseq, cat_inorder, number_on_axis, as_is, discard, verbatim, kernel_
 export as_color
 export aesthetics_function
 
+# default options
+
 const plot_log = Ref{Bool}(true)
 const plot_show = Ref{Bool}(true)
 const plot_pluto = Ref{Bool}(true)

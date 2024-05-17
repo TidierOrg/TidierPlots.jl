@@ -26,6 +26,8 @@ using TidierData
 # for geom_smooth fits
 using GLM
 using Loess
+
+# for geom_contour fits
 using KernelDensity
 
 include("structs.jl")

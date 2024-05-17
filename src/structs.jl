@@ -11,6 +11,12 @@ struct Geom
     grouping_aes::Vector{Symbol}
 end
 
+struct FacetOptions
+    rows::Union{Symbol, Nothing}
+    cols::Union{Symbol, Nothing}
+    wrap::Union{Symbol, Nothing}
+end
+
 struct GGPlot
     geoms::AbstractArray
     default_aes::Dict
@@ -20,12 +26,6 @@ struct GGPlot
     column_transformations::Dict
     legend_options::Dict
     facet_options::Union{FacetOptions, Nothing}
-end
-
-struct FacetOptions
-    rows::Union{Symbol, Nothing}
-    cols::Union{Symbol, Nothing}
-    wrap::Union{Symbol, Nothing}
 end
 
 struct Aesthetics

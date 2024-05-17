@@ -6,8 +6,8 @@ function facet_grid(args...; kwargs...)
     d = Dict(kwargs)
     
     return FacetOptions(
-        get(d, :rows, nothing),
-        get(d, :cols, nothing),
+        Symbol(get(d, :rows, nothing)),
+        Symbol(get(d, :cols, nothing)),
         nothing
     )    
 end
@@ -16,7 +16,7 @@ function facet_wrap(args...; kwargs...)
     if length(args) == 0
         d = Dict(kwargs)
         if length(d) == 1
-            wrap = values(d)[1]
+            wrap = collect(values(d))[1]
         else
             throw("Too many keyword arguments to facet_wrap")
         end

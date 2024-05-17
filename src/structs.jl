@@ -19,6 +19,13 @@ struct GGPlot
     theme::Attributes
     column_transformations::Dict
     legend_options::Dict
+    facet_options::Union{FacetOptions, Nothing}
+end
+
+struct FacetOptions
+    rows::Union{Symbol, Nothing}
+    cols::Union{Symbol, Nothing}
+    wrap::Union{Symbol, Nothing}
 end
 
 struct Aesthetics

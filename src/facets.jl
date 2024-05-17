@@ -1,34 +1,36 @@
 function facet_grid(args...; kwargs...)
-    aes_dict, args_dict = extract_aes(args, kwargs)
-    
-    if length(args) == 2
-        aes_dict["row"] = Symbol(args[1])
-        aes_dict["col"] = Symbol(args[2])
-    elseif length(args) == 1
-        aes_dict["col"] = Symbol(args[1])
-    else
-        if haskey(args_dict, "rows")
-            aes_dict["row"] = Symbol(args_dict["rows"])
-        end
-        if haskey(args_dict, "cols")
-            aes_dict["col"] = Symbol(args_dict["cols"])
-        end
+    if length(args) > 0 
+        throw("Use keyword args to specify rows and/or columns in facet_grid")
     end
+
+    d = Dict(kwargs)
     
-    return Aesthetics(aes_dict)
+    return FacetOptions(
+        get(d, :rows, nothing),
+        get(d, :cols, nothing),
+        nothing
+    )    
 end
 
-
 function facet_wrap(args...; kwargs...)
-    aes_dict, args_dict = extract_aes(args, kwargs)
-
-    if length(args) == 1
-        aes_dict["layout"] = Symbol(args[1])
-    elseif haskey(args_dict, "facets")
-        aes_dict["layout"] = Symbol(args_dict["facets"])
+    if length(args) == 0
+        d = Dict(kwargs)
+        if length(d) == 1
+            wrap = values(d)[1]
+        else
+            throw("Too many keyword arguments to facet_wrap")
+        end
+    elseif length(args) == 1
+        wrap = args[1]
+    else
+        throw("Too many arguments to facet_wrap")
     end
     
-    return Aesthetics(aes_dict)
+    return FacetOptions(
+        nothing,
+        nothing,
+        Symbol(wrap)
+    )    
 end
 
 function facet_wrap(plot::GGPlot, args...; kwargs...)    

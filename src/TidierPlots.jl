@@ -76,6 +76,7 @@ export draw_ggplot, ggplot, ggsave
 export TidierPlots_set
 export @aes, @es, aes
 export geom_template
+export plot_layout
 
 # geoms
 

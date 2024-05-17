@@ -36,7 +36,7 @@ include("aes.jl")
 include("attributes.jl")
 include("draw.jl")
 include("extract_aes.jl")
-#include("facets.jl")
+include("facets.jl")
 include("geom.jl")
 include("ggplot.jl")
 include("ggsave.jl")
@@ -104,7 +104,7 @@ export geom_vline
 
 export labs, lims, c
 export label_bytes, label_currency, label_date, label_log, label_number, label_ordinal, label_percent, label_pvalue, label_scientific, label_wrap
-#export facet_wrap, facet_grid
+export facet_wrap, facet_grid
 export scale_x_continuous, scale_y_continuous
 export scale_x_log10, scale_y_log10, scale_x_log2, scale_y_log2, scale_x_log, scale_y_log
 export scale_x_logit, scale_y_logit

@@ -3,6 +3,7 @@ import Makie.SpecApi
 function Makie.SpecApi.Axis(plot::GGPlot)
     plot_list = Makie.PlotSpec[]
     plot_list_by_facet = nothing
+    facet_names = nothing
     axis_options = Dict{Symbol, Any}()
 
     for geom in plot.geoms
@@ -126,29 +127,25 @@ function Makie.SpecApi.Axis(plot::GGPlot)
             # if there are both facets and grouping required
             facetting_column = [plot.facet_options.wrap]
             grouping_columns = [aes_dict_makie[a] for a in [intersect(keys(given_aes), geom.grouping_aes)...]]
-            group_by_facet = groupby(plot_data, facetting_column)
+            subgroup_given_aes = subgroup_split(given_aes, plot_data[!, unique([facetting_column...; grouping_columns...])])
+            facet_names = [n[plot.facet_options.wrap] for n in keys(groupby(plot_data, unique([facetting_column...; grouping_columns...])))]
 
-            plot_list_by_facet = Dict(facet => Makie.PlotSpec[] for facet in facet_names)
+            plot_list_by_facet = Dict(facet => Makie.PlotSpec[] for facet in unique(facet_names))
 
-            for facet in group_by_facet 
-                subgroup_given_aes = subgroup_split(given_aes, facet[!, [grouping_columns...]])
-                facet_name = keys(facet)[plot.facet_options.wrap]
-                
-                for sub in subgroup_given_aes
-                    required_aes_data = [p.makie_function(p.raw) for p in [sub[a] for a in Symbol.(required_aes)]]
-                    optional_aes_data = [a => p.makie_function(p.raw) for (a, p) in sub if !(String(a) in required_aes)]
+            for (sub, facet_name) in zip(subgroup_given_aes, facet_names)
+                required_aes_data = [p.makie_function(p.raw) for p in [sub[a] for a in Symbol.(required_aes)]]
+                optional_aes_data = [a => p.makie_function(p.raw) for (a, p) in sub if !(String(a) in required_aes)]
     
-                    args = Tuple([geom.visual, required_aes_data...])
-                    kwargs = merge(args_dict_makie, Dict(optional_aes_data))
+                args = Tuple([geom.visual, required_aes_data...])
+                kwargs = merge(args_dict_makie, Dict(optional_aes_data))
     
-                    # if we are grouping, we only need a single value rather than a vector
-                    for aes in [intersect(keys(given_aes), geom.grouping_aes)...]
-                        kwargs[aes] = first(kwargs[aes])
-                    end
-    
-                    # push completed PlotSpec (type, args, and kwargs) to the list of plots
-                    push!(plot_list_by_facet[facet_name], Makie.PlotSpec(args...; kwargs...))
+                # since we are grouping, we only need a single value rather than a vector
+                for aes in [intersect(keys(given_aes), geom.grouping_aes)...]
+                    kwargs[aes] = first(kwargs[aes])
                 end
+    
+                # push completed PlotSpec (type, args, and kwargs) to the list of plots
+                push!(plot_list_by_facet[facet_name], Makie.PlotSpec(args...; kwargs...))
             end
         end
     end
@@ -170,11 +167,11 @@ function Makie.SpecApi.Axis(plot::GGPlot)
     else
         if length(axis_options) == 0 
             return Makie.SpecApi.GridLayout(
-                hcat([Makie.SpecApi.Axis(plots = plot_list_by_facet[i]) for i in 1:length(plot_list_by_facet)]...)
+                hcat([Makie.SpecApi.Axis(plots = plot_list_by_facet[name]) for name in facet_names]...)
             )          
         else
             return Makie.SpecApi.GridLayout(
-                hcat([Makie.SpecApi.Axis(plots = plot_list_by_facet[i]; axis_options...) for i in 1:length(plot_list_by_facet)]...)
+                hcat([Makie.SpecApi.Axis(plots = plot_list_by_facet[name]; axis_options...) for name in facet_names]...)
             )    
         end
     end

@@ -15,6 +15,10 @@ struct FacetOptions
     rows::Union{Symbol, Nothing}
     cols::Union{Symbol, Nothing}
     wrap::Union{Symbol, Nothing}
+    nrow::Union{Integer, Nothing}
+    ncol::Union{Integer, Nothing}
+    free_x::Bool
+    free_y::Bool
 end
 
 struct GGPlot

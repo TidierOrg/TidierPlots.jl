@@ -131,6 +131,7 @@ function Makie.SpecApi.Axis(plot::GGPlot)
             grouping_columns = [aes_dict_makie[a] for a in [intersect(keys(given_aes), geom.grouping_aes)...]]
             subgroup_given_aes = subgroup_split(given_aes, plot_data[!, unique([facetting_column...; grouping_columns...])])
             facet_names = [n[plot.facet_options.wrap] for n in keys(groupby(plot_data, unique([facetting_column...; grouping_columns...])))]
+            facet_positions = position_facets(facet_names)
 
             plot_list_by_facet = Dict(facet => Makie.PlotSpec[] for facet in unique(facet_names))
 
@@ -169,11 +170,11 @@ function Makie.SpecApi.Axis(plot::GGPlot)
     else
         if length(axis_options) == 0 
             return Makie.SpecApi.GridLayout(
-                [facet_position[name] => Makie.SpecApi.Axis(plots = plot_list_by_facet[name]) for name in facet_names]...
+                [facet_positions[name] => Makie.SpecApi.Axis(plots = plot_list_by_facet[name]) for name in facet_names]...
             )          
         else
             return Makie.SpecApi.GridLayout(
-                [facet_position[name] => Makie.SpecApi.Axis(plots = plot_list_by_facet[name]; axis_options...) for name in facet_names]...
+                [facet_positions[name] => Makie.SpecApi.Axis(plots = plot_list_by_facet[name]; axis_options...) for name in facet_names]...
             )    
         end
     end

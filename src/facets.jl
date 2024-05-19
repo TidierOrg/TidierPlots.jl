@@ -75,9 +75,9 @@ function facet_grid(plot::GGPlot, args...; kwargs...)
 end
 
 """
-Internal function. Given a list of names and (optionally) some constraints, return a Dict{name::String, position::Tuple} that gives the relative position of the facet. 
+Internal function. Given a list of names and (optionally) some constraints, return the relative position of the facets and their labels. 
 """
-function position_facets(names, rows = nothing, cols = 3, labels = true, boxes = true)
+function position_facets(names, rows = nothing, cols = 3, labels = :all)
     if (!isnothing(rows) && !isnothing(cols))
         if (rows * cols < length(names))
             len = length(names)
@@ -98,5 +98,16 @@ function position_facets(names, rows = nothing, cols = 3, labels = true, boxes =
 
     plot_positions = Dict{Any, Tuple}(name => (i, j) for (i, j, name) in zip(repeat(1:rows, inner = cols), repeat(1:cols, rows), names))
     
-    return plot_positions
+    label_dict = Dict{Tuple, Any}()
+    box_dict = Dict{Tuple, Any}()
+
+    if labels == :all
+        label_dict = Dict{Tuple, Any}((i, j, Makie.Top()) => Makie.SpecApi.Label(text = name, padding = (8, 10, 8, 10)) for (i, j, name) in zip(repeat(1:rows, inner = cols), repeat(1:cols, rows), names))
+        box_dict = Dict{Tuple, Any}((i, j, Makie.Top()) => Makie.SpecApi.Box() for (i, j, name) in zip(repeat(1:rows, inner = cols), repeat(1:cols, rows), names))
+    elseif labels == :top
+        label_dict = Dict{Tuple, Any}((i, j, Makie.Top()) => Makie.SpecApi.Label(text = name, padding = (8, 10, 8, 10)) for (i, j, name) in zip(repeat([1], cols), 1:cols, names))
+        box_dict = Dict{Tuple, Any}((i, j, Makie.Top()) => Makie.SpecApi.Box() for (i, j, name) in zip(repeat([1], cols), 1:cols, names))
+    end
+
+    return (plot_positions, box_dict, label_dict)
 end

@@ -5,6 +5,8 @@ function Makie.SpecApi.Axis(plot::GGPlot)
     plot_list_by_facet = nothing
     facet_names = nothing
     facet_positions = nothing
+    facet_boxes = Dict()
+    facet_labels = Dict()
     axis_options = Dict{Symbol, Any}()
 
     for geom in plot.geoms
@@ -111,7 +113,7 @@ function Makie.SpecApi.Axis(plot::GGPlot)
             facetting_column = [plot.facet_options.wrap]
             subgroup_given_aes = subgroup_split(given_aes, plot_data[!, facetting_column])
             facet_names = unique(plot_data[!, plot.facet_options.wrap])
-            facet_positions = position_facets(facet_names)
+            facet_positions, facet_labels, facet_boxes = position_facets(facet_names, plot.facet_options.nrow, plot.facet_options.ncol)
 
             plot_list_by_facet = Dict(facet => Makie.PlotSpec[] for facet in facet_names)
 
@@ -131,7 +133,7 @@ function Makie.SpecApi.Axis(plot::GGPlot)
             grouping_columns = [aes_dict_makie[a] for a in [intersect(keys(given_aes), geom.grouping_aes)...]]
             subgroup_given_aes = subgroup_split(given_aes, plot_data[!, unique([facetting_column...; grouping_columns...])])
             facet_names = [n[plot.facet_options.wrap] for n in keys(groupby(plot_data, unique([facetting_column...; grouping_columns...])))]
-            facet_positions = position_facets(facet_names)
+            facet_positions, facet_labels, facet_boxes = position_facets(facet_names, plot.facet_options.nrow, plot.facet_options.ncol)
 
             plot_list_by_facet = Dict(facet => Makie.PlotSpec[] for facet in unique(facet_names))
 
@@ -170,11 +172,15 @@ function Makie.SpecApi.Axis(plot::GGPlot)
     else
         if length(axis_options) == 0 
             return Makie.SpecApi.GridLayout(
-                [facet_positions[name] => Makie.SpecApi.Axis(plots = plot_list_by_facet[name]) for name in facet_names]...
+                [facet_positions[name] => Makie.SpecApi.Axis(plots = plot_list_by_facet[name]) for name in facet_names]...,
+                facet_labels...,
+                facet_boxes...
             )          
         else
             return Makie.SpecApi.GridLayout(
-                [facet_positions[name] => Makie.SpecApi.Axis(plots = plot_list_by_facet[name]; axis_options...) for name in facet_names]...
+                [facet_positions[name] => Makie.SpecApi.Axis(plots = plot_list_by_facet[name]; axis_options...) for name in facet_names]...,
+                facet_labels...,
+                facet_boxes...   
             )    
         end
     end

@@ -169,11 +169,11 @@ function Makie.SpecApi.Axis(plot::GGPlot)
     else
         if length(axis_options) == 0 
             return Makie.SpecApi.GridLayout(
-                hcat([Makie.SpecApi.Axis(plots = plot_list_by_facet[name]) for name in facet_names]...)
+                [facet_position[name] => Makie.SpecApi.Axis(plots = plot_list_by_facet[name]) for name in facet_names]...
             )          
         else
             return Makie.SpecApi.GridLayout(
-                hcat([Makie.SpecApi.Axis(plots = plot_list_by_facet[name]; axis_options...) for name in facet_names]...)
+                [facet_position[name] => Makie.SpecApi.Axis(plots = plot_list_by_facet[name]; axis_options...) for name in facet_names]...
             )    
         end
     end

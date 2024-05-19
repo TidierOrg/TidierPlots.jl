@@ -83,13 +83,13 @@ function Makie.SpecApi.Axis(plot::GGPlot)
 
         # keep track of the global max and min on each axis
         if haskey(given_aes, :x)
-            xmin = min(xmin, minimum(given_aes[:x].raw))
-            xmax = max(xmax, maximum(given_aes[:x].raw))
+            xmin = min(xmin, minimum(given_aes[:x].makie_function(given_aes[:x].raw)))
+            xmax = max(xmax, maximum(given_aes[:x].makie_function(given_aes[:x].raw)))
         end
 
         if haskey(given_aes, :y)
-            ymin = min(ymin, minimum(given_aes[:y].raw))
-            ymax = max(ymax, maximum(given_aes[:y].raw))
+            ymin = min(ymin, minimum(given_aes[:y].makie_function(given_aes[:y].raw)))
+            ymax = max(ymax, maximum(given_aes[:y].makie_function(given_aes[:y].raw)))
         end
 
         if length(intersect(keys(given_aes), geom.grouping_aes)) == 0 && isnothing(plot.facet_options) 

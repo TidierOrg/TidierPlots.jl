@@ -83,10 +83,6 @@ number_on_axis = AesTransform(number_on_axis_fn)
 # categorical array handling options for String columns
 
 function cat_inorder_fn(target::Symbol, source::Vector{Symbol}, data::DataFrame)
-    cat_column = data[!, source[1]]
-    cat_array = CategoricalArray(cat_column,
-        levels = unique(cat_column),
-        ordered = true)
     
     label_target = target == :x ? :xticks :
                    target == :y ? :yticks : 
@@ -94,10 +90,17 @@ function cat_inorder_fn(target::Symbol, source::Vector{Symbol}, data::DataFrame)
     
     return Dict{Symbol, PlottableData}(
         target => PlottableData(
-            cat_array,
-            x -> levelcode.(x),
+            data[!, source[1]],
+            x -> levelcode.(CategoricalArray(x,
+                levels = unique(x),
+                ordered = true)),
             label_target,
-            x -> (1:length(levels(x)), levels(x))
+            x -> (1:length(levels(CategoricalArray(x,
+                levels = unique(x),
+                ordered = true))), 
+                levels(CategoricalArray(x,
+                levels = unique(x),
+                ordered = true)))
         )
     )    
 end
@@ -105,7 +108,6 @@ end
 cat_inorder = AesTransform(cat_inorder_fn)
 
 function cat_inseq_fn(target::Symbol, source::Vector{Symbol}, data::DataFrame)
-    cat_array = CategoricalArray(data[!, source[1]])
 
     label_target = target == :x ? :xticks :
                    target == :y ? :yticks : 
@@ -113,10 +115,10 @@ function cat_inseq_fn(target::Symbol, source::Vector{Symbol}, data::DataFrame)
 
     return Dict{Symbol, PlottableData}(
         target => PlottableData(
-            cat_array,
-            x -> levelcode.(x),
+            data[!, source[1]],
+            x -> levelcode.(CategoricalArray(x)),
             label_target,
-            x -> (1:length(levels(x)), levels(x))
+            x -> (1:length(levels(CategoricalArray(x))), levels(CategoricalArray(x)))
         )
     )      
 end

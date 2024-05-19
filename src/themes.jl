@@ -5,3 +5,7 @@ for theme_name in (:theme_black, :theme_dark, :theme_ggplot2, :theme_light, :the
         end
     end
 end
+
+function theme(args...; kwargs...)
+    return AxisOptions(Dict(kwargs), Dict(), Dict())
+end

@@ -32,7 +32,7 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         # make a master list of all possible accepted optional aesthetics and args
         ggplot_to_makie_geom = merge(_ggplot_to_makie, geom.special_aes)
 
-        # which aesthetics were given?
+        # given_aes will store the data for each given aes
         given_aes = Dict{Symbol, PlottableData}()
 
         # inherit any unspecified column transforms
@@ -187,12 +187,16 @@ function Makie.SpecApi.Axis(plot::GGPlot)
             Makie.SpecApi.Axis(plots = plot_list; axis_options...)
     else
         if !haskey(axis_options, :limits)
+            expand_x = (xmax - xmin) * 0.05
+            expand_y = (ymax - ymin) * 0.05
+
             if !plot.facet_options.free_x && plot.facet_options.free_y
-                axis_options[:limits] = ((xmin, xmax), nothing)
+                expandx = (xmax - xmin) * 0.05
+                axis_options[:limits] = ((xmin - expand_x, xmax + expand_x), nothing)
             elseif plot.facet_options.free_x && !plot.facet_options.free_y
-                axis_options[:limits] = (nothing, (ymin, ymax))
+                axis_options[:limits] = (nothing, (ymin - expand_y, ymax + expand_y))
             elseif !plot.facet_options.free_x && !plot.facet_options.free_y
-                axis_options[:limits] = ((xmin, xmax), (ymin, ymax))
+                axis_options[:limits] = ((xmin - expand_x, xmax + expand_x), (ymin - expand_y, ymax + expand_y))
             end
         end
 

@@ -70,7 +70,10 @@ include("geoms/geom_text.jl")
 include("geoms/geom_tile.jl")
 include("geoms/geom_violin.jl")
 
+# theming
+
 @reexport using Makie: theme_black, theme_dark, theme_ggplot2, theme_light, theme_minimal
+export theme
 
 # functions
 
@@ -102,11 +105,14 @@ export geom_density
 export geom_hline
 export geom_vline
 
+# facetting 
+
+export facet_wrap, facet_grid
+
 # scales
 
 export labs, lims, c
 export label_bytes, label_currency, label_date, label_log, label_number, label_ordinal, label_percent, label_pvalue, label_scientific, label_wrap
-export facet_wrap, facet_grid
 export scale_x_continuous, scale_y_continuous
 export scale_x_log10, scale_y_log10, scale_x_log2, scale_y_log2, scale_x_log, scale_y_log
 export scale_x_logit, scale_y_logit

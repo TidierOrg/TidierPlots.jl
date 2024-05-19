@@ -9,6 +9,11 @@ function Makie.SpecApi.Axis(plot::GGPlot)
     facet_labels = Dict()
     axis_options = Dict{Symbol, Any}()
 
+    ymin = Inf
+    xmin = Inf
+    xmax = -Inf
+    ymax = -Inf
+
     for geom in plot.geoms
         # use the dataframe specified in the geom if present, otherwise use the ggplot one
         plot_data = isnothing(geom.data) ? plot.data : geom.data
@@ -74,6 +79,17 @@ function Makie.SpecApi.Axis(plot::GGPlot)
                 makie_attr = get(ggplot_to_makie_geom, arg, arg)
                 args_dict_makie[Symbol(makie_attr)] = converted_value
             end
+        end
+
+        # keep track of the global max and min on each axis
+        if haskey(given_aes, :x)
+            xmin = min(xmin, minimum(given_aes[:x].raw))
+            xmax = max(xmax, maximum(given_aes[:x].raw))
+        end
+
+        if haskey(given_aes, :y)
+            ymin = min(ymin, minimum(given_aes[:y].raw))
+            ymax = max(ymax, maximum(given_aes[:y].raw))
         end
 
         if length(intersect(keys(given_aes), geom.grouping_aes)) == 0 && isnothing(plot.facet_options) 
@@ -170,6 +186,16 @@ function Makie.SpecApi.Axis(plot::GGPlot)
             Makie.SpecApi.Axis(plots = plot_list) :
             Makie.SpecApi.Axis(plots = plot_list; axis_options...)
     else
+        if !haskey(axis_options, :limits)
+            if !plot.facet_options.free_x && plot.facet_options.free_y
+                axis_options[:limits] = ((xmin, xmax), nothing)
+            elseif plot.facet_options.free_x && !plot.facet_options.free_y
+                axis_options[:limits] = (nothing, (ymin, ymax))
+            elseif !plot.facet_options.free_x && !plot.facet_options.free_y
+                axis_options[:limits] = ((xmin, xmax), (ymin, ymax))
+            end
+        end
+
         if length(axis_options) == 0 
             return Makie.SpecApi.GridLayout(
                 [facet_positions[name] => Makie.SpecApi.Axis(plots = plot_list_by_facet[name]) for name in facet_names]...,

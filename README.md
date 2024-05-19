@@ -131,32 +131,40 @@ end
 Access to all axis and plot options from `Makie` lets you use Makie's extensive capabilities for plot customization (example adapted from [beautiful.makie.org](https://beautiful.makie.org/examples/2d/scatters/bubble_plot_logxy)):
 
 ```julia
-using CairoMakie, Random, DataFrames
+using Random, DataFrames
 using TidierPlots
+import Makie.IntervalsBetween, Makie.Attributes
 
 Random.seed!(123)
 
-df = DataFrame(x = 10 .^ (range(-1, stop=1, length=100)),
-    y = x .^ 2 .+ abs.(2 * randn(length(x))),
-    size = (x .^ 2/3)[end:-1:1] .+ 6)
+xs = 10 .^ (range(-1, stop=1, length=100))
 
+df = DataFrame(x = xs,
+    y = xs .^ 2 .+ abs.(2 * randn(length(xs))),
+    size = (xs .^ 2/3)[end:-1:1] .+ 6)
 
 beautiful_makie_theme = Attributes(
     fonts=(;regular="CMU Serif"),
 )
 
-ggplot(df, xminorticksvisible=true, xminorgridvisible=true, 
-       yminorticksvisible=true, yminorgridvisible=true, 
-       xminorticks=IntervalsBetween(9), yminorticks=IntervalsBetween(9),
-       backgroundcolor = :transparent, xgridstyle=:dash,
-       ygridstyle=:dash) + 
+ggplot(df) + 
     geom_point(aes(x = :x, y = :y, size = :size, color = :x), alpha = 0.8) +
     scale_x_log10() + 
     scale_y_log10() + 
     labs(x = "x", y = "y") +
     lims(y = c(.1, 100)) +
     scale_color_continuous(palette = "Hiroshige", name = "") +
-    beautiful_makie_theme
+    theme(
+        xminorticksvisible=true, 
+        xminorgridvisible=true, 
+        yminorticksvisible=true, 
+        yminorgridvisible=true, 
+        xminorticks=IntervalsBetween(9), 
+        yminorticks=IntervalsBetween(9),
+        backgroundcolor = :transparent, 
+        xgridstyle=:dash,
+        ygridstyle=:dash
+    ) + beautiful_makie_theme
 ```
 ![](assets/beautiful_makie.png)
 

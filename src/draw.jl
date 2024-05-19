@@ -4,6 +4,7 @@ function Makie.SpecApi.Axis(plot::GGPlot)
     plot_list = Makie.PlotSpec[]
     plot_list_by_facet = nothing
     facet_names = nothing
+    facet_positions = nothing
     axis_options = Dict{Symbol, Any}()
 
     for geom in plot.geoms
@@ -110,6 +111,7 @@ function Makie.SpecApi.Axis(plot::GGPlot)
             facetting_column = [plot.facet_options.wrap]
             subgroup_given_aes = subgroup_split(given_aes, plot_data[!, facetting_column])
             facet_names = unique(plot_data[!, plot.facet_options.wrap])
+            facet_positions = position_facets(facet_names)
 
             plot_list_by_facet = Dict(facet => Makie.PlotSpec[] for facet in facet_names)
 

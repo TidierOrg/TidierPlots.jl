@@ -177,16 +177,14 @@ Random.seed!(123)
 n = 200
 df = DataFrame(x = randn(n) / 2, y = randn(n))
 
-top = ggplot(df) + 
-    geom_histogram(aes(x = :x), color = (:orangered, 0.5), strokewidth = 0.5) + 
-    lims(x = c(-4, 4)) + labs(y = "y") + 
+top = ggplot(df) + geom_histogram(aes(x = :x), color = (:orangered, 0.5), strokewidth = 0.5) + 
+    lims(x = c(-4, 4)) + 
     theme(xticklabelsvisible = false, xgridvisible = false) + 
     beautiful_makie_theme
 
 right = ggplot(df) + 
-    geom_histogram(aes(:y), color = (:dodgerblue, 0.5), 
-        direction = :x, strokewidth = 0.5) + 
-    lims(y = c(-3, 3)) + labs(x = "x") + 
+    geom_histogram(aes(:y), color = (:dodgerblue, 0.5), direction = :x, strokewidth = 0.5) + 
+    lims(y = c(-3, 3)) + 
     theme(yticklabelsvisible = false, ygridvisible = false) +
     beautiful_makie_theme
 
@@ -197,10 +195,11 @@ middle = ggplot(df) + geom_point(aes(:x, :y), size = 10) +
 blank = ggplot() + 
     theme(xticklabelsvisible = false, xgridvisible = false, yticklabelsvisible = false,
         ygridvisible = false, xtickcolor = :transparent, ytickcolor = :transparent, 
-        bottomspinevisible = false, topspinevisible = false, rightspinevisible = false,
-        leftspinevisible = false) + beautiful_makie_theme
+        bottomspinevisible = false, topspinevisible = false, rightspinevisible = false, leftspinevisible = false) + 
+    beautiful_makie_theme
 
-(top/middle) + (blank/right) + plot_layout(widths = c(2, 1))
+top + blank + middle + right + 
+    plot_layout(ncol = 2, nrow = 2, widths = c(3, 1), heights = c(1, 2))
 ```
 
 ![](assets/patchwork.png)

@@ -184,7 +184,8 @@ top = ggplot(df) +
     beautiful_makie_theme
 
 right = ggplot(df) + 
-    geom_histogram(aes(:y), color = (:dodgerblue, 0.5), direction = :x, strokewidth = 0.5) + 
+    geom_histogram(aes(:y), color = (:dodgerblue, 0.5), 
+        direction = :x, strokewidth = 0.5) + 
     lims(y = c(-3, 3)) + labs(x = "x") + 
     theme(yticklabelsvisible = false, ygridvisible = false) +
     beautiful_makie_theme

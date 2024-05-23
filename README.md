@@ -195,8 +195,8 @@ middle = ggplot(df) + geom_point(aes(:x, :y), size = 10) +
 blank = ggplot() + 
     theme(xticklabelsvisible = false, xgridvisible = false, yticklabelsvisible = false,
         ygridvisible = false, xtickcolor = :transparent, ytickcolor = :transparent, 
-        bottomspinevisible = false, topspinevisible = false, rightspinevisible = false, leftspinevisible = false) + 
-    beautiful_makie_theme
+        bottomspinevisible = false, topspinevisible = false, rightspinevisible = false,
+        leftspinevisible = false) + beautiful_makie_theme
 
 (top/middle) + (blank/right) + plot_layout(widths = c(2, 1))
 ```

@@ -170,7 +170,7 @@ ggplot(df) +
 
 ### Built-in Support for Plot Layouts
 
-Combine plots with a `{patchwork}`-inspired syntax to create complex layouts: 
+Combine plots with a `{patchwork}`-inspired syntax to create complex layouts (adapted from [beautiful.makie.org](https://beautiful.makie.org/examples/2d/histogram/hists_on_the_sides)): 
 
 ```julia
 Random.seed!(123)

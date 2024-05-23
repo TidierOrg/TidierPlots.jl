@@ -168,6 +168,41 @@ ggplot(df) +
 ```
 ![](assets/beautiful_makie.png)
 
+### Built-in Support for Plot Layouts
+
+Combine plots with a `{patchwork}`-inspired syntax to create complex layouts: 
+
+```julia
+Random.seed!(123)
+n = 200
+df = DataFrame(x = randn(n) / 2, y = randn(n))
+
+top = ggplot(df) + geom_histogram(aes(x = :x), color = (:orangered, 0.5), strokewidth = 0.5) + 
+    lims(x = c(-4, 4)) + labs(y = "y") + 
+    theme(xticklabelsvisible = false, xgridvisible = false) + 
+    beautiful_makie_theme
+
+right = ggplot(df) + 
+    geom_histogram(aes(:y), color = (:dodgerblue, 0.5), direction = :x, strokewidth = 0.5) + 
+    lims(y = c(-3, 3)) + labs(x = "x") + 
+    theme(yticklabelsvisible = false, ygridvisible = false) +
+    beautiful_makie_theme
+
+middle = ggplot(df) + geom_point(aes(:x, :y), size = 10) + 
+    lims(x = c(-4, 4), y = c(-3, 3)) + labs(x = "x", y = "y") + 
+    beautiful_makie_theme
+
+blank = ggplot() + 
+    theme(xticklabelsvisible = false, xgridvisible = false, yticklabelsvisible = false,
+        ygridvisible = false, xtickcolor = :transparent, ytickcolor = :transparent, 
+        bottomspinevisible = false, topspinevisible = false, rightspinevisible = false, leftspinevisible = false) + 
+    beautiful_makie_theme
+
+(top/middle) + (blank/right) + plot_layout(widths = c(2, 1))
+```
+
+![](assets/patchwork.png)
+
 ### Easy Extensions with Makie
 
 Add basic support for any Makie plot using `geom_template(name, required_aes, makie_plot)`. It will inherit support for most optional aesthetics and arguments automatically:

@@ -235,8 +235,31 @@ function draw_ggplot(plot::GGPlot)
     end
 end
 
+function draw_ggplot(plot::GGPlot, size::Tuple)
+    axis = Makie.SpecApi.Axis(plot)
+    legend = build_legend(plot)
+
+    if isnothing(legend)
+        Makie.plot(
+            Makie.SpecApi.GridLayout(
+                axis
+            ), figure=(;size=size)
+        )
+    else
+        Makie.plot(
+            Makie.SpecApi.GridLayout(
+                [axis legend]
+            ), figure=(;size=size)
+        )
+    end
+end
+
 function draw_ggplot(plot_grid::GGPlotGrid)
     Makie.plot(plot_grid.grid)
+end
+
+function draw_ggplot(plot_grid::GGPlotGrid, size::Tuple)
+    Makie.plot(plot_grid.grid, figure=(;size=size))
 end
 
 try_convert(::Type{Any}, v, ::Any, ::Any) = v

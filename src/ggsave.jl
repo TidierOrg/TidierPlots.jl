@@ -1,21 +1,26 @@
-function ggsave(path::String, plot::GGPlot; scale = 2)
-    save(path,
-    with_theme(plot.theme) do
-        draw_ggplot(plot)
-    end;
-    px_per_unit = scale)
-end
+function ggsave(path::String, plot::Union{GGPlot, GGPlotGrid}; 
+    scale = 2, height = nothing, width = nothing)
 
-function ggsave(plot::GGPlot, path::String; scale = 2)
-    save(path,
-        with_theme(plot.theme) do
+    if xor(isnothing(height), isnothing(width))
+        throw("Specify either: both height and width OR neither height nor width.")
+    end
+
+    # does not support different themes per plot in a grid
+    theme = plot isa GGPlotGrid ? plot.plots[1].theme : plot.theme  
+
+    if !isnothing(height)
+        save(path,
+        with_theme(theme) do
+            draw_ggplot(plot, (width, height))
+        end; px_per_unit = scale)
+    else
+        save(path,
+        with_theme(theme) do
             draw_ggplot(plot)
-        end;
-        px_per_unit = scale)
+        end; px_per_unit = scale)
+    end    
 end
 
-function ggsave(plot::GGPlotGrid, path::String; scale = 2)
-    save(path, draw_ggplot(plot), px_per_unit = scale)
+function ggsave(plot::GGPlot, path::String; scale = 2, height = nothing, width = nothing)
+    ggsave(path, plot; scale=scale, height=height, width=width)
 end
-
-ggsave(path::String, plot::GGPlotGrid; scale = 2) = ggsave(plot, path; scale=scale)

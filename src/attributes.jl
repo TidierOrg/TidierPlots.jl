@@ -1,4 +1,4 @@
-const _legend_geom_elements = Dict{String, DataType}(
+const _legend_geom_elements = Dict{String,DataType}(
     "geom_bar" => MarkerElement,
     "geom_col" => MarkerElement,
     "geom_histogram" => MarkerElement,
@@ -20,7 +20,7 @@ const _legend_geom_elements = Dict{String, DataType}(
     "geom_vline" => LineElement
 );
 
-const _legend_geom_symbols = Dict{String, Dict}(
+const _legend_geom_symbols = Dict{String,Dict}(
     "geom_bar" => Dict(:marker => :rect, :markersize => 12),
     "geom_col" => Dict(:marker => :rect, :markersize => 12),
     "geom_histogram" => Dict(:marker => :rect, :markersize => 12),
@@ -42,7 +42,7 @@ const _legend_geom_symbols = Dict{String, Dict}(
     "geom_vline" => Dict(:linestyle => nothing)
 );
 
-const _ggplot_to_makie = Dict{String, String}(
+const _ggplot_to_makie = Dict{String,String}(
     "colour" => "color",
     "shape" => "marker",
     "size" => "markersize",
@@ -57,7 +57,7 @@ const _ggplot_to_makie = Dict{String, String}(
 );
 
 
-const _makie_expected_type = Dict{String, Type}(
+const _makie_expected_type = Dict{String,Type}(
     # Generic Attributes
     "depth_shift" => Float32,
     "fxaa" => Bool,
@@ -72,7 +72,7 @@ const _makie_expected_type = Dict{String, Type}(
     "alpha" => Real,
     "color" => Any,
     "colormap" => Symbol,
-    "colorrange" => Tuple{<:Real, <:Real},
+    "colorrange" => Tuple{<:Real,<:Real},
     "colorscale" => Function,
     "highclip" => Any,
     "lowclip" => Any,
@@ -146,6 +146,6 @@ const _makie_expected_type = Dict{String, Type}(
 
 # options that are not meant to go to Makie
 const _internal_geom_options = Symbol[
-    :inherit_aes
+    :inherit_aes,
+    :geom_name
 ]
-    

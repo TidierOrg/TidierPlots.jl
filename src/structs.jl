@@ -26,7 +26,7 @@ struct GGPlot
     default_aes::Dict
     data::Union{Nothing, DataFrame}
     axis_options::Dict
-    theme::Attributes
+    theme::Makie.Attributes
     column_transformations::Dict
     legend_options::Dict
     facet_options::Union{FacetOptions, Nothing}

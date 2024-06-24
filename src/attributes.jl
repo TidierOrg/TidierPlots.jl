@@ -152,6 +152,7 @@ const _internal_geom_options = Symbol[
     :inherit_aes,
     :lower,
     :method,
+    :position,
     :upper,
     :x, :x1, :x2,
     :xintercept,

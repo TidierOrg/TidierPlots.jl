@@ -73,7 +73,7 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         args_dict_makie = Dict{Symbol, Any}()
 
         for (arg, value) in args_dict
-            if !(arg in _internal_geom_options) 
+            if !(Symbol(arg) in _internal_geom_options)
                 ex_type = get(_makie_expected_type, arg, Any)
                 converted_value = try_convert(ex_type, value, arg, geom.args["geom_name"])
                 makie_attr = get(ggplot_to_makie_geom, arg, arg)
@@ -92,10 +92,10 @@ function Makie.SpecApi.Axis(plot::GGPlot)
             ymax = max(ymax, maximum(given_aes[:y].makie_function(given_aes[:y].raw)))
         end
 
-        if length(intersect(keys(given_aes), geom.grouping_aes)) == 0 && isnothing(plot.facet_options) 
+        if length(intersect(keys(given_aes), geom.grouping_aes)) == 0 && isnothing(plot.facet_options)
             # if there are no grouping_aes given and no facets required, we only need one PlotSpec
             required_aes_data = [p.makie_function(p.raw) for p in [given_aes[a] for a in Symbol.(required_aes)]]
-            optional_aes_data = [a => p.makie_function(p.raw) for (a, p) in given_aes if !(String(a) in required_aes)]
+            optional_aes_data = [a => p.makie_function(p.raw) for (a, p) in given_aes if (!(String(a) in required_aes) && !(a in _internal_geom_options))]
 
             args = Tuple([geom.visual, required_aes_data...])
             kwargs = merge(args_dict_makie, Dict(optional_aes_data))
@@ -107,11 +107,11 @@ function Makie.SpecApi.Axis(plot::GGPlot)
             # make a list of modified given_aes objects which only include the points from their subsets
             grouping_columns = [aes_dict_makie[a] for a in [intersect(keys(given_aes), geom.grouping_aes)...]]
             subgroup_given_aes = subgroup_split(given_aes, plot_data[!, grouping_columns])
-            
+
             # push each one to the overall plot_list
             for sub in subgroup_given_aes
                 required_aes_data = [p.makie_function(p.raw) for p in [sub[a] for a in Symbol.(required_aes)]]
-                optional_aes_data = [a => p.makie_function(p.raw) for (a, p) in sub if !(String(a) in required_aes)]
+                optional_aes_data = [a => p.makie_function(p.raw) for (a, p) in sub if (!(String(a) in required_aes) && !(a in _internal_geom_options))]
 
                 args = Tuple([geom.visual, required_aes_data...])
                 kwargs = merge(args_dict_makie, Dict(optional_aes_data))
@@ -135,7 +135,7 @@ function Makie.SpecApi.Axis(plot::GGPlot)
 
             for (index, sub) in enumerate(subgroup_given_aes)
                 required_aes_data = [p.makie_function(p.raw) for p in [sub[a] for a in Symbol.(required_aes)]]
-                optional_aes_data = [a => p.makie_function(p.raw) for (a, p) in sub if !(String(a) in required_aes)]
+                optional_aes_data = [a => p.makie_function(p.raw) for (a, p) in sub if (!(String(a) in required_aes) && !(a in _internal_geom_options))]
 
                 args = Tuple([geom.visual, required_aes_data...])
                 kwargs = merge(args_dict_makie, Dict(optional_aes_data))
@@ -155,16 +155,16 @@ function Makie.SpecApi.Axis(plot::GGPlot)
 
             for (sub, facet_name) in zip(subgroup_given_aes, facet_names)
                 required_aes_data = [p.makie_function(p.raw) for p in [sub[a] for a in Symbol.(required_aes)]]
-                optional_aes_data = [a => p.makie_function(p.raw) for (a, p) in sub if !(String(a) in required_aes)]
-    
+                optional_aes_data = [a => p.makie_function(p.raw) for (a, p) in sub if (!(String(a) in required_aes) && !(a in _internal_geom_options))]
+
                 args = Tuple([geom.visual, required_aes_data...])
                 kwargs = merge(args_dict_makie, Dict(optional_aes_data))
-    
+
                 # since we are grouping, we only need a single value rather than a vector
                 for aes in [intersect(keys(given_aes), geom.grouping_aes)...]
                     kwargs[aes] = first(kwargs[aes])
                 end
-    
+
                 # push completed PlotSpec (type, args, and kwargs) to the list of plots
                 push!(plot_list_by_facet[facet_name], Makie.PlotSpec(args...; kwargs...))
             end
@@ -173,7 +173,7 @@ function Makie.SpecApi.Axis(plot::GGPlot)
 
     # rename and correct types on all axis options
     for (arg, value) in plot.axis_options
-        if !(arg in _internal_geom_options) 
+        if !(Symbol(arg) in _internal_geom_options)
             ex_type = get(_makie_expected_type, arg, Any)
             converted_value = try_convert(ex_type, value, arg, "ggplot")
             makie_attr = get(_ggplot_to_makie, arg, arg)
@@ -181,7 +181,7 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         end
     end
 
-    if isnothing(plot.facet_options) 
+    if isnothing(plot.facet_options)
         return length(axis_options) == 0 ?
             Makie.SpecApi.Axis(plots = plot_list) :
             Makie.SpecApi.Axis(plots = plot_list; axis_options...)
@@ -200,18 +200,18 @@ function Makie.SpecApi.Axis(plot::GGPlot)
             end
         end
 
-        if length(axis_options) == 0 
+        if length(axis_options) == 0
             return Makie.SpecApi.GridLayout(
                 [facet_positions[name] => Makie.SpecApi.Axis(plots = plot_list_by_facet[name]) for name in facet_names]...,
                 facet_labels...,
                 facet_boxes...
-            )          
+            )
         else
             return Makie.SpecApi.GridLayout(
                 [facet_positions[name] => Makie.SpecApi.Axis(plots = plot_list_by_facet[name]; axis_options...) for name in facet_names]...,
                 facet_labels...,
-                facet_boxes...   
-            )    
+                facet_boxes...
+            )
         end
     end
 end

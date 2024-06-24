@@ -111,7 +111,9 @@ function stat_linear(
 
     lin_model = GLM.lm(add_intercept_column(x), y)
     x̂ = range(extrema(x)..., length = 100)
-    pred = DataFrame(GLM.predict(lin_model, add_intercept_column(x̂); interval = :confidence))
+    pred = DataFrame(
+        GLM.predict(lin_model, add_intercept_column(x̂); interval = :confidence)
+    )
 
     aes_dict["upper"] = :upper
     aes_dict["lower"] = :lower

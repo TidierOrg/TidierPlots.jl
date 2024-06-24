@@ -145,7 +145,20 @@ const _makie_expected_type = Dict{String,Type}(
 );
 
 # options that are not meant to go to Makie
+# keep these in alphabetical order if making additions
 const _internal_geom_options = Symbol[
+    :data,
+    :geom_name,
     :inherit_aes,
-    :geom_name
+    :lower,
+    :method,
+    :upper,
+    :x, :x1, :x2,
+    :xintercept,
+    :xmax,
+    :xmin,
+    :y, :y1, :y2,
+    :yintercept,
+    :ymax,
+    :ymin
 ]

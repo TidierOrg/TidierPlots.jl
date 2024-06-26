@@ -72,12 +72,18 @@ function Makie.SpecApi.Axis(plot::GGPlot)
 
         args_dict_makie = Dict{Symbol, Any}()
 
+        supported_kwargs = get(_accepted_options_by_type, geom.visual, nothing)
+
         for (arg, value) in args_dict
             if !(Symbol(arg) in _internal_geom_options)
                 ex_type = get(_makie_expected_type, arg, Any)
                 converted_value = try_convert(ex_type, value, arg, geom.args["geom_name"])
                 makie_attr = get(ggplot_to_makie_geom, arg, arg)
-                args_dict_makie[Symbol(makie_attr)] = converted_value
+                if isnothing(supported_kwargs) || Symbol(makie_attr) in supported_kwargs
+                    args_dict_makie[Symbol(makie_attr)] = converted_value
+                else
+                    @warn "Dropping unsupported argument: $makie_attr"
+                end
             end
         end
 
@@ -95,7 +101,7 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         if length(intersect(keys(given_aes), geom.grouping_aes)) == 0 && isnothing(plot.facet_options)
             # if there are no grouping_aes given and no facets required, we only need one PlotSpec
             required_aes_data = [p.makie_function(p.raw) for p in [given_aes[a] for a in Symbol.(required_aes)]]
-            optional_aes_data = [a => p.makie_function(p.raw) for (a, p) in given_aes if (!(String(a) in required_aes) && !(a in _internal_geom_options))]
+            optional_aes_data = [a => p.makie_function(p.raw) for (a, p) in given_aes if (!(String(a) in required_aes) && (isnothing(supported_kwargs) || a in supported_kwargs))]
 
             args = Tuple([geom.visual, required_aes_data...])
             kwargs = merge(args_dict_makie, Dict(optional_aes_data))
@@ -111,7 +117,7 @@ function Makie.SpecApi.Axis(plot::GGPlot)
             # push each one to the overall plot_list
             for sub in subgroup_given_aes
                 required_aes_data = [p.makie_function(p.raw) for p in [sub[a] for a in Symbol.(required_aes)]]
-                optional_aes_data = [a => p.makie_function(p.raw) for (a, p) in sub if (!(String(a) in required_aes) && !(a in _internal_geom_options))]
+                optional_aes_data = [a => p.makie_function(p.raw) for (a, p) in sub if (!(String(a) in required_aes) && (isnothing(supported_kwargs) || a in supported_kwargs))]
 
                 args = Tuple([geom.visual, required_aes_data...])
                 kwargs = merge(args_dict_makie, Dict(optional_aes_data))
@@ -135,7 +141,7 @@ function Makie.SpecApi.Axis(plot::GGPlot)
 
             for (index, sub) in enumerate(subgroup_given_aes)
                 required_aes_data = [p.makie_function(p.raw) for p in [sub[a] for a in Symbol.(required_aes)]]
-                optional_aes_data = [a => p.makie_function(p.raw) for (a, p) in sub if (!(String(a) in required_aes) && !(a in _internal_geom_options))]
+                optional_aes_data = [a => p.makie_function(p.raw) for (a, p) in sub if (!(String(a) in required_aes) && (isnothing(supported_kwargs) || a in supported_kwargs))]
 
                 args = Tuple([geom.visual, required_aes_data...])
                 kwargs = merge(args_dict_makie, Dict(optional_aes_data))
@@ -155,7 +161,7 @@ function Makie.SpecApi.Axis(plot::GGPlot)
 
             for (sub, facet_name) in zip(subgroup_given_aes, facet_names)
                 required_aes_data = [p.makie_function(p.raw) for p in [sub[a] for a in Symbol.(required_aes)]]
-                optional_aes_data = [a => p.makie_function(p.raw) for (a, p) in sub if (!(String(a) in required_aes) && !(a in _internal_geom_options))]
+                optional_aes_data = [a => p.makie_function(p.raw) for (a, p) in sub if (!(String(a) in required_aes) && (isnothing(supported_kwargs) || a in supported_kwargs))]
 
                 args = Tuple([geom.visual, required_aes_data...])
                 kwargs = merge(args_dict_makie, Dict(optional_aes_data))

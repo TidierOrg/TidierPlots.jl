@@ -22,13 +22,7 @@ function aes(args...; kwargs...)
 
     for (k, v) in d
         if v isa Pair
-            replace_v = Symbol[]
-            for (source_index, source_colname) in enumerate(v[1])
-                push!(aes_kwargs, String(k) * string(source_index) => Symbol(source_colname))
-                push!(replace_v, Symbol(String(k) * string(source_index)))
-            end
-            push!(col_transforms, Symbol(k) => replace_v => v[2])
-            push!(aes_kwargs, String(k) => :Calculated)
+            push!(aes_kwargs, String(k) => v)
         else
             push!(aes_kwargs, String(k) => Symbol(v))
         end
@@ -41,7 +35,7 @@ function aes(args...; kwargs...)
 end
 
 macro aes(exprs...)
-    aes_dict = Dict{String, Union{Symbol, Pair}}()
+    aes_dict = Dict{String, Union{Symbol, Any}}()
     positional = Symbol[]
     for aes_ex in exprs
         if aes_ex isa Expr

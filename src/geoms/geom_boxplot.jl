@@ -1,10 +1,10 @@
-function boxplot_groups(aes_dict::Dict{String, Symbol},
+function boxplot_groups(aes_dict::Dict{String, Union{Symbol, Pair}},
     args_dict::Dict{Any, Any}, required_aes::Vector{String}, plot_data::DataFrame)
 
     factor_aes = [aes for (aes, v) in aes_dict if eltype(plot_data[!, v]) <: Union{AbstractString, AbstractChar, CategoricalValue}]
-    
+
     main_factor_aes = "x"
-    
+
     if "y" in factor_aes && !("x" in factor_aes)
         required_aes = ["y", "x"]
         args_dict["orientation"] = :horizontal

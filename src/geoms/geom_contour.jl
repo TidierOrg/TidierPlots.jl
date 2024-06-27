@@ -1,4 +1,4 @@
-function stat_density_2d(aes_dict::Dict{String, Symbol},
+function stat_density_2d(aes_dict::Dict{String, Union{Symbol, Pair}},
     args_dict, required_aes::Vector{String}, plot_data::DataFrame)
 
     new_required_aes = ["x", "y", "z"]

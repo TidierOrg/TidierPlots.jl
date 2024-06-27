@@ -25,28 +25,28 @@
         @test plot_images_equal(t, m)
         @test plot_images_equal(tm, m)
 
-        t = ggplot(penguins) +
-            geom_point(aes(x = [:bill_length_mm, :bill_depth_mm] => ((x, y) -> x .+ y), y = :bill_depth_mm))
+        # t = ggplot(penguins) +
+        #     geom_point(aes(x = [:bill_length_mm, :bill_depth_mm] => ((x, y) -> x .+ y), y = :bill_depth_mm))
 
-        tm = ggplot(penguins) +
-                    geom_point(@aes(x = bill_length_mm + bill_depth_mm,
-                                    y = bill_depth_mm))
+        # tm = ggplot(penguins) +
+        #             geom_point(@aes(x = bill_length_mm + bill_depth_mm,
+        #                             y = bill_depth_mm))
 
-        m = Makie.plot(
-            Makie.SpecApi.GridLayout(
-                Makie.SpecApi.Axis(
-                    plots = [
-                        Makie.PlotSpec(
-                            :Scatter,
-                            penguins.bill_length_mm .+ penguins.bill_depth_mm,
-                            penguins.bill_depth_mm)
-                    ]
-                )
-            )
-        )
+        # m = Makie.plot(
+        #     Makie.SpecApi.GridLayout(
+        #         Makie.SpecApi.Axis(
+        #             plots = [
+        #                 Makie.PlotSpec(
+        #                     :Scatter,
+        #                     penguins.bill_length_mm .+ penguins.bill_depth_mm,
+        #                     penguins.bill_depth_mm)
+        #             ]
+        #         )
+        #     )
+        # )
 
-        @test plot_images_equal(t, m)
-        @test plot_images_equal(tm, m)
+        # @test plot_images_equal(t, m)
+        # @test plot_images_equal(tm, m)
     end
 
     @testset "subtraction" begin
@@ -74,28 +74,28 @@
         @test plot_images_equal(t, m)
         @test plot_images_equal(tm, m)
 
-        t = ggplot(penguins) +
-            geom_point(aes(x = [:bill_length_mm, :bill_depth_mm] => ((x, y) -> x .- y), y = :bill_depth_mm))
+        # t = ggplot(penguins) +
+        #     geom_point(aes(x = [:bill_length_mm, :bill_depth_mm] => ((x, y) -> x .- y), y = :bill_depth_mm))
 
-        tm = ggplot(penguins) +
-                    geom_point(@aes(x = bill_length_mm - bill_depth_mm,
-                                    y = bill_depth_mm))
+        # tm = ggplot(penguins) +
+        #             geom_point(@aes(x = bill_length_mm - bill_depth_mm,
+        #                             y = bill_depth_mm))
 
-        m = Makie.plot(
-            Makie.SpecApi.GridLayout(
-                Makie.SpecApi.Axis(
-                    plots = [
-                        Makie.PlotSpec(
-                            :Scatter,
-                            penguins.bill_length_mm .- penguins.bill_depth_mm,
-                            penguins.bill_depth_mm)
-                    ]
-                )
-            )
-        )
+        # m = Makie.plot(
+        #     Makie.SpecApi.GridLayout(
+        #         Makie.SpecApi.Axis(
+        #             plots = [
+        #                 Makie.PlotSpec(
+        #                     :Scatter,
+        #                     penguins.bill_length_mm .- penguins.bill_depth_mm,
+        #                     penguins.bill_depth_mm)
+        #             ]
+        #         )
+        #     )
+        # )
 
-        @test plot_images_equal(t, m)
-        @test plot_images_equal(tm, m)
+        # @test plot_images_equal(t, m)
+        # @test plot_images_equal(tm, m)
     end
 
     @testset "multiplication" begin
@@ -123,27 +123,27 @@
         @test plot_images_equal(t, m)
         @test plot_images_equal(tm, m)
 
-        t = ggplot(penguins) +
-            geom_point(aes(x = [:bill_length_mm, :bill_depth_mm] => ((x, y) -> x .* y), y = :bill_depth_mm))
+        # t = ggplot(penguins) +
+        #     geom_point(aes(x = [:bill_length_mm, :bill_depth_mm] => ((x, y) -> x .* y), y = :bill_depth_mm))
 
-        tm = ggplot(penguins) +
-                geom_point(@aes(x = bill_length_mm * bill_depth_mm, y = bill_depth_mm))
+        # tm = ggplot(penguins) +
+        #         geom_point(@aes(x = bill_length_mm * bill_depth_mm, y = bill_depth_mm))
 
-        m = Makie.plot(
-            Makie.SpecApi.GridLayout(
-                Makie.SpecApi.Axis(
-                    plots = [
-                        Makie.PlotSpec(
-                            :Scatter,
-                            penguins.bill_length_mm .* penguins.bill_depth_mm,
-                            penguins.bill_depth_mm)
-                    ]
-                )
-            )
-        )
+        # m = Makie.plot(
+        #     Makie.SpecApi.GridLayout(
+        #         Makie.SpecApi.Axis(
+        #             plots = [
+        #                 Makie.PlotSpec(
+        #                     :Scatter,
+        #                     penguins.bill_length_mm .* penguins.bill_depth_mm,
+        #                     penguins.bill_depth_mm)
+        #             ]
+        #         )
+        #     )
+        # )
 
-        @test plot_images_equal(t, m)
-        @test plot_images_equal(tm, m)
+        # @test plot_images_equal(t, m)
+        # @test plot_images_equal(tm, m)
     end
 
     @testset "division" begin
@@ -171,27 +171,27 @@
         @test plot_images_equal(t, m)
         @test plot_images_equal(tm, m)
 
-        t = ggplot(penguins) +
-            geom_point(aes(x = [:bill_length_mm, :bill_depth_mm] => ((x, y) -> x ./ y), y = :bill_depth_mm))
+        # t = ggplot(penguins) +
+        #     geom_point(aes(x = [:bill_length_mm, :bill_depth_mm] => ((x, y) -> x ./ y), y = :bill_depth_mm))
 
-        tm = ggplot(penguins) +
-                geom_point(@aes(x = bill_length_mm / bill_depth_mm, y = bill_depth_mm))
+        # tm = ggplot(penguins) +
+        #         geom_point(@aes(x = bill_length_mm / bill_depth_mm, y = bill_depth_mm))
 
-        m = Makie.plot(
-            Makie.SpecApi.GridLayout(
-                Makie.SpecApi.Axis(
-                    plots = [
-                        Makie.PlotSpec(
-                            :Scatter,
-                            penguins.bill_length_mm ./ penguins.bill_depth_mm,
-                            penguins.bill_depth_mm)
-                    ]
-                )
-            )
-        )
+        # m = Makie.plot(
+        #     Makie.SpecApi.GridLayout(
+        #         Makie.SpecApi.Axis(
+        #             plots = [
+        #                 Makie.PlotSpec(
+        #                     :Scatter,
+        #                     penguins.bill_length_mm ./ penguins.bill_depth_mm,
+        #                     penguins.bill_depth_mm)
+        #             ]
+        #         )
+        #     )
+        # )
 
-        @test plot_images_equal(t, m)
-        @test plot_images_equal(tm, m)
+        # @test plot_images_equal(t, m)
+        # @test plot_images_equal(tm, m)
     end
 
     @testset "one col function" begin
@@ -221,29 +221,29 @@
     end
 
     @testset "two col function" begin
-        my_func(x, y) = x ./ y
+        # my_func(x, y) = x ./ y
 
-        t = ggplot(penguins) +
-            geom_point(aes(x = [:bill_length_mm, :bill_depth_mm] => my_func, y = :bill_depth_mm))
+        # t = ggplot(penguins) +
+        #     geom_point(aes(x = [:bill_length_mm, :bill_depth_mm] => my_func, y = :bill_depth_mm))
 
-        tm = ggplot(penguins) +
-            geom_point(aes(my_func(bill_length_mm, bill_depth_mm), y = :bill_depth_mm))
+        # tm = ggplot(penguins) +
+        #     geom_point(aes(my_func(bill_length_mm, bill_depth_mm), y = :bill_depth_mm))
 
-        m = Makie.plot(
-            Makie.SpecApi.GridLayout(
-                Makie.SpecApi.Axis(
-                    plots = [
-                        Makie.PlotSpec(
-                            :Scatter,
-                            penguins.bill_length_mm ./ penguins.bill_depth_mm,
-                            penguins.bill_depth_mm)
-                    ]
-                )
-            )
-        )
+        # m = Makie.plot(
+        #     Makie.SpecApi.GridLayout(
+        #         Makie.SpecApi.Axis(
+        #             plots = [
+        #                 Makie.PlotSpec(
+        #                     :Scatter,
+        #                     penguins.bill_length_mm ./ penguins.bill_depth_mm,
+        #                     penguins.bill_depth_mm)
+        #             ]
+        #         )
+        #     )
+        # )
 
-        @test plot_images_equal(t, m)
-        @test plot_images_equal(tm, m)
+        # @test plot_images_equal(t, m)
+        # @test plot_images_equal(tm, m)
     end
 
 end

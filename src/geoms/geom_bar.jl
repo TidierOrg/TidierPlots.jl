@@ -1,4 +1,4 @@
-function handle_position(aes_dict::Dict{String, Symbol},
+function handle_position(aes_dict::Dict{String, Union{Symbol, Pair}},
     args_dict::Dict{Any, Any}, required_aes::Vector{String}, plot_data::DataFrame)
     # handles defaults and grouping for geom_bar/col
 

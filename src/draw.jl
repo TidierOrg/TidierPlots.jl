@@ -56,19 +56,21 @@ function Makie.SpecApi.Axis(plot::GGPlot)
                     plottable_data[aes] = column_name[2] ∘ plottable_data[aes]
                 end
             elseif column_name isa Pair && eltype(plot_data[!, column_name[1]]) <: Union{AbstractString, AbstractChar}
-                plottable_data = cat_inseq(aes, [column_name[1]], plot_data)
+                col_vec = column_name[1] isa Symbol ? [column_name[1]] : column_name[1]
+                plottable_data = cat_inseq(aes, col_vec, plot_data)
                 if aes in [:color, :fill]
                     plottable_data[aes] = as_color(plottable_data[aes])
                 end
                 plottable_data[aes] = column_name[2] ∘ plottable_data[aes]
-            elseif eltype(plot_data[!, column_name]) <: Union{AbstractString, AbstractChar}
+            elseif column_name isa Symbol && eltype(plot_data[!, column_name]) <: Union{AbstractString, AbstractChar}
                 plottable_data = cat_inseq(aes, [column_name], plot_data)
                 if aes in [:color, :fill]
                     plottable_data[aes] = as_color(plottable_data[aes])
                 end
             else
                 if column_name isa Pair
-                    plottable_data = as_is(aes, [column_name[1]], plot_data)
+                    col_vec = column_name[1] isa Symbol ? [column_name[1]] : column_name[1]
+                    plottable_data = as_is(aes, col_vec, plot_data)
                     plottable_data[aes] = column_name[2] ∘ plottable_data[aes]
                 else
                     plottable_data = as_is(aes, [column_name], plot_data)

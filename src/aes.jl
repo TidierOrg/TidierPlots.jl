@@ -8,7 +8,7 @@ TBD
 function aes(args...; kwargs...)
     col_transforms = Dict()
     aes_args = Symbol[]
-    aes_kwargs = Dict{String, Symbol}()
+    aes_kwargs = Dict{String, Union{Symbol, Pair}}()
 
     for arg in args
         if arg isa Pair
@@ -41,13 +41,13 @@ function aes(args...; kwargs...)
 end
 
 macro aes(exprs...)
-    aes_dict = Dict{String, Symbol}()
+    aes_dict = Dict{String, Union{Symbol, Pair}}()
     positional = Symbol[]
     for aes_ex in exprs
         if aes_ex isa Expr
             if aes_ex.args[2] isa Expr
-
-
+                tidy = TidierData.parse_tidy(aes_ex)
+                aes_dict[String(aes_ex.args[1])] = tidy.args[2] => eval(tidy.args[3])[1]
             elseif aes_ex.args[2] isa QuoteNode
                 aes_dict[String(aes_ex.args[1])] = aes_ex.args[2].value
             elseif aes_ex.args[2] isa String

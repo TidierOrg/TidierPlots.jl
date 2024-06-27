@@ -3,7 +3,7 @@
     @testset "addition" begin
         t = ggplot(penguins) +
             geom_point(aes(x = :bill_length_mm => (x -> x .+ 10),
-                           y = :bill_depth_mm (y -> y .+ 20)))
+                           y = :bill_depth_mm => (y -> y .+ 20)))
 
         tm = ggplot(penguins) +
                     geom_point(@aes(x = bill_length_mm + 10,
@@ -52,7 +52,7 @@
     @testset "subtraction" begin
         t = ggplot(penguins) +
             geom_point(aes(x = :bill_length_mm => (x -> x .- 10),
-                           y = :bill_depth_mm (y -> y .- 20)))
+                           y = :bill_depth_mm => (y -> y .- 20)))
 
         tm = ggplot(penguins) +
                     geom_point(@aes(x = bill_length_mm - 10,

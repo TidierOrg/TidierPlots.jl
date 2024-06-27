@@ -33,7 +33,6 @@ using KernelDensity
 include("structs.jl")
 
 include("addplots.jl")
-include("aes_ops.jl")
 include("aes.jl")
 include("attributes.jl")
 include("draw.jl")

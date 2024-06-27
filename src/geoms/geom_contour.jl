@@ -51,7 +51,7 @@ ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) +
 """
 geom_contour = geom_template("geom_contour", ["x", "y"], :Contour;
     aes_function = stat_density_2d,
-    column_transformations = Dict{Symbol, Pair{Vector{Symbol}, AesTransform}}(
+    column_transformations = Dict{Symbol, Pair}(
         :x => [:x]=>discard,
         :y => [:y]=>discard,
         :z => [:x, :y]=>kernel_density_2d))

@@ -2,7 +2,7 @@ function make_aes_extractor(required_aes)
     return function extract_aes(args, kwargs)
         aes_dict = Dict{String, Union{Symbol, Pair}}()
         args_dict = Dict{String, Any}()
-        transforms = Dict{Symbol, Pair{Vector{Symbol}, AesTransform}}()
+        transforms = Dict{Symbol, Pair}()
 
         for arg in args
             if arg isa DataFrame

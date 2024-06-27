@@ -1,8 +1,8 @@
 function geom_template(name::AbstractString,
-                       required_aes::AbstractArray, 
+                       required_aes::AbstractArray,
                        spec_api_function::Symbol;
                        aes_function::Function = do_nothing,
-                       column_transformations::Dict{Symbol, Pair{Vector{Symbol}, AesTransform}} = Dict{Symbol, Pair{Vector{Symbol}, AesTransform}}(), 
+                       column_transformations::Dict{Symbol, Pair} = Dict{Symbol, Pair}(),
                        extra_args::Dict = Dict(),
                        grouping_aes::Vector{Symbol} = Symbol[])
 
@@ -13,10 +13,10 @@ function geom_template(name::AbstractString,
         args_dict["geom_name"] = name
         args_dict = merge(args_dict, extra_args)
 
-        return build_geom(aes_dict, args_dict, 
+        return build_geom(aes_dict, args_dict,
             required_aes,
             spec_api_function,
-            aes_function, 
+            aes_function,
             merge(transforms, column_transformations);
             grouping_aes = grouping_aes)
     end

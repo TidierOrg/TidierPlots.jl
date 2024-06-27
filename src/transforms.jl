@@ -5,7 +5,7 @@
 # - raw: the data
 # - makie_function: what should be done before data goes to the Makie arg
 # - label_target: where should the labels go?
-# - label_function: what should be done to data in "raw"" to display it
+# - label_function: what should be done to data in "raw" to display it
 
 struct PlottableData
     raw::Any
@@ -158,9 +158,9 @@ function as_color(plottable_data_object::PlottableData)
     )
 end
 
-using Base:∘
+import Base.:∘
 
-Base.:∘(plottable_data_object::PlottableData, f::Function)
+function Base.:∘(plottable_data_object::PlottableData, f::Function)
     return PlottableData(
         plottable_data_object.raw,
         plottable_data_object.makie_function ∘ f,
@@ -169,7 +169,7 @@ Base.:∘(plottable_data_object::PlottableData, f::Function)
     )
 end
 
-Base.:∘(f::Function, plottable_data_object::PlottableData)
+function Base.:∘(f::Function, plottable_data_object::PlottableData)
     return PlottableData(
         plottable_data_object.raw,
         f ∘ plottable_data_object.makie_function,

@@ -1,6 +1,6 @@
 function make_color_lookup_manual(args_dict)
     function color_lookup_manual(input)
-        colors = parse.(Colorant, args_dict[:values]) 
+        colors = parse.(Colorant, args_dict[:values])
         return colors[input]
     end
     return color_lookup_manual
@@ -8,9 +8,9 @@ end
 
 function make_color_lookup_discrete(args_dict)
     function color_lookup_discrete(input)
-        palette = haskey(args_dict, :palette) ? args_dict[:palette] : 
+        palette = haskey(args_dict, :palette) ? args_dict[:palette] :
             haskey(args_dict, :values) ? args_dict[:values][1] : nothing
-    
+
         if isnothing(palette)
             @error "Invalid palette specification in discrete color scale."
         end
@@ -32,10 +32,10 @@ end
 function make_color_lookup_continuous(args_dict)
     function color_lookup_continuous(input)
         scaled_input = input ./ maximum(input)
-    
-        palette = haskey(args_dict, :palette) ? args_dict[:palette] : 
+
+        palette = haskey(args_dict, :palette) ? args_dict[:palette] :
             haskey(args_dict, :values) ? args_dict[:values][1] : nothing
-    
+
         if isnothing(palette)
             @error "Invalid palette specification in continuous color scale."
         end
@@ -48,7 +48,7 @@ function make_color_lookup_continuous(args_dict)
             palette_type = typeof(palette)
             @error "Palette should be a String, a Symbol, or a ColorScheme, not a $palette_type"
         end
-    
+
         return get(scheme, scaled_input)
     end
     return color_lookup_continuous
@@ -57,10 +57,10 @@ end
 function make_color_lookup_binned(args_dict)
     function color_lookup_binned(input)
         binned_input = ceil.(Int, 1 .+ 4 .* ((input .- minimum(input)) ./ (maximum(input) - minimum(input))))
-    
-        palette = haskey(args_dict, :palette) ? args_dict[:palette] : 
+
+        palette = haskey(args_dict, :palette) ? args_dict[:palette] :
             haskey(args_dict, :values) ? args_dict[:values][1] : nothing
-    
+
         if isnothing(palette)
             @error "Invalid palette specification in binned color scale."
         end
@@ -73,7 +73,7 @@ function make_color_lookup_binned(args_dict)
             palette_type = typeof(palette)
             @error "Palette should be a String, a Symbol, or a ColorScheme, not a $palette_type"
         end
-    
+
         return scheme[binned_input]
     end
     return color_lookup_binned
@@ -81,17 +81,17 @@ end
 
 function color_scale_to_ggoptions(args_dict::Dict)
 
-    lookup = args_dict[:type] == "manual"     ? make_color_lookup_manual(args_dict)     : 
-             args_dict[:type] == "discrete"   ? make_color_lookup_discrete(args_dict)   : 
+    lookup = args_dict[:type] == "manual"     ? make_color_lookup_manual(args_dict)     :
+             args_dict[:type] == "discrete"   ? make_color_lookup_discrete(args_dict)   :
              args_dict[:type] == "continuous" ? make_color_lookup_continuous(args_dict) :
              make_color_lookup_binned(args_dict)
-    
+
     function make_color_transform_fn(lookup)
         function color_transform_fn(target::Symbol, source::Vector{Symbol}, data::DataFrame)
             input = data[!, source[1]]
 
             if eltype(input) <: Union{AbstractString, AbstractChar, CategoricalValue}
-            
+
                 cat_array = CategoricalArray(input)
 
                 return Dict{Symbol, PlottableData}(
@@ -101,7 +101,7 @@ function color_scale_to_ggoptions(args_dict::Dict)
                         nothing,
                         nothing
                     )
-                )     
+                )
             elseif eltype(input) <: Union{Integer, AbstractFloat}
                 return Dict{Symbol, PlottableData}(
                     target => PlottableData(
@@ -110,19 +110,19 @@ function color_scale_to_ggoptions(args_dict::Dict)
                         nothing,
                         nothing
                     )
-                ) 
-            else 
+                )
+            else
                 scale = args_dict[:scale]
                 throw(@error "Column is not compatible with scale: $scale")
-            end       
+            end
         end
         return color_transform_fn
     end
-    
-    color_transform = AesTransform(make_color_transform_fn(lookup))
-    
+
+    color_transform = make_color_transform_fn(lookup)
+
     return AxisOptions(
-        Dict(), 
+        Dict(),
         Dict(Symbol(args_dict[:scale]) => [Symbol(args_dict[:scale])]=>color_transform),
         Dict(:color => args_dict) # pass the full args dict for use by legend
     )

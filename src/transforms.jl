@@ -4,8 +4,8 @@
 
 # - raw: the data
 # - makie_function: what should be done before data goes to the Makie arg
-# - label_target: where should the labels go? 
-# - label_function: what should be done to data in "position" to display it
+# - label_target: where should the labels go?
+# - label_function: what should be done to data in "raw"" to display it
 
 struct PlottableData
     raw::Any
@@ -34,7 +34,7 @@ end
 (at::AesTransform)(s1::Symbol, s2::Symbol) = [s1, s2]                 => at
 (at::AesTransform)(s1::String, s2::String) = [Symbol(s1), Symbol(s2)] => at
 
-# simplest one is as_is, which just gets a column 
+# simplest one is as_is, which just gets a column
 # exactly as it is in the DataFrame
 
 function as_is_fn(target::Symbol, source::Vector{Symbol}, data::DataFrame)
@@ -42,8 +42,8 @@ function as_is_fn(target::Symbol, source::Vector{Symbol}, data::DataFrame)
         target => PlottableData(
             data[!, source[1]],        # get the column out of the dataframe
             identity,                  # do nothing to it
-            nothing,            
-            nothing                   
+            nothing,
+            nothing
         )
     )
 end
@@ -83,11 +83,11 @@ number_on_axis = AesTransform(number_on_axis_fn)
 # categorical array handling options for String columns
 
 function cat_inorder_fn(target::Symbol, source::Vector{Symbol}, data::DataFrame)
-    
+
     label_target = target == :x ? :xticks :
-                   target == :y ? :yticks : 
+                   target == :y ? :yticks :
                    nothing
-    
+
     return Dict{Symbol, PlottableData}(
         target => PlottableData(
             data[!, source[1]],
@@ -97,12 +97,12 @@ function cat_inorder_fn(target::Symbol, source::Vector{Symbol}, data::DataFrame)
             label_target,
             x -> (1:length(levels(CategoricalArray(x,
                 levels = unique(x),
-                ordered = true))), 
+                ordered = true))),
                 levels(CategoricalArray(x,
                 levels = unique(x),
                 ordered = true)))
         )
-    )    
+    )
 end
 
 cat_inorder = AesTransform(cat_inorder_fn)
@@ -110,7 +110,7 @@ cat_inorder = AesTransform(cat_inorder_fn)
 function cat_inseq_fn(target::Symbol, source::Vector{Symbol}, data::DataFrame)
 
     label_target = target == :x ? :xticks :
-                   target == :y ? :yticks : 
+                   target == :y ? :yticks :
                    nothing
 
     return Dict{Symbol, PlottableData}(
@@ -120,7 +120,7 @@ function cat_inseq_fn(target::Symbol, source::Vector{Symbol}, data::DataFrame)
             label_target,
             x -> (1:length(levels(CategoricalArray(x))), levels(CategoricalArray(x)))
         )
-    )      
+    )
 end
 
 cat_inseq = AesTransform(cat_inseq_fn)
@@ -134,8 +134,8 @@ function kernel_density_2d_fn(target::Symbol, source::Vector{Symbol}, data::Data
     return_dict = Dict{Symbol, PlottableData}(
         :x => PlottableData(k.x, identity, nothing, nothing),
         :y => PlottableData(k.y, identity, nothing, nothing),
-        :z => PlottableData(k.density, 
-            identity, 
+        :z => PlottableData(k.density,
+            identity,
             nothing,
             nothing)
     )
@@ -157,7 +157,7 @@ function sort_by_fn(target::Symbol, source::Vector{Symbol}, data::DataFrame)
             nothing,
             nothing
         )
-    )      
+    )
 end
 
 sort_by = AesTransform(sort_by_fn)
@@ -180,12 +180,12 @@ function aesthetics_function(generic_fn::Function)
             target => PlottableData(
                 result,        # put the result in raw
                 identity,      # do nothing
-                nothing,            
-                nothing                   
+                nothing,
+                nothing
             )
         )
     end
-    
+
     return AesTransform(aes_fn)
 end
 

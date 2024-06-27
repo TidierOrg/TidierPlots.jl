@@ -1,7 +1,7 @@
 function make_aes_extractor(required_aes)
     return function extract_aes(args, kwargs)
-        aes_dict = Dict{String, Symbol}() 
-        args_dict = Dict{String, Any}() 
+        aes_dict = Dict{String, Union{Symbol, Pair}}()
+        args_dict = Dict{String, Any}()
         transforms = Dict{Symbol, Pair{Vector{Symbol}, AesTransform}}()
 
         for arg in args
@@ -20,7 +20,7 @@ function make_aes_extractor(required_aes)
                         end
                         push!(aes_dict, required_aes[i] => pos_arg)
                     end
-                end  
+                end
                 merge!(aes_dict, arg.named)
                 merge!(transforms, arg.column_transformations)
             end
@@ -31,6 +31,6 @@ function make_aes_extractor(required_aes)
 
         return (aes_dict, args_dict, transforms)
     end
-end    
+end
 
 extract_aes = make_aes_extractor([])

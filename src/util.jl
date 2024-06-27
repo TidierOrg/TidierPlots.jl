@@ -1,17 +1,17 @@
 function TidierPlots_set(option::AbstractString, value::Bool)
     if option == "autoplot"
-       autoplot[] = value
+        autoplot[] = value
     elseif option == "plot_log"
         plot_log[] = value
     elseif option == "plot_show"
         plot_show[] = value
     else
-      throw("That is not a valid option.")
+        throw("That is not a valid option.")
     end
 end
 
 function c(args...)
-    @warn "The julia equivalent of 'c(1, 2, 3)' in R is '[1, 2, 3]'." maxlog=2
+    @info "The julia equivalent of 'c(1, 2, 3)' in R is '[1, 2, 3]'." maxlog = 1
     return reduce(vcat, args)
 end
 

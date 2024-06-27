@@ -38,7 +38,7 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         # inherit any unspecified column transforms
         col_transforms = merge(geom.column_transformations, plot.column_transformations)
 
-        aes_dict_makie = Dict{Symbol, Symbol}()
+        aes_dict_makie = Dict{Symbol, Union{Symbol, Pair}}()
 
         for (aes_string, column_name) in aes_dict
             # the name of the aes is translated to the makie term if needed
@@ -52,13 +52,27 @@ function Makie.SpecApi.Axis(plot::GGPlot)
             if haskey(col_transforms, aes)
                 source_cols = [aes_dict_makie[source] for source in col_transforms[aes][1]]
                 plottable_data = col_transforms[aes][2](aes, source_cols, plot_data)
+                if column_name isa Pair
+                    plottable_data[aes] = column_name[2] ∘ plottable_data[aes]
+                end
+            elseif column_name isa Pair && eltype(plot_data[!, column_name[1]]) <: Union{AbstractString, AbstractChar}
+                plottable_data = cat_inseq(aes, [column_name[1]], plot_data)
+                if aes in [:color, :fill]
+                    plottable_data[aes] = as_color(plottable_data[aes])
+                end
+                plottable_data[aes] = column_name[2] ∘ plottable_data[aes]
             elseif eltype(plot_data[!, column_name]) <: Union{AbstractString, AbstractChar}
                 plottable_data = cat_inseq(aes, [column_name], plot_data)
                 if aes in [:color, :fill]
                     plottable_data[aes] = as_color(plottable_data[aes])
                 end
             else
-                plottable_data = as_is(aes, [column_name], plot_data)
+                if column_name isa Pair
+                    plottable_data = as_is(aes, [column_name[1]], plot_data)
+                    plottable_data[aes] = column_name[2] ∘ plottable_data[aes]
+                else
+                    plottable_data = as_is(aes, [column_name], plot_data)
+                end
             end
 
             # if the transform has a label associated with it, pass that into axis_options

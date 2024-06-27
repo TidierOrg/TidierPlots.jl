@@ -14,30 +14,10 @@ struct PlottableData
     label_function::Any
 end
 
-# AesTransform acts like a class of functions
-
-struct AesTransform
-    fn::Function
-end
-
-# When called with the standard signature, an AesFunction object
-# calls its internal function with those arguments
-
-(at::AesTransform)(target::Symbol, source::Vector{Symbol}, data::DataFrame) = at.fn(target, source, data)
-
-# When called with a string or symbol, as would happen in an aes() call
-# returns a dict of the same type used in column_transformations
-
-(at::AesTransform)(sym::Symbol) = [sym]         => at
-(at::AesTransform)(str::String) = [Symbol(str)] => at
-
-(at::AesTransform)(s1::Symbol, s2::Symbol) = [s1, s2]                 => at
-(at::AesTransform)(s1::String, s2::String) = [Symbol(s1), Symbol(s2)] => at
-
 # simplest one is as_is, which just gets a column
 # exactly as it is in the DataFrame
 
-function as_is_fn(target::Symbol, source::Vector{Symbol}, data::DataFrame)
+function as_is(target::Symbol, source::Vector{Symbol}, data::DataFrame)
     return Dict{Symbol, PlottableData}(
         target => PlottableData(
             data[!, source[1]],        # get the column out of the dataframe
@@ -47,8 +27,6 @@ function as_is_fn(target::Symbol, source::Vector{Symbol}, data::DataFrame)
         )
     )
 end
-
-as_is = AesTransform(as_is_fn)
 
 # verbatim has a similar goal, but for String columns
 
@@ -65,9 +43,9 @@ function convert_to(type::Type)
     end
 end
 
-verbatim = AesTransform(convert_to(String))
+verbatim = convert_to(String)
 
-function number_on_axis_fn(target::Symbol, source::Vector{Symbol}, data::DataFrame)
+function number_on_axis(target::Symbol, source::Vector{Symbol}, data::DataFrame)
     return Dict{Symbol, PlottableData}(
         target => PlottableData(
             data[!, source[1]],                 # get the column out of the dataframe
@@ -78,11 +56,9 @@ function number_on_axis_fn(target::Symbol, source::Vector{Symbol}, data::DataFra
     )
 end
 
-number_on_axis = AesTransform(number_on_axis_fn)
-
 # categorical array handling options for String columns
 
-function cat_inorder_fn(target::Symbol, source::Vector{Symbol}, data::DataFrame)
+function cat_inorder(target::Symbol, source::Vector{Symbol}, data::DataFrame)
 
     label_target = target == :x ? :xticks :
                    target == :y ? :yticks :
@@ -105,9 +81,7 @@ function cat_inorder_fn(target::Symbol, source::Vector{Symbol}, data::DataFrame)
     )
 end
 
-cat_inorder = AesTransform(cat_inorder_fn)
-
-function cat_inseq_fn(target::Symbol, source::Vector{Symbol}, data::DataFrame)
+function cat_inseq(target::Symbol, source::Vector{Symbol}, data::DataFrame)
 
     label_target = target == :x ? :xticks :
                    target == :y ? :yticks :
@@ -123,11 +97,9 @@ function cat_inseq_fn(target::Symbol, source::Vector{Symbol}, data::DataFrame)
     )
 end
 
-cat_inseq = AesTransform(cat_inseq_fn)
-
 # kernel density estimation for geom_contour
 
-function kernel_density_2d_fn(target::Symbol, source::Vector{Symbol}, data::DataFrame)
+function kernel_density_2d(target::Symbol, source::Vector{Symbol}, data::DataFrame)
 
     k = kde((data[!, source[1]], data[!, source[2]]))
 
@@ -143,11 +115,9 @@ function kernel_density_2d_fn(target::Symbol, source::Vector{Symbol}, data::Data
     return return_dict
 end
 
-kernel_density_2d = AesTransform(kernel_density_2d_fn)
-
 # sort arg 1 by arg 2
 
-function sort_by_fn(target::Symbol, source::Vector{Symbol}, data::DataFrame)
+function sort_by(target::Symbol, source::Vector{Symbol}, data::DataFrame)
     perm = sortperm(data[!, source[2]])
 
     return Dict{Symbol, PlottableData}(
@@ -160,35 +130,11 @@ function sort_by_fn(target::Symbol, source::Vector{Symbol}, data::DataFrame)
     )
 end
 
-sort_by = AesTransform(sort_by_fn)
-
 # returns nothing, removing aes from graph
 
-function discard_fn(target::Symbol, source::Vector{Symbol}, data::DataFrame)
+function discard(target::Symbol, source::Vector{Symbol}, data::DataFrame)
     return Dict{Symbol, PlottableData}()
 end
-
-discard = AesTransform(discard_fn)
-
-# generic function -> AesTransform creator
-
-function aesthetics_function(generic_fn::Function)
-    function aes_fn(target::Symbol, source::Vector{Symbol}, data::DataFrame)
-        result = generic_fn([data[!, s] for s in source]...)
-
-        return Dict{Symbol, PlottableData}(
-            target => PlottableData(
-                result,        # put the result in raw
-                identity,      # do nothing
-                nothing,
-                nothing
-            )
-        )
-    end
-
-    return AesTransform(aes_fn)
-end
-
 
 # tweaks
 # takes an existing PlottableData object and modifies the makie_function
@@ -207,6 +153,26 @@ function as_color(plottable_data_object::PlottableData)
     return PlottableData(
         plottable_data_object.raw,
         (x -> colors[x]) ∘ plottable_data_object.makie_function,
+        plottable_data_object.label_target,
+        plottable_data_object.label_function
+    )
+end
+
+using Base:∘
+
+Base.:∘(plottable_data_object::PlottableData, f::Function)
+    return PlottableData(
+        plottable_data_object.raw,
+        plottable_data_object.makie_function ∘ f,
+        plottable_data_object.label_target,
+        plottable_data_object.label_function
+    )
+end
+
+Base.:∘(f::Function, plottable_data_object::PlottableData)
+    return PlottableData(
+        plottable_data_object.raw,
+        f ∘ plottable_data_object.makie_function,
         plottable_data_object.label_target,
         plottable_data_object.label_function
     )

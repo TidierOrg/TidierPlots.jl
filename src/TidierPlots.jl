@@ -50,7 +50,6 @@ include("patchwork.jl")
 include("scales_colour.jl")
 include("scales_numeric.jl")
 include("themes.jl")
-include("transforms.jl")
 include("show.jl")
 include("util.jl")
 
@@ -120,12 +119,6 @@ export scale_x_pseudolog10, scale_y_pseudolog10, scale_x_symlog10, scale_y_symlo
 export scale_x_reverse, scale_y_reverse, scale_x_sqrt, scale_y_sqrt
 export scale_colour_continuous, scale_colour_discrete, scale_colour_manual, scale_colour_binned
 export scale_color_continuous, scale_color_discrete, scale_color_manual, scale_color_binned
-
-# transforms
-
-export cat_inseq, cat_inorder, number_on_axis, as_is, discard, verbatim, kernel_density_2d
-export as_color
-export aesthetics_function
 
 # default options
 

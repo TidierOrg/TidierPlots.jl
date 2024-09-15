@@ -52,20 +52,20 @@ function geom_smooth(args...; kwargs...)
         return [build_geom(aes_dict,
                     args_dict,
                     ["x", "y"],
-                    :Lines,
-                    stat_linear),
+                    :Lines;
+                    post_function = stat_linear),
                 build_geom(aes_dict,
                     args_dict,
                     ["x", "lower", "upper"],
                     :Band,
-                    stat_linear)]
+                    post_function = stat_linear)]
     end
 
     return build_geom(aes_dict,
                       args_dict,
                       ["x", "y"],
                       :Lines,
-                      stat_loess)
+                      post_function = stat_loess)
 end
 
 function stat_loess(
@@ -74,16 +74,16 @@ function stat_loess(
     required_aes::Vector{String},
     plot_data::DataFrame
 )
-    x = plot_data[!, aes_dict["x"]]
-    y = plot_data[!, aes_dict["y"]]
+    x = plot_data[!, :x]
+    y = plot_data[!, :y]
 
     model = Loess.loess(x, y; span = .75, degree = 2)
     x̂ = range(extrema(x)..., length=200)
     ŷ = Loess.predict(model, x̂)
 
     return_data = DataFrame(
-        String(aes_dict["x"]) => x̂,
-        String(aes_dict["y"]) => ŷ
+        "x" => x̂,
+        "y" => ŷ
     )
 
     return (aes_dict, args_dict, required_aes, return_data)
@@ -95,8 +95,8 @@ function stat_linear(
     required_aes::Vector{String},
     plot_data::DataFrame
 )
-    x = plot_data[!, aes_dict["x"]]
-    y = plot_data[!, aes_dict["y"]]
+    x = plot_data[!, :x]
+    y = plot_data[!, :y]
 
     # thanks AlgebraOfGraphics
     function add_intercept_column(x::AbstractVector{T}) where {T}
@@ -112,12 +112,9 @@ function stat_linear(
         GLM.predict(lin_model, add_intercept_column(x̂); interval = :confidence)
     )
 
-    aes_dict["upper"] = :upper
-    aes_dict["lower"] = :lower
-
     return_data = DataFrame(
-        String(aes_dict["x"]) => x̂,
-        String(aes_dict["y"]) => pred.prediction,
+        "x" => x̂,
+        "y" => pred.prediction,
         "lower" => pred.lower,
         "upper" => pred.upper
     )

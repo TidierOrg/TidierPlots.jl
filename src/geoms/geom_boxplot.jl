@@ -69,4 +69,4 @@ ggplot(penguins, @aes(x=species, y=bill_length_mm, dodge=sex, color=sex)) +
     geom_boxplot()
 ```
 """
-geom_boxplot = geom_template("geom_boxplot", ["x", "y"], :BoxPlot; aes_function=boxplot_groups)
+geom_boxplot = geom_template("geom_boxplot", ["x", "y"], :BoxPlot; pre_function=boxplot_groups)

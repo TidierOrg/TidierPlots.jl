@@ -6,7 +6,8 @@ struct Geom
     data::Union{Nothing,DataFrame}
     visual::Symbol
     axis_options::Dict
-    aes_function::Function
+    pre_function::Function
+    post_function::Function
     grouping_aes::Vector{Symbol}
 end
 

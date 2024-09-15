@@ -2,8 +2,9 @@ function build_geom(
         aes_dict,
         args_dict,
         required_aes,
-        spec_api_function,
-        aes_function;
+        spec_api_function;
+        pre_function = do_nothing,
+        post_function = do_nothing,
         special_aes = Dict(),
         grouping_aes = Symbol[])
 
@@ -29,7 +30,8 @@ function build_geom(
         plot_data,
         spec_api_function,
         Dict(),
-        aes_function,
+        pre_function,
+        post_function,
         grouping_aes
     )
 end

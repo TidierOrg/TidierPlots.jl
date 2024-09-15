@@ -27,7 +27,7 @@ function Makie.SpecApi.Axis(plot::GGPlot)
 
         # apply function if required to edit the aes/args/data
         aes_dict, args_dict, required_aes, plot_data =
-            geom.aes_function(aes_dict, geom.args, geom.required_aes, plot_data)
+            geom.pre_function(aes_dict, geom.args, geom.required_aes, plot_data)
 
         # make a master list of all possible accepted optional aesthetics and args
         ggplot_to_makie_geom = merge(_ggplot_to_makie, geom.special_aes)
@@ -68,6 +68,12 @@ function Makie.SpecApi.Axis(plot::GGPlot)
                 end
             end
         end
+
+        aes_dict, args_dict, required_aes, aes_df =
+            geom.post_function(aes_dict,
+                geom.args,
+                geom.required_aes,
+                aes_df)
 
         # keep track of the global max and min on each axis
         if "x" in names(aes_df)

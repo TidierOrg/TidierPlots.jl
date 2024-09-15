@@ -1,7 +1,8 @@
 function geom_template(name::AbstractString,
                        required_aes::AbstractArray,
                        spec_api_function::Symbol;
-                       aes_function::Function = do_nothing,
+                       pre_function::Function = do_nothing,
+                       post_function::Function = do_nothing,
                        extra_args::Dict = Dict(),
                        grouping_aes::Vector{Symbol} = Symbol[])
 
@@ -15,7 +16,7 @@ function geom_template(name::AbstractString,
         return build_geom(aes_dict, args_dict,
             required_aes,
             spec_api_function,
-            aes_function;
+            pre_function, post_function;
             grouping_aes = grouping_aes)
     end
 

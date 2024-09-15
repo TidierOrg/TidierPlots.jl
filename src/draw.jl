@@ -7,7 +7,7 @@ function Makie.SpecApi.Axis(plot::GGPlot)
     facet_positions = nothing
     facet_boxes = Dict()
     facet_labels = Dict()
-    axis_options = Dict{Symbol, Any}()
+    axis_options = Dict{Symbol,Any}()
 
     ymin = Inf
     xmin = Inf
@@ -15,15 +15,15 @@ function Makie.SpecApi.Axis(plot::GGPlot)
     ymax = -Inf
 
     for geom in plot.geoms
-        # use the dataframe specified in the geom if present, otherwise use the ggplot one
-        plot_data = isnothing(geom.data) ? plot.data : geom.data
+        # use the dataframe from the geom if present, else ggplot one
+        plot_data = isnothing(geom.data) ?
+                    plot.data :
+                    geom.data
 
-        # inherit any aes specified at the ggplot level, unless inherit_aes is false
-        if get(geom.args, "inherit_aes", true)
-            aes_dict = merge(plot.default_aes, geom.aes)
-        else
-            aes_dict = geom.aes
-        end
+        # inherit any aes specified in ggplot, unless inherit_aes is false
+        aes_dict = get(geom.args, "inherit_aes", true) ?
+                   merge(plot.default_aes, geom.aes) :
+                   geom.aes
 
         # apply function if required to edit the aes/args/data
         aes_dict, args_dict, required_aes, plot_data =
@@ -32,61 +32,27 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         # make a master list of all possible accepted optional aesthetics and args
         ggplot_to_makie_geom = merge(_ggplot_to_makie, geom.special_aes)
 
-        # given_aes will store the data for each given aes
-        given_aes = Dict{Symbol, PlottableData}()
+        aes_dict_makie = Dict{Symbol,Union{Symbol,Pair}}()
 
-        # inherit any unspecified column transforms
-        col_transforms = merge(geom.column_transformations, plot.column_transformations)
-
-        aes_dict_makie = Dict{Symbol, Union{Symbol, Pair}}()
-
-        for (aes_string, column_name) in aes_dict
-            # the name of the aes is translated to the makie term if needed
-            aes = get(ggplot_to_makie_geom, aes_string, aes_string)
+        # the name of the aes is translated to the makie term if needed
+        for (aes_symbol, column_name) in aes_dict
+            aes = get(ggplot_to_makie_geom, aes_symbol, aes_symbol)
             push!(aes_dict_makie, Symbol(aes) => column_name)
         end
 
-        for (aes, column_name) in aes_dict_makie
-            # if there is a specified column transformation, use it
-            # otherwise use cat_inseq for string-like columns and as_is for everything else
-            if haskey(col_transforms, aes)
-                source_cols = [aes_dict_makie[source] for source in col_transforms[aes][1]]
-                plottable_data = col_transforms[aes][2](aes, source_cols, plot_data)
-                if column_name isa Pair
-                    plottable_data[aes] = column_name[2] ∘ plottable_data[aes]
-                end
-            elseif column_name isa Pair && eltype(plot_data[!, column_name[1]]) <: Union{AbstractString, AbstractChar}
-                col_vec = column_name[1] isa Symbol ? [column_name[1]] : column_name[1]
-                plottable_data = cat_inseq(aes, col_vec, plot_data)
-                if aes in [:color, :fill]
-                    plottable_data[aes] = as_color(plottable_data[aes])
-                end
-                plottable_data[aes] = column_name[2] ∘ plottable_data[aes]
-            elseif column_name isa Symbol && eltype(plot_data[!, column_name]) <: Union{AbstractString, AbstractChar}
-                plottable_data = cat_inseq(aes, [column_name], plot_data)
-                if aes in [:color, :fill]
-                    plottable_data[aes] = as_color(plottable_data[aes])
-                end
-            else
-                if column_name isa Pair
-                    col_vec = column_name[1] isa Symbol ? [column_name[1]] : column_name[1]
-                    plottable_data = as_is(aes, col_vec, plot_data)
-                    plottable_data[aes] = column_name[2] ∘ plottable_data[aes]
-                else
-                    plottable_data = as_is(aes, [column_name], plot_data)
-                end
-            end
+        # build a new dataframe with column names equal to the required aesthetics
+        # this dataframe will take data from plot_data according to the rules outlined in the aes object
+        aes_df_list = DataFrame[]
 
-            # if the transform has a label associated with it, pass that into axis_options
-            if haskey(plottable_data, aes) && !isnothing(plottable_data[aes].label_target)
-                axis_options[plottable_data[aes].label_target] = plottable_data[aes].label_function(plottable_data[aes].raw)
-            end
-
-            # add the transformed data to list to eventually be passed to the plot args/kwargs
-            merge!(given_aes, plottable_data)
+        for (aes, rule) in aes_dict_makie
+            # aes is a symbol, the target column name
+            # rule is a pair, the source columns and function to apply
+            push!(aes_df_list, select(plot_data, rule[1] => rule[2] => aes))
         end
 
-        args_dict_makie = Dict{Symbol, Any}()
+        aes_df = hcat(aes_df_list...)
+
+        args_dict_makie = Dict{Symbol,Any}()
 
         supported_kwargs = get(_accepted_options_by_type, geom.visual, nothing)
 
@@ -104,20 +70,30 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         end
 
         # keep track of the global max and min on each axis
-        if haskey(given_aes, :x)
-            xmin = min(xmin, minimum(given_aes[:x].makie_function(given_aes[:x].raw)))
-            xmax = max(xmax, maximum(given_aes[:x].makie_function(given_aes[:x].raw)))
+        if "x" in names(aes_df)
+            xmin = min(xmin, minimum(aes_df.x))
+            xmax = max(xmax, maximum(aes_df.x))
         end
 
-        if haskey(given_aes, :y)
-            ymin = min(ymin, minimum(given_aes[:y].makie_function(given_aes[:y].raw)))
-            ymax = max(ymax, maximum(given_aes[:y].makie_function(given_aes[:y].raw)))
+        if "y" in names(aes_df)
+            ymin = min(ymin, minimum(aes_df.y))
+            ymax = max(ymax, maximum(aes_df.y))
         end
 
-        if length(intersect(keys(given_aes), geom.grouping_aes)) == 0 && isnothing(plot.facet_options)
+        if length(intersect(
+            names(aes_df), geom.grouping_aes)) == 0 &&
+           isnothing(plot.facet_options)
             # if there are no grouping_aes given and no facets required, we only need one PlotSpec
-            required_aes_data = [p.makie_function(p.raw) for p in [given_aes[a] for a in Symbol.(required_aes)]]
-            optional_aes_data = [a => p.makie_function(p.raw) for (a, p) in given_aes if (!(String(a) in required_aes) && (isnothing(supported_kwargs) || a in supported_kwargs))]
+            required_aes_data = [aes_df[!, a] for a in Symbol.(required_aes)]
+            optional_aes_data = [
+                Symbol(a) => aes_df[!, Symbol(a)]
+                for a in names(aes_df)
+                if (!(String(a) in required_aes) &&
+                 (
+                    isnothing(supported_kwargs) ||
+                    a in supported_kwargs)
+                )
+            ]
 
             args = Tuple([geom.visual, required_aes_data...])
             kwargs = merge(args_dict_makie, Dict(optional_aes_data))
@@ -205,8 +181,8 @@ function Makie.SpecApi.Axis(plot::GGPlot)
 
     if isnothing(plot.facet_options)
         return length(axis_options) == 0 ?
-            Makie.SpecApi.Axis(plots = plot_list) :
-            Makie.SpecApi.Axis(plots = plot_list; axis_options...)
+               Makie.SpecApi.Axis(plots=plot_list) :
+               Makie.SpecApi.Axis(plots=plot_list; axis_options...)
     else
         if !haskey(axis_options, :limits)
             expand_x = (xmax - xmin) * 0.05
@@ -224,13 +200,13 @@ function Makie.SpecApi.Axis(plot::GGPlot)
 
         if length(axis_options) == 0
             return Makie.SpecApi.GridLayout(
-                [facet_positions[name] => Makie.SpecApi.Axis(plots = plot_list_by_facet[name]) for name in facet_names]...,
+                [facet_positions[name] => Makie.SpecApi.Axis(plots=plot_list_by_facet[name]) for name in facet_names]...,
                 facet_labels...,
                 facet_boxes...
             )
         else
             return Makie.SpecApi.GridLayout(
-                [facet_positions[name] => Makie.SpecApi.Axis(plots = plot_list_by_facet[name]; axis_options...) for name in facet_names]...,
+                [facet_positions[name] => Makie.SpecApi.Axis(plots=plot_list_by_facet[name]; axis_options...) for name in facet_names]...,
                 facet_labels...,
                 facet_boxes...
             )
@@ -265,13 +241,13 @@ function draw_ggplot(plot::GGPlot, size::Tuple)
         Makie.plot(
             Makie.SpecApi.GridLayout(
                 axis
-            ), figure=(;size=size)
+            ), figure=(; size=size)
         )
     else
         Makie.plot(
             Makie.SpecApi.GridLayout(
                 [axis legend]
-            ), figure=(;size=size)
+            ), figure=(; size=size)
         )
     end
 end
@@ -281,7 +257,7 @@ function draw_ggplot(plot_grid::GGPlotGrid)
 end
 
 function draw_ggplot(plot_grid::GGPlotGrid, size::Tuple)
-    Makie.plot(plot_grid.grid, figure=(;size=size))
+    Makie.plot(plot_grid.grid, figure=(; size=size))
 end
 
 try_convert(::Type{Any}, v, ::Any, ::Any) = v
@@ -292,7 +268,7 @@ function try_convert(T::Type, v::S, arg, fname) where {S}
         return retvalue
     catch
         msg = "Argument '$arg' in '$fname' has value '$v' and type '$S' which cannot be " *
-        "converted to the expected type '$T'."
+              "converted to the expected type '$T'."
         throw(ArgumentError(msg))
     end
 end

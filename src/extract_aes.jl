@@ -1,8 +1,7 @@
 function make_aes_extractor(required_aes)
     return function extract_aes(args, kwargs)
-        aes_dict = Dict{String, Union{Symbol, Pair}}()
-        args_dict = Dict{String, Any}()
-        transforms = Dict{Symbol, Pair}()
+        aes_dict = Dict{String,Union{Symbol,Pair}}()
+        args_dict = Dict{String,Any}()
 
         for arg in args
             if arg isa DataFrame
@@ -22,14 +21,14 @@ function make_aes_extractor(required_aes)
                     end
                 end
                 merge!(aes_dict, arg.named)
-                merge!(transforms, arg.column_transformations)
             end
         end
 
         d = Dict(kwargs)
-        args_dict = merge(args_dict, Dict([String(key) => d[key] for key in keys(d)]))
+        args_dict = merge(args_dict,
+            Dict([String(key) => d[key] for key in keys(d)]))
 
-        return (aes_dict, args_dict, transforms)
+        return (aes_dict, args_dict)
     end
 end
 

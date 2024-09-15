@@ -1,7 +1,7 @@
-function boxplot_groups(aes_dict::Dict{String, Union{Symbol, Pair}},
-    args_dict::Dict{Any, Any}, required_aes::Vector{String}, plot_data::DataFrame)
+function boxplot_groups(aes_dict::Dict{String,Union{Symbol,Pair}},
+    args_dict::Dict{Any,Any}, required_aes::Vector{String}, plot_data::DataFrame)
 
-    factor_aes = [aes for (aes, v) in aes_dict if eltype(plot_data[!, v]) <: Union{AbstractString, AbstractChar, CategoricalValue}]
+    factor_aes = [aes for (aes, v) in aes_dict if eltype(plot_data[!, v]) <: Union{AbstractString,AbstractChar,CategoricalValue}]
 
     main_factor_aes = "x"
 
@@ -69,4 +69,4 @@ ggplot(penguins, @aes(x=species, y=bill_length_mm, dodge=sex, color=sex)) +
     geom_boxplot()
 ```
 """
-geom_boxplot = geom_template("geom_boxplot", ["x", "y"], :BoxPlot; aes_function = boxplot_groups)
+geom_boxplot = geom_template("geom_boxplot", ["x", "y"], :BoxPlot; aes_function=boxplot_groups)

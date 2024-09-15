@@ -7,7 +7,6 @@ struct Geom
     visual::Symbol
     axis_options::Dict
     aes_function::Function
-    column_transformations::Dict
     grouping_aes::Vector{Symbol}
 end
 
@@ -27,7 +26,6 @@ struct GGPlot
     data::Union{Nothing,DataFrame}
     axis_options::Dict
     theme::Makie.Attributes
-    column_transformations::Dict
     legend_options::Dict
     facet_options::Union{FacetOptions,Nothing}
 end

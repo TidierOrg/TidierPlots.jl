@@ -45,15 +45,14 @@ ggplot(df, @aes(x = trt, ymin = lower, ymax = upper)) +
 function geom_errorbar end
 
 function geom_errorbar(args...; kwargs...)
-    aes_dict, args_dict, transforms = extract_aes(args, kwargs)
+    aes_dict, args_dict = extract_aes(args, kwargs)
 
     args_dict["geom_name"] = "geom_errorbar"
 
     return build_geom(aes_dict, args_dict,
         ["x", "ymin", "ymax"], # required aesthetics
         :Rangebars, # function for visual layer
-        do_nothing,
-        transforms;
+        do_nothing;
         special_aes = Dict("width" => "whiskerwidth"))
 end
 
@@ -110,7 +109,7 @@ function geom_errorbarh end
 
 
 function geom_errorbarh(args...; kwargs...)
-    aes_dict, args_dict, transforms = extract_aes(args, kwargs)
+    aes_dict, args_dict = extract_aes(args, kwargs)
 
     args_dict["geom_name"] = "geom_errorbarh"
     args_dict["errorbar_direction"] = :x
@@ -118,8 +117,7 @@ function geom_errorbarh(args...; kwargs...)
     return build_geom(aes_dict, args_dict,
         ["y", "xmin", "xmax"], # required aesthetics
         :Rangebars, # function for visual layer
-        do_nothing,
-        transforms;
+        do_nothing;
         special_aes = Dict("width" => "whiskerwidth"))
 
 end

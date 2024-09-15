@@ -37,7 +37,6 @@ end
 
 struct AxisOptions
     opt::Dict{Symbol,Any}
-    column_transformations::Dict
     legend_options::Dict
 end
 

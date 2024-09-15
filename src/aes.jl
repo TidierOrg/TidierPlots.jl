@@ -69,3 +69,5 @@ function Base.show(io::IO, aes::Aesthetics)
         println("$k : $v")
     end
 end
+
+@eval const $(Symbol("@es")) = $(Symbol("@aes"))

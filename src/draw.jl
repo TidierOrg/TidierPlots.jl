@@ -80,93 +80,28 @@ function Makie.SpecApi.Axis(plot::GGPlot)
             ymax = max(ymax, maximum(aes_df.y))
         end
 
-        if length(intersect(
-            names(aes_df), geom.grouping_aes)) == 0 &&
-           isnothing(plot.facet_options)
-            # if there are no grouping_aes given and no facets required, we only need one PlotSpec
-            required_aes_data = [aes_df[!, a] for a in Symbol.(required_aes)]
-            optional_aes_data = [
-                Symbol(a) => aes_df[!, Symbol(a)]
-                for a in names(aes_df)
-                if (!(String(a) in required_aes) &&
-                 (
-                    isnothing(supported_kwargs) ||
-                    a in supported_kwargs)
-                )
-            ]
+        grouping = length(intersect(
+            names(aes_df), geom.grouping_aes)) == 0
 
-            args = Tuple([geom.visual, required_aes_data...])
-            kwargs = merge(args_dict_makie, Dict(optional_aes_data))
+        facets = !isnothing(plot.facet_options)
 
-            # push completed PlotSpec (type, args, and kwargs) to the list of plots
-            push!(plot_list, Makie.PlotSpec(args...; kwargs...))
-        elseif length(intersect(keys(given_aes), geom.grouping_aes)) != 0 && isnothing(plot.facet_options)
-            # if there is a aes in the grouping_aes list given, we will need multiple PlotSpecs
-            # make a list of modified given_aes objects which only include the points from their subsets
-            grouping_columns = [aes_dict_makie[a] for a in [intersect(keys(given_aes), geom.grouping_aes)...]]
-            subgroup_given_aes = subgroup_split(given_aes, plot_data[!, grouping_columns])
+        # if there are no grouping_aes given and no facets required, we only need one PlotSpec
+        required_aes_data = [aes_df[!, a] for a in Symbol.(required_aes)]
+        optional_aes_data = [
+            Symbol(a) => aes_df[!, Symbol(a)]
+            for a in names(aes_df)
+            if (!(String(a) in required_aes) &&
+                (
+                isnothing(supported_kwargs) ||
+                a in supported_kwargs)
+            )
+        ]
 
-            # push each one to the overall plot_list
-            for sub in subgroup_given_aes
-                required_aes_data = [p.makie_function(p.raw) for p in [sub[a] for a in Symbol.(required_aes)]]
-                optional_aes_data = [a => p.makie_function(p.raw) for (a, p) in sub if (!(String(a) in required_aes) && (isnothing(supported_kwargs) || a in supported_kwargs))]
+        args = Tuple([geom.visual, required_aes_data...])
+        kwargs = merge(args_dict_makie, Dict(optional_aes_data))
 
-                args = Tuple([geom.visual, required_aes_data...])
-                kwargs = merge(args_dict_makie, Dict(optional_aes_data))
-
-                # if we are grouping, we only need a single value rather than a vector
-                for aes in [intersect(keys(given_aes), geom.grouping_aes)...]
-                    kwargs[aes] = first(kwargs[aes])
-                end
-
-                # push completed PlotSpec (type, args, and kwargs) to the list of plots
-                push!(plot_list, Makie.PlotSpec(args...; kwargs...))
-            end
-        elseif length(intersect(keys(given_aes), geom.grouping_aes)) == 0
-            # if there are facets but no grouping
-            facetting_column = [plot.facet_options.wrap]
-            subgroup_given_aes = subgroup_split(given_aes, plot_data[!, facetting_column])
-            facet_names = unique(plot_data[!, plot.facet_options.wrap])
-            facet_positions, facet_labels, facet_boxes = position_facets(facet_names, plot.facet_options.nrow, plot.facet_options.ncol)
-
-            plot_list_by_facet = Dict(facet => Makie.PlotSpec[] for facet in facet_names)
-
-            for (index, sub) in enumerate(subgroup_given_aes)
-                required_aes_data = [p.makie_function(p.raw) for p in [sub[a] for a in Symbol.(required_aes)]]
-                optional_aes_data = [a => p.makie_function(p.raw) for (a, p) in sub if (!(String(a) in required_aes) && (isnothing(supported_kwargs) || a in supported_kwargs))]
-
-                args = Tuple([geom.visual, required_aes_data...])
-                kwargs = merge(args_dict_makie, Dict(optional_aes_data))
-
-                # push completed PlotSpec (type, args, and kwargs) to the list of plots
-                push!(plot_list_by_facet[facet_names[index]], Makie.PlotSpec(args...; kwargs...))
-            end
-        else
-            # if there are both facets and grouping required
-            facetting_column = [plot.facet_options.wrap]
-            grouping_columns = [aes_dict_makie[a] for a in [intersect(keys(given_aes), geom.grouping_aes)...]]
-            subgroup_given_aes = subgroup_split(given_aes, plot_data[!, unique([facetting_column...; grouping_columns...])])
-            facet_names = [n[plot.facet_options.wrap] for n in keys(groupby(plot_data, unique([facetting_column...; grouping_columns...])))]
-            facet_positions, facet_labels, facet_boxes = position_facets(facet_names, plot.facet_options.nrow, plot.facet_options.ncol)
-
-            plot_list_by_facet = Dict(facet => Makie.PlotSpec[] for facet in unique(facet_names))
-
-            for (sub, facet_name) in zip(subgroup_given_aes, facet_names)
-                required_aes_data = [p.makie_function(p.raw) for p in [sub[a] for a in Symbol.(required_aes)]]
-                optional_aes_data = [a => p.makie_function(p.raw) for (a, p) in sub if (!(String(a) in required_aes) && (isnothing(supported_kwargs) || a in supported_kwargs))]
-
-                args = Tuple([geom.visual, required_aes_data...])
-                kwargs = merge(args_dict_makie, Dict(optional_aes_data))
-
-                # since we are grouping, we only need a single value rather than a vector
-                for aes in [intersect(keys(given_aes), geom.grouping_aes)...]
-                    kwargs[aes] = first(kwargs[aes])
-                end
-
-                # push completed PlotSpec (type, args, and kwargs) to the list of plots
-                push!(plot_list_by_facet[facet_name], Makie.PlotSpec(args...; kwargs...))
-            end
-        end
+        # push completed PlotSpec (type, args, and kwargs) to the list of plots
+        push!(plot_list, Makie.PlotSpec(args...; kwargs...))
     end
 
     # rename and correct types on all axis options

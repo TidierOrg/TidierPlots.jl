@@ -1,3 +1,5 @@
+# these functions only exist to allow broadcasting to work on ggplots
+
 import Base.iterate
 import Base.length
 

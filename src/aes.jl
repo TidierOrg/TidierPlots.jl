@@ -6,15 +6,14 @@
 TBD
 """
 function aes(args...; kwargs...)
-    col_transforms = Dict()
-    aes_args = Symbol[]
-    aes_kwargs = Dict{String, Union{Symbol, Pair}}()
+    aes_args = Pair[]
+    aes_kwargs = Dict{Symbol,Pair}()
 
     for arg in args
         if arg isa Pair
-            @error "Calculated columns currently do not support positional aes specification."
+            push!(aes_args, arg)
         else
-            push!(aes_args, Symbol(arg))
+            push!(aes_args, Symbol(arg) => identity)
         end
     end
 
@@ -22,40 +21,51 @@ function aes(args...; kwargs...)
 
     for (k, v) in d
         if v isa Pair
-            push!(aes_kwargs, String(k) => v)
+            push!(aes_kwargs, Symbol(k) => v)
         else
-            push!(aes_kwargs, String(k) => Symbol(v))
+            push!(aes_kwargs, Symbol(k) => Symbol(v) => identity)
         end
     end
 
-    return Aesthetics(
-            aes_args,
-            aes_kwargs,
-            col_transforms)
+    return Aesthetics(aes_args, aes_kwargs)
 end
 
 macro aes(exprs...)
-    aes_dict = Dict{String, Union{Symbol, Any}}()
-    positional = Symbol[]
-    for aes_ex in exprs
-        if aes_ex isa Expr
-            if aes_ex.args[2] isa Expr
-                tidy = TidierData.parse_tidy(aes_ex)
-                aes_dict[String(aes_ex.args[1])] = tidy.args[2] => eval(tidy.args[3])[1]
-            elseif aes_ex.args[2] isa QuoteNode
-                aes_dict[String(aes_ex.args[1])] = aes_ex.args[2].value
-            elseif aes_ex.args[2] isa String
-                aes_dict[String(aes_ex.args[1])] = Symbol(aes_ex.args[2])
-            else
-                aes_dict[String(aes_ex.args[1])] = aes_ex.args[2]
-            end
-        elseif aes_ex isa Symbol
-            push!(positional, aes_ex)
-        elseif aes_ex isa String
-            push!(positional, Symbol(aes_ex))
+    exprs = TidierData.parse_blocks(exprs...)
+    interpolated_exprs = TidierData.parse_interpolation.(exprs)
+    tidy_exprs = [i[1] for i in interpolated_exprs]
+    mapping = TidierData.parse_tidy.(tidy_exprs)
+
+    aes_args = Pair[]
+    aes_kw = Dict{Symbol,Pair}()
+
+    for aes in mapping
+        if aes isa QuoteNode # positional aes with no transformations
+            push!(aes_args, aes.value => identity)
+        elseif aes.args[1] == :Cols
+            throw("Calculations are not supported in positional aes specs.")
+        elseif aes.args[2] isa QuoteNode
+            push!(aes_kw, aes.args[3].value => aes.args[2].value => identity)
+        else
+            tf = eval(aes)
+            push!(aes_kw, tf[2][2] => tf[1] => tf[2][1])
         end
     end
-    return Aesthetics(positional, aes_dict, Dict())
+
+    return Aesthetics(aes_args, aes_kw)
 end
 
-@eval const $(Symbol("@es")) = $(Symbol("@aes"))
+function Base.show(io::IO, aes::Aesthetics)
+    println("A TidierPlots aes mapping object.")
+    println("Positional:")
+
+    for pos in aes.positional
+        println(pos)
+    end
+
+    println("Named:")
+
+    for (k, v) in aes.named
+        println("$k : $v")
+    end
+end

@@ -117,6 +117,7 @@ export scale_x_pseudolog10, scale_y_pseudolog10, scale_x_symlog10, scale_y_symlo
 export scale_x_reverse, scale_y_reverse, scale_x_sqrt, scale_y_sqrt
 export scale_colour_continuous, scale_colour_discrete, scale_colour_manual, scale_colour_binned
 export scale_color_continuous, scale_color_discrete, scale_color_manual, scale_color_binned
+export scale_fill_continuous, scale_fill_discrete, scale_fill_manual, scale_fill_binned
 
 # default options
 

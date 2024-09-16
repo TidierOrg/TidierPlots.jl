@@ -89,43 +89,20 @@ function color_scale_to_ggoptions(args_dict::Dict)
         make_color_lookup_continuous(args_dict) :
         make_color_lookup_binned(args_dict)
 
-    function make_color_transform_fn(lookup)
-        function color_transform_fn(target::Symbol, source::Vector{Symbol}, data::DataFrame)
-            input = data[!, source[1]]
-
-            if eltype(input) <: Union{AbstractString, AbstractChar, CategoricalValue}
-
-                cat_array = CategoricalArray(input)
-
-                return Dict{Symbol, PlottableData}(
-                    target => PlottableData(
-                        cat_array,
-                        x -> lookup(levelcode.(x)),
-                        nothing,
-                        nothing
-                    )
-                )
-            elseif eltype(input) <: Union{Integer, AbstractFloat}
-                return Dict{Symbol, PlottableData}(
-                    target => PlottableData(
-                        input,
-                        x -> lookup(x),
-                        nothing,
-                        nothing
-                    )
-                )
-            else
-                scale = args_dict[:scale]
-                throw(@error "Column is not compatible with scale: $scale")
-            end
-        end
-        return color_transform_fn
+    if args_dict[:scale] == "color"
+        color = lookup
+        fill = nothing
+    elseif args_dict[:scale] == "fill"
+        color = nothing
+        fill = lookup
+    else
+        throw("Unrecognized scale: $(args_dict[:scale])")
     end
-
-    color_transform = make_color_transform_fn(lookup)
 
     return AxisOptions(
         Dict(),
+        color,
+        fill,
         Dict(:color => args_dict) # pass the full args dict for use by legend
     )
 end
@@ -191,5 +168,25 @@ scale_colour_binned = color_scale_template(
 
 scale_color_binned = color_scale_template(
     "color",
+    color_scale_to_ggoptions,
+    "binned")
+
+scale_fill_manual = color_scale_template(
+    "fill",
+    color_scale_to_ggoptions,
+    "manual")
+
+scale_fill_discrete = color_scale_template(
+    "fill",
+    color_scale_to_ggoptions,
+    "discrete")
+
+scale_fill_continuous = color_scale_template(
+    "fill",
+    color_scale_to_ggoptions,
+    "continuous")
+
+scale_colour_binned = color_scale_template(
+    "fill",
     color_scale_to_ggoptions,
     "binned")

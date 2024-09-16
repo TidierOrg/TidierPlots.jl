@@ -1,24 +1,24 @@
-function boxplot_groups(aes_dict::Dict{String,Union{Symbol,Pair}},
+function boxplot_groups(aes_dict::Dict{Symbol,Pair},
     args_dict::Dict{Any,Any}, required_aes::Vector{String}, plot_data::DataFrame)
 
-    factor_aes = [aes for (aes, v) in aes_dict if eltype(plot_data[!, v]) <: Union{AbstractString,AbstractChar,CategoricalValue}]
+    factor_aes = [aes for (aes, v) in aes_dict if eltype(plot_data[!, v[1]]) <: Union{AbstractString,AbstractChar,CategoricalValue}]
 
-    main_factor_aes = "x"
+    main_factor_aes = :x
 
-    if "y" in factor_aes && !("x" in factor_aes)
+    if :y in factor_aes && !(:x in factor_aes)
         required_aes = ["y", "x"]
         args_dict["orientation"] = :horizontal
-        main_factor_aes = "y"
+        main_factor_aes = :y
     end
 
-    dodge_aes = [aes for aes in factor_aes if aes_dict[aes] != aes_dict[main_factor_aes]]
+    dodge_aes = [aes for aes in factor_aes if aes_dict[aes][1] != aes_dict[main_factor_aes][1]]
 
     if length(dodge_aes) > 1
         @warn "Too many categorical aes specified, can't select dodge automatically"
     end
 
     if length(dodge_aes) != 0
-        aes_dict["dodge"] = aes_dict[dodge_aes[1]]
+        aes_dict[:dodge] = aes_dict[dodge_aes[1]] => identity
     end
 
     return (aes_dict, args_dict, required_aes, plot_data)

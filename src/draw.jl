@@ -69,6 +69,8 @@ function Makie.SpecApi.Axis(plot::GGPlot)
             end
         end
 
+        # after all edits have been made, apply the post_function
+
         aes_dict, args_dict, required_aes, aes_df =
             geom.post_function(aes_dict,
                 geom.args,
@@ -76,12 +78,12 @@ function Makie.SpecApi.Axis(plot::GGPlot)
                 aes_df)
 
         # keep track of the global max and min on each axis
-        if "x" in names(aes_df)
+        if "x" in names(aes_df) && eltype(aes_df.x) <: AbstractFloat
             xmin = min(xmin, minimum(aes_df.x))
             xmax = max(xmax, maximum(aes_df.x))
         end
 
-        if "y" in names(aes_df)
+        if "y" in names(aes_df) && eltype(aes_df.y) <: AbstractFloat
             ymin = min(ymin, minimum(aes_df.y))
             ymax = max(ymax, maximum(aes_df.y))
         end
@@ -92,19 +94,37 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         facets = !isnothing(plot.facet_options)
 
         # if there are no grouping_aes given and no facets required, we only need one PlotSpec
-        required_aes_data = [aes_df[!, a] for a in Symbol.(required_aes)]
-        optional_aes_data = [
-            Symbol(a) => aes_df[!, Symbol(a)]
-            for a in names(aes_df)
-            if (!(String(a) in required_aes) &&
-                (
-                isnothing(supported_kwargs) ||
-                a in supported_kwargs)
-            )
-        ]
+        required_aes_data = []
+
+        for a in Symbol.(required_aes)
+            data = aes_df[!, a]
+            if eltype(data) <: AbstractString
+                data = Categorical(data)
+            end
+            push!(required_aes_data, data)
+        end
+
+        optional_aes_data = Dict()
+
+        for a in names(aes_df)
+            if String(a) in required_aes
+                continue
+            end
+            if isnothing(supported_kwargs) || !(a in supported_kwargs)
+                continue
+            end
+
+            data = aes_df[!, Symbol(a)]
+
+            if eltype(data) <: AbstractString
+                data = Categorical(data)
+            end
+
+            push!(optional_aes_data, Symbol(a) => data)
+        end
 
         args = Tuple([geom.visual, required_aes_data...])
-        kwargs = merge(args_dict_makie, Dict(optional_aes_data))
+        kwargs = merge(args_dict_makie, optional_aes_data)
 
         # push completed PlotSpec (type, args, and kwargs) to the list of plots
         push!(plot_list, Makie.PlotSpec(args...; kwargs...))

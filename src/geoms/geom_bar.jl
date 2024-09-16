@@ -8,31 +8,37 @@ function handle_position(aes_dict::Dict{Symbol,Pair},
         if args_dict["position"] == "dodge"
             if haskey(aes_dict, :group)
                 aes_dict[:dodge] = aes_dict[:group]
+                split_var = aes_dict[:dodge][1]
             elseif haskey(aes_dict, :colour)
                 aes_dict[:dodge] = aes_dict[:colour]
+                split_var = aes_dict[:dodge][1]
             elseif haskey(aes_dict, :color)
                 aes_dict[:dodge] = aes_dict[:color]
+                split_var = aes_dict[:dodge][1]
             end
-            split_var = aes_dict[:dodge][1]
         elseif args_dict["position"] != "none"
             if haskey(aes_dict, :group)
                 aes_dict[:stack] = aes_dict[:group]
+                split_var = aes_dict[:stack][1]
             elseif haskey(aes_dict, :colour)
                 aes_dict[:stack] = aes_dict[:colour]
+                split_var = aes_dict[:stack][1]
             elseif haskey(aes_dict, :color)
                 aes_dict[:stack] = aes_dict[:color]
+                split_var = aes_dict[:stack][1]
             end
-            split_var = aes_dict[:stack][1]
         end
     else
         if haskey(aes_dict, :group)
              aes_dict[:stack] = aes_dict[:group]
-        elseif haskey(aes_dict, "colour")
+             split_var = aes_dict[:stack][1]
+        elseif haskey(aes_dict, :colour)
             aes_dict[:stack] = aes_dict[:colour]
-        elseif haskey(aes_dict, "color")
+            split_var = aes_dict[:stack][1]
+        elseif haskey(aes_dict, :color)
             aes_dict[:stack] = aes_dict[:color]
+            split_var = aes_dict[:stack][1]
         end
-        split_var = aes_dict[:stack][1]
     end
 
     # for geom_bar, we need to summarize counts

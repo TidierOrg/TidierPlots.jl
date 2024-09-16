@@ -81,10 +81,13 @@ end
 
 function color_scale_to_ggoptions(args_dict::Dict)
 
-    lookup = args_dict[:type] == "manual"     ? make_color_lookup_manual(args_dict)     :
-             args_dict[:type] == "discrete"   ? make_color_lookup_discrete(args_dict)   :
-             args_dict[:type] == "continuous" ? make_color_lookup_continuous(args_dict) :
-             make_color_lookup_binned(args_dict)
+    lookup = args_dict[:type] == "manual"       ?
+        make_color_lookup_manual(args_dict)     :
+        args_dict[:type] == "discrete"          ?
+        make_color_lookup_discrete(args_dict)   :
+        args_dict[:type] == "continuous"        ?
+        make_color_lookup_continuous(args_dict) :
+        make_color_lookup_binned(args_dict)
 
     function make_color_transform_fn(lookup)
         function color_transform_fn(target::Symbol, source::Vector{Symbol}, data::DataFrame)
@@ -123,7 +126,6 @@ function color_scale_to_ggoptions(args_dict::Dict)
 
     return AxisOptions(
         Dict(),
-        Dict(Symbol(args_dict[:scale]) => [Symbol(args_dict[:scale])]=>color_transform),
         Dict(:color => args_dict) # pass the full args dict for use by legend
     )
 end
@@ -152,11 +154,42 @@ end
 
 # scale definitions
 
-scale_colour_manual =     color_scale_template("color", color_scale_to_ggoptions, "manual")
-scale_color_manual =      color_scale_template("color", color_scale_to_ggoptions, "manual")
-scale_colour_discrete =   color_scale_template("color", color_scale_to_ggoptions, "discrete")
-scale_color_discrete =    color_scale_template("color", color_scale_to_ggoptions, "discrete")
-scale_colour_continuous = color_scale_template("color", color_scale_to_ggoptions, "continuous")
-scale_color_continuous =  color_scale_template("color", color_scale_to_ggoptions, "continuous")
-scale_colour_binned =     color_scale_template("color", color_scale_to_ggoptions, "binned")
-scale_color_binned =      color_scale_template("color", color_scale_to_ggoptions, "binned")
+scale_colour_manual = color_scale_template(
+    "color",
+    color_scale_to_ggoptions,
+    "manual")
+
+scale_color_manual = color_scale_template(
+    "color",
+    color_scale_to_ggoptions,
+    "manual")
+
+scale_colour_discrete = color_scale_template(
+    "color",
+    color_scale_to_ggoptions,
+    "discrete")
+
+scale_color_discrete = color_scale_template(
+    "color",
+    color_scale_to_ggoptions,
+    "discrete")
+
+scale_colour_continuous = color_scale_template(
+    "color",
+    color_scale_to_ggoptions,
+    "continuous")
+
+scale_color_continuous = color_scale_template(
+    "color",
+    color_scale_to_ggoptions,
+    "continuous")
+
+scale_colour_binned = color_scale_template(
+    "color",
+    color_scale_to_ggoptions,
+    "binned")
+
+scale_color_binned = color_scale_template(
+    "color",
+    color_scale_to_ggoptions,
+    "binned")

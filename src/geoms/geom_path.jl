@@ -1,4 +1,4 @@
-function stat_sort_by_x(aes_dict::Dict{String, Union{Symbol, Pair}},
+function stat_sort_by_x(aes_dict::Dict{Symbol,Pair},
     args_dict::Dict{Any, Any}, required_aes::Vector{String}, plot_data::DataFrame)
 
     perm = sortperm(plot_data[!, :x])

@@ -15,8 +15,9 @@ function geom_template(name::AbstractString,
 
         return build_geom(aes_dict, args_dict,
             required_aes,
-            spec_api_function,
-            pre_function, post_function;
+            spec_api_function;
+            pre_function = pre_function,
+            post_function = post_function,
             grouping_aes = grouping_aes)
     end
 

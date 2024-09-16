@@ -6,49 +6,43 @@ function handle_position(aes_dict::Dict{Symbol,Pair},
 
     if haskey(args_dict, "position")
         if args_dict["position"] == "dodge"
-            if haskey(aes_dict, "group")
-                aes_dict["dodge"] = aes_dict["group"]
-                split_var = aes_dict["dodge"]
-            elseif haskey(aes_dict, "colour")
-                aes_dict["dodge"] = aes_dict["colour"]
-                split_var = aes_dict["dodge"]
-            elseif haskey(aes_dict, "color")
-                aes_dict["dodge"] = aes_dict["color"]
-                split_var = aes_dict["dodge"]
+            if haskey(aes_dict, :group)
+                aes_dict[:dodge] = aes_dict[:group]
+            elseif haskey(aes_dict, :colour)
+                aes_dict[:dodge] = aes_dict[:colour]
+            elseif haskey(aes_dict, :color)
+                aes_dict[:dodge] = aes_dict[:color]
             end
+            split_var = aes_dict[:dodge][1]
         elseif args_dict["position"] != "none"
-            if haskey(aes_dict, "group")
-                aes_dict["stack"] = aes_dict["group"]
-                split_var = aes_dict["stack"]
-            elseif haskey(aes_dict, "colour")
-                aes_dict["stack"] = aes_dict["colour"]
-                split_var = aes_dict["stack"]
-            elseif haskey(aes_dict, "color")
-                aes_dict["stack"] = aes_dict["color"]
-                split_var = aes_dict["stack"]
+            if haskey(aes_dict, :group)
+                aes_dict[:stack] = aes_dict[:group]
+            elseif haskey(aes_dict, :colour)
+                aes_dict[:stack] = aes_dict[:colour]
+            elseif haskey(aes_dict, :color)
+                aes_dict[:stack] = aes_dict[:color]
             end
+            split_var = aes_dict[:stack][1]
         end
     else
-        if haskey(aes_dict, "group")
-            aes_dict["stack"] = aes_dict["group"]
-            split_var = aes_dict["stack"]
+        if haskey(aes_dict, :group)
+             aes_dict[:stack] = aes_dict[:group]
         elseif haskey(aes_dict, "colour")
-            aes_dict["stack"] = aes_dict["colour"]
-            split_var = aes_dict["stack"]
+            aes_dict[:stack] = aes_dict[:colour]
         elseif haskey(aes_dict, "color")
-            aes_dict["stack"] = aes_dict["color"]
-            split_var = aes_dict["stack"]
+            aes_dict[:stack] = aes_dict[:color]
         end
+        split_var = aes_dict[:stack][1]
     end
 
     # for geom_bar, we need to summarize counts
     if args_dict["geom_name"] == "geom_bar"
         if haskey(aes_dict, :x) && !haskey(aes_dict, :y)
-            grouping_var = Symbol(aes_dict[:x][1])
+            grouping_var = aes_dict[:x][1]
             aes_dict[:y] = :count => identity
             required_aes = ["x", "y"]
         elseif haskey(aes_dict, :y) && !haskey(aes_dict, :x)
-            grouping_var = Symbol(aes_dict[:y][1])
+            grouping_var = aes_dict[:y][1]
             aes_dict[:x] = :count => identity
             args_dict["direction"] = "x"
             required_aes = ["y", "x"]
@@ -74,7 +68,6 @@ function handle_position(aes_dict::Dict{Symbol,Pair},
 
     return (aes_dict, args_dict, required_aes, plot_data)
 end
-
 
 """
     geom_col(aes(...), ...)

@@ -56,6 +56,8 @@ end
 
 function make_color_lookup_binned(args_dict)
     function color_lookup_binned(input)
+        input = convert.(Float64, input)
+
         binned_input = ceil.(Int, 1 .+ 4 .* ((input .- minimum(input)) ./ (maximum(input) - minimum(input))))
 
         palette = haskey(args_dict, :palette) ? args_dict[:palette] :

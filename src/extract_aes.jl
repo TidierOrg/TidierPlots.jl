@@ -4,7 +4,6 @@ function make_aes_extractor(required_aes)
         args_dict = Dict{String,Any}()
 
         for arg in args
-            println(arg)
             if arg isa DataFrame
                 args_dict["data"] = arg
             elseif arg isa Aesthetics

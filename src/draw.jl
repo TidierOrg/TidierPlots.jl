@@ -54,7 +54,8 @@ function Makie.SpecApi.Axis(plot::GGPlot)
 
         args_dict_makie = Dict{Symbol,Any}()
 
-        supported_kwargs = get(_accepted_options_by_type, geom.visual, nothing)
+        supported_kwargs = get(_accepted_options_by_type, geom.visual,
+            nothing)
 
         for (arg, value) in args_dict
             if !(Symbol(arg) in _internal_geom_options)
@@ -78,7 +79,18 @@ function Makie.SpecApi.Axis(plot::GGPlot)
                 aes_df)
 
         if !isnothing(plot.color_palette)
-            aes_df = transform(aes_df, :color => plot.color_palette => :color)
+            if eltype(aes_df.color) <: Number
+                aes_df = transform(aes_df, :color =>
+                    plot.color_palette => :color)
+            else
+                aes_df = transform(aes_df, :color =>
+                    (x -> plot.color_palette.(
+                        levelcode.(
+                            CategoricalArray(x)
+                        )
+                    )) => :color
+                )
+            end
         end
 
         # keep track of the global max and min on each axis
@@ -102,7 +114,7 @@ function Makie.SpecApi.Axis(plot::GGPlot)
 
         for a in Symbol.(required_aes)
             data = aes_df[!, a]
-            if eltype(data) <: AbstractString
+            if eltype(data) <: Union{AbstractString,RGB{FixedPoint}}
                 data = Categorical(data)
             end
             push!(required_aes_data, data)
@@ -114,13 +126,15 @@ function Makie.SpecApi.Axis(plot::GGPlot)
             if String(a) in required_aes
                 continue
             end
-            if isnothing(supported_kwargs) || !(a in supported_kwargs)
-                continue
+            if !isnothing(supported_kwargs)
+                if !(Symbol(a) in supported_kwargs)
+                    continue
+                end
             end
 
             data = aes_df[!, Symbol(a)]
 
-            if eltype(data) <: AbstractString
+            if eltype(data) <: Union{AbstractString,RGB{FixedPoint}}
                 data = Categorical(data)
             end
 

@@ -12,6 +12,7 @@ using Reexport
 # Needed for color scales to work correctly
 using Colors
 using ColorSchemes
+using FixedPointNumbers
 
 # Needed for label functions
 using Format

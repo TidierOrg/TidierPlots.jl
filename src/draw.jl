@@ -74,8 +74,8 @@ function Makie.SpecApi.Axis(plot::GGPlot)
 
         aes_dict, args_dict, required_aes, aes_df =
             geom.post_function(aes_dict,
-                geom.args,
-                geom.required_aes,
+                args_dict,
+                required_aes,
                 aes_df)
 
         if !isnothing(plot.color_palette)
@@ -94,12 +94,12 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         end
 
         # keep track of the global max and min on each axis
-        if "x" in names(aes_df) && eltype(aes_df.x) <: AbstractFloat
+        if "x" in names(aes_df) && eltype(aes_df.x) <: Number
             xmin = min(xmin, minimum(aes_df.x))
             xmax = max(xmax, maximum(aes_df.x))
         end
 
-        if "y" in names(aes_df) && eltype(aes_df.y) <: AbstractFloat
+        if "y" in names(aes_df) && eltype(aes_df.y) <: Number
             ymin = min(ymin, minimum(aes_df.y))
             ymax = max(ymax, maximum(aes_df.y))
         end
@@ -112,11 +112,16 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         # if there are no grouping_aes given and no facets required, we only need one PlotSpec
         required_aes_data = []
 
-        for a in Symbol.(required_aes)
-            data = aes_df[!, a]
-            if eltype(data) <: Union{AbstractString,RGB{FixedPoint}}
-                if !(a in _verbatim_aes)
-                    data = Categorical(data)
+        for a in required_aes
+            data = aes_df[!, Symbol(a)]
+            if eltype(data) <: Union{AbstractString,CategoricalValue}
+                if !(Symbol(a) in _verbatim_aes)
+                    labels = levels(CategoricalArray(data))
+                    data = levelcode.(CategoricalArray(data))
+                    axis_options[Symbol(a * "ticks")] = (
+                        1:maximum(data),
+                        string.(labels)
+                    )
                 end
             end
             push!(required_aes_data, data)

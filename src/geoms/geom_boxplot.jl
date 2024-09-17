@@ -24,6 +24,14 @@ function boxplot_groups(aes_dict::Dict{Symbol,Pair},
     return (aes_dict, args_dict, required_aes, plot_data)
 end
 
+function axis_string_as_cat_array(aes_dict::Dict{Symbol,Pair},
+    args_dict::Dict{Any,Any}, required_aes::Vector{String}, plot_data::DataFrame)
+
+plot_data.x = CategoricalArray(plot_data.x)
+
+    return (aes_dict, args_dict, required_aes, plot_data)
+end
+
 """
     geom_boxplot(aes(...), ...)
     geom_boxplot(plot::GGPlot, aes(...), ...)
@@ -69,4 +77,4 @@ ggplot(penguins, @aes(x=species, y=bill_length_mm, dodge=sex, color=sex)) +
     geom_boxplot()
 ```
 """
-geom_boxplot = geom_template("geom_boxplot", ["x", "y"], :BoxPlot; pre_function=boxplot_groups)
+geom_boxplot = geom_template("geom_boxplot", ["x", "y"], :BoxPlot; pre_function=boxplot_groups, post_function = axis_string_as_cat_array)

@@ -193,11 +193,11 @@
         ]
 
         t = ggplot(penguins) +
-            geom_violin(aes(x = :species, y = :bill_length_mm, color = :species))
+            geom_violin(aes(x = :species, y = :bill_length_mm, color = :species)) + scale_color_manual(values = colours)
 
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
-                [Makie.SpecApi.Axis(
+                Makie.SpecApi.Axis(
                     plots = [
                         Makie.PlotSpec(
                         :Violin,
@@ -206,7 +206,8 @@
                         color = (x -> colours[x]).(levelcode.(cat_array))
                     )]; xticks = (unique(levelcode.(cat_array)),
                     unique(cat_array))
-                ) TidierPlots.build_legend(t)])
+                )
+            )
         )
 
         @test plot_images_equal(t, m)

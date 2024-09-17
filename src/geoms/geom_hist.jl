@@ -36,5 +36,5 @@ ggplot(penguins, @aes(x = bill_length_mm)) +
     geom_histogram(normalization=:probability, bins=20)
 ```
 """
-geom_histogram = geom_template("geom_histogram", ["x"], :Hist; 
-    grouping_aes = [:color, :colour])
+geom_histogram = geom_template("geom_histogram", ["x"], :Hist;
+    grouping_aes=[:color, :colour])

@@ -1,8 +1,7 @@
 function make_aes_extractor(required_aes)
     return function extract_aes(args, kwargs)
-        aes_dict = Dict{String, Symbol}() 
-        args_dict = Dict{String, Any}() 
-        transforms = Dict{Symbol, Pair{Vector{Symbol}, AesTransform}}()
+        aes_dict = Dict{Symbol,Pair}()
+        args_dict = Dict{String,Any}()
 
         for arg in args
             if arg isa DataFrame
@@ -18,19 +17,19 @@ function make_aes_extractor(required_aes)
                             bad_aes = required_aes[i]
                             @error "Required aes ($bad_aes) given both positionally and by name. Choose one or the other."
                         end
-                        push!(aes_dict, required_aes[i] => pos_arg)
+                        push!(aes_dict, Symbol(required_aes[i]) => (pos_arg => identity))
                     end
-                end  
+                end
                 merge!(aes_dict, arg.named)
-                merge!(transforms, arg.column_transformations)
             end
         end
 
         d = Dict(kwargs)
-        args_dict = merge(args_dict, Dict([String(key) => d[key] for key in keys(d)]))
+        args_dict = merge(args_dict,
+            Dict([String(key) => d[key] for key in keys(d)]))
 
-        return (aes_dict, args_dict, transforms)
+        return (aes_dict, args_dict)
     end
-end    
+end
 
 extract_aes = make_aes_extractor([])

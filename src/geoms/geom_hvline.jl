@@ -45,20 +45,18 @@ ggplot(df, @aes(yintercept = y)) + geom_hline()
 function geom_hline end
 
 function geom_hline(args...; kwargs...)
-    aes_dict, args_dict, transforms = extract_aes(args, kwargs)
+    aes_dict, args_dict = extract_aes(args, kwargs)
 
     args_dict["geom_name"] = "geom_hline"
 
     if haskey(args_dict, "yintercept")
         args_dict["data"] = DataFrame(Numeric = args_dict["yintercept"])
-        aes_dict["yintercept"] = :Numeric
+        aes_dict[:yintercept] = :Numeric => identity
     end
 
     return build_geom(aes_dict, args_dict,
         ["yintercept"], # required aesthetics
-        :HLines,
-        do_nothing,
-        transforms) # function for visual layer
+        :HLines) # function for visual layer
 end
 
 """
@@ -108,20 +106,18 @@ ggplot(df, @aes(xintercept = x)) + geom_vline()
 function geom_vline end
 
 function geom_vline(args...; kwargs...)
-    aes_dict, args_dict, transforms = extract_aes(args, kwargs)
+    aes_dict, args_dict = extract_aes(args, kwargs)
 
     args_dict["geom_name"] = "geom_vline"
 
     if haskey(args_dict, "xintercept")
         args_dict["data"] = DataFrame(Numeric = args_dict["xintercept"])
-        aes_dict["xintercept"] = :Numeric
+        aes_dict[:xintercept] = :Numeric => identity
     end
 
     return build_geom(aes_dict, args_dict,
         ["xintercept"], # required aesthetics
-        :VLines,
-        do_nothing,
-        transforms) # function for visual layer
+        :VLines) # function for visual layer
 end
 
 function geom_hline(plot::GGPlot, args...; kwargs...)

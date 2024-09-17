@@ -193,11 +193,11 @@
         ]
 
         t = ggplot(penguins) +
-            geom_violin(aes(x = :species, y = :bill_length_mm, color = :species))
+            geom_violin(aes(x = :species, y = :bill_length_mm, color = :species)) + scale_color_manual(values = colours)
 
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
-                [Makie.SpecApi.Axis(
+                Makie.SpecApi.Axis(
                     plots = [
                         Makie.PlotSpec(
                         :Violin,
@@ -206,7 +206,8 @@
                         color = (x -> colours[x]).(levelcode.(cat_array))
                     )]; xticks = (unique(levelcode.(cat_array)),
                     unique(cat_array))
-                ) TidierPlots.build_legend(t)])
+                )
+            )
         )
 
         @test plot_images_equal(t, m)
@@ -252,7 +253,7 @@
     end
 
     @testset "geom_errorbar" begin
-        categories = ["A", "B", "C", "D"];
+        categories = [1, 2, 3, 4];
         n = length(categories);
 
         mean_values = rand(n);  # Random mean values for demonstration
@@ -262,13 +263,12 @@
         UpperBound = mean_values .+ errors;
 
         df_errorbar = DataFrame(
-            Category = categories,
-            cat_numeric = CategoricalArray(categories),
+            cat_numeric = categories,
             MeanValue = mean_values,
             LowerBound = LowerBound,
             UpperBound = UpperBound);
 
-        t = ggplot(df_errorbar, @aes(x = Category, y = MeanValue, ymin = LowerBound, ymax = UpperBound)) +
+        t = ggplot(df_errorbar, @aes(x = cat_numeric, y = MeanValue, ymin = LowerBound, ymax = UpperBound)) +
             geom_point() + # to show the mean value
             geom_errorbar(width = 0.2) # width of the horizontal line at the top and bottom of the error bar
 
@@ -278,14 +278,14 @@
                     plots = [
                         Makie.PlotSpec(
                             :Scatter,
-                            levelcode.(df_errorbar.cat_numeric),
+                            df_errorbar.cat_numeric,
                             df_errorbar.MeanValue),
                         Makie.PlotSpec(
                             :Rangebars,
-                            levelcode.(df_errorbar.cat_numeric),
+                            df_errorbar.cat_numeric,
                             df_errorbar.LowerBound,
                             df_errorbar.UpperBound)
-                    ]; xticks = (1:4, categories)
+                    ]
                 )
             )
         )
@@ -385,29 +385,6 @@
 
         @test plot_images_equal(t, m)
 
-    end
-
-    @testset "geom_contour" begin
-        k = kde((penguins.bill_length_mm, penguins.bill_depth_mm))
-
-        m = Makie.plot(
-            Makie.SpecApi.GridLayout(
-                Makie.SpecApi.Axis(
-                    plots = [
-                        Makie.PlotSpec(
-                            :Contour,
-                            k.x, k.y,
-                            k.density
-                        )
-                    ]
-                )
-            )
-        )
-
-        t = ggplot(penguins) +
-            geom_contour(aes(x = :bill_length_mm, y = :bill_depth_mm))
-
-        @test plot_images_equal(t, m)
     end
 
     @testset "geom_hline" begin

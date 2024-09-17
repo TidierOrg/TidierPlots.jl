@@ -1,13 +1,13 @@
 function build_geom(
         aes_dict,
         args_dict,
-        required_aes, 
-        spec_api_function,
-        aes_function,
-        column_transformations; 
+        required_aes,
+        spec_api_function;
+        pre_function = do_nothing,
+        post_function = do_nothing,
         special_aes = Dict(),
         grouping_aes = Symbol[])
-    
+
     if haskey(args_dict, "data")
         if args_dict["data"] isa DataFrame
             plot_data = args_dict["data"]
@@ -23,15 +23,15 @@ function build_geom(
 
     # return a geom object
     return Geom(
-        aes_dict, 
+        aes_dict,
         args_dict,
-        required_aes, 
+        required_aes,
         special_aes,
-        plot_data, 
+        plot_data,
         spec_api_function,
         Dict(),
-        aes_function,
-        column_transformations,
+        pre_function,
+        post_function,
         grouping_aes
     )
 end

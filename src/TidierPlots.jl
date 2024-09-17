@@ -12,6 +12,7 @@ using Reexport
 # Needed for color scales to work correctly
 using Colors
 using ColorSchemes
+using FixedPointNumbers
 
 # Needed for label functions
 using Format
@@ -33,16 +34,15 @@ using KernelDensity
 include("structs.jl")
 
 include("addplots.jl")
-include("aes_ops.jl")
 include("aes.jl")
 include("attributes.jl")
+include("broadcasting.jl")
 include("draw.jl")
 include("extract_aes.jl")
 include("facets.jl")
 include("geom.jl")
 include("ggplot.jl")
 include("ggsave.jl")
-include("grouping.jl")
 include("labs.jl")
 include("label_functions.jl")
 include("legend.jl")
@@ -50,7 +50,6 @@ include("patchwork.jl")
 include("scales_colour.jl")
 include("scales_numeric.jl")
 include("themes.jl")
-include("transforms.jl")
 include("show.jl")
 include("util.jl")
 
@@ -58,7 +57,6 @@ include("geoms/geom_template.jl")
 
 include("geoms/geom_bar.jl")
 include("geoms/geom_boxplot.jl")
-include("geoms/geom_contour.jl")
 include("geoms/geom_density.jl")
 include("geoms/geom_errorbar.jl")
 include("geoms/geom_hvline.jl")
@@ -120,12 +118,7 @@ export scale_x_pseudolog10, scale_y_pseudolog10, scale_x_symlog10, scale_y_symlo
 export scale_x_reverse, scale_y_reverse, scale_x_sqrt, scale_y_sqrt
 export scale_colour_continuous, scale_colour_discrete, scale_colour_manual, scale_colour_binned
 export scale_color_continuous, scale_color_discrete, scale_color_manual, scale_color_binned
-
-# transforms
-
-export cat_inseq, cat_inorder, number_on_axis, as_is, discard, verbatim, kernel_density_2d
-export as_color
-export aesthetics_function
+export scale_fill_continuous, scale_fill_discrete, scale_fill_manual, scale_fill_binned
 
 # default options
 

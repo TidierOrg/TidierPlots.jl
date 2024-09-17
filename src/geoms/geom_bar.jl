@@ -1,4 +1,4 @@
-function handle_position(aes_dict::Dict{String, Symbol},
+function handle_position(aes_dict::Dict{Symbol,Pair},
     args_dict::Dict{Any, Any}, required_aes::Vector{String}, plot_data::DataFrame)
     # handles defaults and grouping for geom_bar/col
 
@@ -6,50 +6,50 @@ function handle_position(aes_dict::Dict{String, Symbol},
 
     if haskey(args_dict, "position")
         if args_dict["position"] == "dodge"
-            if haskey(aes_dict, "group")
-                aes_dict["dodge"] = aes_dict["group"]
-                split_var = aes_dict["dodge"]
-            elseif haskey(aes_dict, "colour")
-                aes_dict["dodge"] = aes_dict["colour"]
-                split_var = aes_dict["dodge"]
-            elseif haskey(aes_dict, "color")
-                aes_dict["dodge"] = aes_dict["color"]
-                split_var = aes_dict["dodge"]
+            if haskey(aes_dict, :group)
+                aes_dict[:dodge] = aes_dict[:group]
+                split_var = aes_dict[:dodge][1]
+            elseif haskey(aes_dict, :colour)
+                aes_dict[:dodge] = aes_dict[:colour]
+                split_var = aes_dict[:dodge][1]
+            elseif haskey(aes_dict, :color)
+                aes_dict[:dodge] = aes_dict[:color]
+                split_var = aes_dict[:dodge][1]
             end
         elseif args_dict["position"] != "none"
-            if haskey(aes_dict, "group")
-                aes_dict["stack"] = aes_dict["group"]
-                split_var = aes_dict["stack"]
-            elseif haskey(aes_dict, "colour")
-                aes_dict["stack"] = aes_dict["colour"]
-                split_var = aes_dict["stack"]
-            elseif haskey(aes_dict, "color")
-                aes_dict["stack"] = aes_dict["color"]
-                split_var = aes_dict["stack"]
+            if haskey(aes_dict, :group)
+                aes_dict[:stack] = aes_dict[:group]
+                split_var = aes_dict[:stack][1]
+            elseif haskey(aes_dict, :colour)
+                aes_dict[:stack] = aes_dict[:colour]
+                split_var = aes_dict[:stack][1]
+            elseif haskey(aes_dict, :color)
+                aes_dict[:stack] = aes_dict[:color]
+                split_var = aes_dict[:stack][1]
             end
         end
     else
-        if haskey(aes_dict, "group")
-            aes_dict["stack"] = aes_dict["group"]
-            split_var = aes_dict["stack"]
-        elseif haskey(aes_dict, "colour")
-            aes_dict["stack"] = aes_dict["colour"]
-            split_var = aes_dict["stack"]
-        elseif haskey(aes_dict, "color")
-            aes_dict["stack"] = aes_dict["color"]
-            split_var = aes_dict["stack"]
+        if haskey(aes_dict, :group)
+             aes_dict[:stack] = aes_dict[:group]
+             split_var = aes_dict[:stack][1]
+        elseif haskey(aes_dict, :colour)
+            aes_dict[:stack] = aes_dict[:colour]
+            split_var = aes_dict[:stack][1]
+        elseif haskey(aes_dict, :color)
+            aes_dict[:stack] = aes_dict[:color]
+            split_var = aes_dict[:stack][1]
         end
     end
 
     # for geom_bar, we need to summarize counts
     if args_dict["geom_name"] == "geom_bar"
-        if haskey(aes_dict, "x") && !haskey(aes_dict, "y")
-            grouping_var = Symbol(aes_dict["x"])
-            aes_dict["y"] = :count
+        if haskey(aes_dict, :x) && !haskey(aes_dict, :y)
+            grouping_var = aes_dict[:x][1]
+            aes_dict[:y] = :count => identity
             required_aes = ["x", "y"]
-        elseif haskey(aes_dict, "y") && !haskey(aes_dict, "x")
-            grouping_var = Symbol(aes_dict["y"])
-            aes_dict["x"] = :count
+        elseif haskey(aes_dict, :y) && !haskey(aes_dict, :x)
+            grouping_var = aes_dict[:y][1]
+            aes_dict[:x] = :count => identity
             args_dict["direction"] = "x"
             required_aes = ["y", "x"]
         else
@@ -74,7 +74,6 @@ function handle_position(aes_dict::Dict{String, Symbol},
 
     return (aes_dict, args_dict, required_aes, plot_data)
 end
-
 
 """
     geom_col(aes(...), ...)
@@ -142,7 +141,7 @@ ggplot(df) +
     geom_col(@aes(x = species, y = mean_bill_length_mm, color = sex))
 ```
 """
-geom_col = geom_template("geom_col", ["x", "y"], :BarPlot; aes_function = handle_position)
+geom_col = geom_template("geom_col", ["x", "y"], :BarPlot; pre_function = handle_position)
 
 """
     geom_bar(aes(...), ...)
@@ -195,4 +194,4 @@ ggplot(penguins) + geom_bar(@aes(y = species))
 ggplot(penguins, @aes(x = species, color=sex, dodge=sex)) + geom_bar()
 ```
 """
-geom_bar = geom_template("geom_bar", String[], :BarPlot; aes_function = handle_position)
+geom_bar = geom_template("geom_bar", String[], :BarPlot; pre_function = handle_position)

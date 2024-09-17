@@ -8,12 +8,20 @@ function get_options(geom_list)
 end
 
 function Base.:+(x::GGPlot, y::Union{Geom, Vector{Geom}, Aesthetics, AxisOptions, FacetOptions, Attributes}...)::GGPlot
-    
+
     themes = [i for i in y if i isa Attributes]
     theme = length(themes) == 0 ? Makie.theme_ggplot2() : themes[end]
 
     facet = [i for i in y if i isa FacetOptions]
     facet_options = length(facet) == 0 ? nothing : facet[end]
+
+    color = [i.color_palette for i in y if i isa AxisOptions &&
+        !isnothing(i.color_palette)]
+    color_palette = length(color) == 0 ? nothing : color[end]
+
+    fill = [i.fill_palette for i in y if i isa AxisOptions &&
+        !isnothing(i.fill_palette)]
+    fill_palette = length(fill) == 0 ? nothing : fill[end]
 
     result = GGPlot(
         vcat(x.geoms, # if there are geoms or lists of geoms, append them to the ggplot's geoms
@@ -27,11 +35,11 @@ function Base.:+(x::GGPlot, y::Union{Geom, Vector{Geom}, Aesthetics, AxisOptions
             [get_options(i) for i in y if i isa Vector{Geom}]...,
             [i.opt          for i in y if i isa AxisOptions]...),
         theme,
-        merge(x.column_transformations,
-            [i.column_transformations for i in y if i isa AxisOptions]...),
         merge(x.legend_options,
             [i.legend_options for i in y if i isa AxisOptions]...),
-        facet_options
+        facet_options,
+        color_palette,
+        fill_palette
     )
 
     return result

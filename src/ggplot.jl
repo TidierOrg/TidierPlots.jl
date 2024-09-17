@@ -14,25 +14,23 @@ function ggplot(args...; kwargs...)
         plot_data = nothing
     end
 
-    GGPlot([], 
-           aes_dict, 
+    GGPlot([],
+           aes_dict,
            plot_data,
-           args_dict, 
+           args_dict,
            theme_ggplot2(),
            Dict(),
-           Dict(),
-           nothing) 
+           nothing, nothing, nothing)
 end
 
 function ggplot(data::DataFrame, args...; kwargs...)
     aes_dict, args_dict = extract_aes(args, kwargs)
 
-    GGPlot([], 
-           aes_dict, 
+    GGPlot([],
+           aes_dict,
            data,
-           args_dict, 
+           args_dict,
            theme_ggplot2(),
            Dict(),
-           Dict(),
-           nothing) 
+           nothing, nothing, nothing)
 end

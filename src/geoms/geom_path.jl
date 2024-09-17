@@ -1,9 +1,7 @@
-function stat_sort_by_x(aes_dict::Dict{String, Symbol},
+function stat_sort_by_x(aes_dict::Dict{Symbol,Pair},
     args_dict::Dict{Any, Any}, required_aes::Vector{String}, plot_data::DataFrame)
 
-    x_column = aes_dict["x"]
-
-    perm = sortperm(plot_data[!, x_column])
+    perm = sortperm(plot_data[!, :x])
 
     return (aes_dict, args_dict, required_aes, plot_data[perm, :])
 end
@@ -47,7 +45,7 @@ ggplot(df, @aes(x = x, y = y)) + geom_line()
 ```
 """
 geom_line = geom_template("geom_line", ["x", "y"], :Lines;
-    aes_function = stat_sort_by_x,
+    post_function = stat_sort_by_x,
     grouping_aes = [:color, :colour]
 )
 
@@ -91,7 +89,7 @@ ggplot(df, @aes(x = x, y = y)) + geom_step()
 ```
 """
 geom_step = geom_template("geom_step", ["x", "y"], :Stairs;
-    aes_function = stat_sort_by_x,
+    post_function = stat_sort_by_x,
     grouping_aes = [:color, :colour]
 )
 

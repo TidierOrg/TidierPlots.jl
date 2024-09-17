@@ -252,7 +252,7 @@
     end
 
     @testset "geom_errorbar" begin
-        categories = ["A", "B", "C", "D"];
+        categories = [1, 2, 3, 4];
         n = length(categories);
 
         mean_values = rand(n);  # Random mean values for demonstration
@@ -262,13 +262,12 @@
         UpperBound = mean_values .+ errors;
 
         df_errorbar = DataFrame(
-            Category = categories,
-            cat_numeric = CategoricalArray(categories),
+            cat_numeric = categories,
             MeanValue = mean_values,
             LowerBound = LowerBound,
             UpperBound = UpperBound);
 
-        t = ggplot(df_errorbar, @aes(x = Category, y = MeanValue, ymin = LowerBound, ymax = UpperBound)) +
+        t = ggplot(df_errorbar, @aes(x = cat_numeric, y = MeanValue, ymin = LowerBound, ymax = UpperBound)) +
             geom_point() + # to show the mean value
             geom_errorbar(width = 0.2) # width of the horizontal line at the top and bottom of the error bar
 
@@ -278,14 +277,14 @@
                     plots = [
                         Makie.PlotSpec(
                             :Scatter,
-                            levelcode.(df_errorbar.cat_numeric),
+                            df_errorbar.cat_numeric,
                             df_errorbar.MeanValue),
                         Makie.PlotSpec(
                             :Rangebars,
-                            levelcode.(df_errorbar.cat_numeric),
+                            df_errorbar.cat_numeric,
                             df_errorbar.LowerBound,
                             df_errorbar.UpperBound)
-                    ]; xticks = (1:4, categories)
+                    ]
                 )
             )
         )

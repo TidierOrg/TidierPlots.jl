@@ -77,6 +77,10 @@ function Makie.SpecApi.Axis(plot::GGPlot)
                 geom.required_aes,
                 aes_df)
 
+        if !isnothing(plot.color_palette)
+            aes_df = transform(aes_df, :color => plot.color_palette => :color)
+        end
+
         # keep track of the global max and min on each axis
         if "x" in names(aes_df) && eltype(aes_df.x) <: AbstractFloat
             xmin = min(xmin, minimum(aes_df.x))

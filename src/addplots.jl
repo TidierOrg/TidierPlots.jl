@@ -15,11 +15,13 @@ function Base.:+(x::GGPlot, y::Union{Geom, Vector{Geom}, Aesthetics, AxisOptions
     facet = [i for i in y if i isa FacetOptions]
     facet_options = length(facet) == 0 ? nothing : facet[end]
 
-    color = [i.color_palette for i in y if i isa AxisOptions]
+    color = [i.color_palette for i in y if i isa AxisOptions &&
+        !isnothing(i.color_palette)]
     color_palette = length(color) == 0 ? nothing : color[end]
 
-    fill = [i.fill_palette for i in y if i isa AxisOptions]
-    fill_palette = length(fill) == 0 ? nothing : color[fill]
+    fill = [i.fill_palette for i in y if i isa AxisOptions &&
+        !isnothing(i.fill_palette)]
+    fill_palette = length(fill) == 0 ? nothing : fill[end]
 
     result = GGPlot(
         vcat(x.geoms, # if there are geoms or lists of geoms, append them to the ggplot's geoms

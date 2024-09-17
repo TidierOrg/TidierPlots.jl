@@ -115,7 +115,9 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         for a in Symbol.(required_aes)
             data = aes_df[!, a]
             if eltype(data) <: Union{AbstractString,RGB{FixedPoint}}
-                data = Categorical(data)
+                if !(a in _verbatim_aes)
+                    data = Categorical(data)
+                end
             end
             push!(required_aes_data, data)
         end
@@ -135,7 +137,9 @@ function Makie.SpecApi.Axis(plot::GGPlot)
             data = aes_df[!, Symbol(a)]
 
             if eltype(data) <: Union{AbstractString,RGB{FixedPoint}}
-                data = Categorical(data)
+                if !(Symbol(a) in _verbatim_aes)
+                    data = Categorical(data)
+                end
             end
 
             push!(optional_aes_data, Symbol(a) => data)

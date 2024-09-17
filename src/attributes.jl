@@ -183,3 +183,7 @@ const _accepted_options_by_type = Dict(
     :Violin    => Makie.attribute_names(Plot{Makie.violin}),
     :Stairs    => Makie.attribute_names(Plot{Makie.stairs})
 )
+
+# aesthetics that should not be treated as categorical variables
+
+const _verbatim_aes = [:label, :text]

@@ -1,5 +1,11 @@
 # TidierPlots.jl updates
 
+## v0.8.0 - 2024-09-18
+- Breaking refactor, at least internally. Changes definitions of structs, replaces calculation backend
+- Calculations now work in macro aes
+- Fixes numerous small issues
+- Plots and geoms can now be broadcast
+
 ## v0.7.3 - 2024-04-18
 
 - `geom_boxplot` now correctly handles color as a grouping aesthetic

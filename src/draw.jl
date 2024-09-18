@@ -1,10 +1,7 @@
 import Makie.SpecApi
 
 function Makie.SpecApi.Axis(plot::GGPlot)
-    plot_list = Makie.PlotSpec[]
-    plot_list_by_facet = nothing
-    facet_names = nothing
-    facet_positions = nothing
+    plot_list = Dict{Tuple,Vector{Makie.PlotSpec}}()
     facet_boxes = Dict()
     facet_labels = Dict()
     axis_options = Dict{Symbol,Any}()
@@ -50,7 +47,26 @@ function Makie.SpecApi.Axis(plot::GGPlot)
             push!(aes_df_list, select(plot_data, rule[1] => rule[2] => aes))
         end
 
+        if !isnothing(plot.facet_options)
+            push!(aes_df_list,
+                DataFrame(facet = plot_data[!, plot.facet_options.wrap]))
+        end
+
         aes_df = hcat(aes_df_list...)
+
+        # if there are no grouping aesthetics and no manually specified group, everything is part of the same group. Otherwise, make a grouping column out of the grouping aesthetics if one doesn't already exist
+        grouping_aes = intersect(
+            geom.grouping_aes,
+            Symbol.(names(aes_df))
+        )
+
+        if !("group" in names(aes_df))
+            if length(grouping_aes) == 0
+                aes_df.group .= 1
+            elseif !("group" in names(aes_df))
+                aes_df.group = string.([aes_df[!, col] for col in grouping_aes]...)
+            end
+        end
 
         args_dict_makie = Dict{Symbol,Any}()
 
@@ -104,57 +120,80 @@ function Makie.SpecApi.Axis(plot::GGPlot)
             ymax = max(ymax, maximum(aes_df.y))
         end
 
-        grouping = length(intersect(
-            names(aes_df), geom.grouping_aes)) == 0
-
-        facets = !isnothing(plot.facet_options)
-
-        # if there are no grouping_aes given and no facets required, we only need one PlotSpec
-        required_aes_data = []
-
-        for a in required_aes
-            data = aes_df[!, Symbol(a)]
-            if eltype(data) <: Union{AbstractString,CategoricalValue}
-                if !(Symbol(a) in _verbatim_aes)
-                    labels = levels(CategoricalArray(data))
-                    data = levelcode.(CategoricalArray(data))
-                    axis_options[Symbol(a * "ticks")] = (
-                        1:maximum(data),
-                        string.(labels)
-                    )
-                end
-            end
-            push!(required_aes_data, data)
+        # if there are no facet options just plot everything in 1,1
+        # if there are, make a column that indicates which facet each point belongs to
+        if isnothing(plot.facet_options)
+            aes_df.facet .= [(1, 1)] # everything goes in the same "facet"
+        else
+            facet_names = unique(aes_df.facet)
+            facet_positions, facet_labels, facet_boxes =
+                position_facets(facet_names,
+                    plot.facet_options.nrow,
+                    plot.facet_options.ncol)
+            aes_df.facet = [facet_positions[k] for k in aes_df.facet]
         end
 
-        optional_aes_data = Dict()
+        for (key, group_aes_df) in pairs(groupby(aes_df, [:group, :facet]))
+            required_aes_data = []
 
-        for a in names(aes_df)
-            if String(a) in required_aes
-                continue
+            for a in required_aes
+                data = group_aes_df[!, Symbol(a)]
+                if !(Symbol(a) in _verbatim_aes)
+                    if eltype(data) <: AbstractString
+                        labels = levels(CategoricalArray(data))
+                        data = levelcode.(CategoricalArray(data))
+                        axis_options[Symbol(a * "ticks")] = (
+                            1:maximum(data),
+                            string.(labels)
+                        )
+                    elseif eltype(data) <: CategoricalValue
+                        labels = levels(data)
+                        data = levelcode.(data)
+                        axis_options[Symbol(a * "ticks")] = (
+                            1:maximum(data),
+                            string.(labels)
+                        )
+                    end
+                end
+                push!(required_aes_data, data)
             end
-            if !isnothing(supported_kwargs)
-                if !(Symbol(a) in supported_kwargs)
+
+            optional_aes_data = Dict()
+
+            for a in names(group_aes_df)
+                if String(a) in required_aes
                     continue
                 end
-            end
-
-            data = aes_df[!, Symbol(a)]
-
-            if eltype(data) <: Union{AbstractString,RGB{FixedPoint}}
-                if !(Symbol(a) in _verbatim_aes)
-                    data = Categorical(data)
+                if !isnothing(supported_kwargs)
+                    if !(Symbol(a) in supported_kwargs)
+                        continue
+                    end
                 end
+
+                data = group_aes_df[!, Symbol(a)]
+
+                if eltype(data) <: Union{AbstractString,RGB{FixedPoint}}
+                    if !(Symbol(a) in _verbatim_aes)
+                        data = Categorical(data)
+                    end
+                end
+
+                push!(optional_aes_data, Symbol(a) => data)
             end
 
-            push!(optional_aes_data, Symbol(a) => data)
+            args = Tuple([geom.visual, required_aes_data...])
+            kwargs = merge(args_dict_makie, optional_aes_data)
+
+            # push completed PlotSpec (type, args, and kwargs) to the list of plots in the appropriate facet
+            facet_position = key[2]
+            if haskey(plot_list, facet_position) # add to list if exists
+                plot_list[facet_position] = vcat(
+                    plot_list[facet_position],
+                    Makie.PlotSpec(args...; kwargs...))
+            else
+                plot_list[facet_position] = [Makie.PlotSpec(args...; kwargs...)]
+            end
         end
-
-        args = Tuple([geom.visual, required_aes_data...])
-        kwargs = merge(args_dict_makie, optional_aes_data)
-
-        # push completed PlotSpec (type, args, and kwargs) to the list of plots
-        push!(plot_list, Makie.PlotSpec(args...; kwargs...))
     end
 
     # rename and correct types on all axis options
@@ -167,40 +206,28 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         end
     end
 
-    if isnothing(plot.facet_options)
-        return length(axis_options) == 0 ?
-               Makie.SpecApi.Axis(plots=plot_list) :
-               Makie.SpecApi.Axis(plots=plot_list; axis_options...)
-    else
-        if !haskey(axis_options, :limits)
-            expand_x = (xmax - xmin) * 0.05
-            expand_y = (ymax - ymin) * 0.05
+    if !haskey(axis_options, :limits) && !isnothing(plot.facet_options)
+        expand_x = (xmax - xmin) * 0.05
+        expand_y = (ymax - ymin) * 0.05
 
-            if !plot.facet_options.free_x && plot.facet_options.free_y
-                expandx = (xmax - xmin) * 0.05
-                axis_options[:limits] = ((xmin - expand_x, xmax + expand_x), nothing)
-            elseif plot.facet_options.free_x && !plot.facet_options.free_y
+        if !plot.facet_options.free_x && plot.facet_options.free_y
+            expandx = (xmax - xmin) * 0.05
+            axis_options[:limits] = ((xmin - expand_x, xmax + expand_x), nothing)
+        elseif plot.facet_options.free_x && !plot.facet_options.free_y
                 axis_options[:limits] = (nothing, (ymin - expand_y, ymax + expand_y))
-            elseif !plot.facet_options.free_x && !plot.facet_options.free_y
+        elseif !plot.facet_options.free_x && !plot.facet_options.free_y
                 axis_options[:limits] = ((xmin - expand_x, xmax + expand_x), (ymin - expand_y, ymax + expand_y))
-            end
-        end
-
-        if length(axis_options) == 0
-            return Makie.SpecApi.GridLayout(
-                [facet_positions[name] => Makie.SpecApi.Axis(plots=plot_list_by_facet[name]) for name in facet_names]...,
-                facet_labels...,
-                facet_boxes...
-            )
-        else
-            return Makie.SpecApi.GridLayout(
-                [facet_positions[name] => Makie.SpecApi.Axis(plots=plot_list_by_facet[name]; axis_options...) for name in facet_names]...,
-                facet_labels...,
-                facet_boxes...
-            )
         end
     end
+
+    return Makie.SpecApi.GridLayout(
+        [k => Makie.SpecApi.Axis(plots=v; axis_options...) for
+            (k, v) in plot_list]...,
+        facet_labels...,
+        facet_boxes...
+    )
 end
+
 
 function draw_ggplot(plot::GGPlot)
     axis = Makie.SpecApi.Axis(plot)

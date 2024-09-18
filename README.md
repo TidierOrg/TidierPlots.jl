@@ -27,14 +27,16 @@ TidierPlots.jl is a 100% Julia implementation of the R package [ggplot2](https:/
 
 ## Installation
 
-For the "stable" version, access the Pkg interface by pressing `]` at the `julia>` prompt, then type `add TidierPlots`.
+For the "stable" version (currently 0.7.8), access the Pkg interface by pressing `]` at the `julia>` prompt, then type `add TidierPlots`.
 
-For the development version:
+For the development version (currently 0.8.0):
 
 ```julia
 using Pkg
 Pkg.add(url="https://github.com/TidierOrg/TidierPlots.jl")
 ```
+
+TidierPlots will also be installed automatically if you `add Tidier`.
 
 ## What functions does TidierPlots.jl support?
 
@@ -47,7 +49,7 @@ Geoms:
 - `geom_path`, `geom_line`, and `geom_step`
 - `geom_bar`, `geom_col`, and `geom_histogram`
 - `geom_boxplot` and `geom_violin`
-- `geom_contour` and `geom_tile`
+- `geom_tile`
 - `geom_density`
 - `geom_text` and `geom_label`
 
@@ -85,7 +87,6 @@ The goal of this package is to allow you to write code that is as similar to ggp
 
 - Option 1: `aes` function, julia-style columns, e.g. `aes(x = :x, y = :y)` or `aes(:x, :y)`
 - Option 2: `@aes` (or `@es`) macro, aes as in ggplot, e.g. `@aes(x = x, y = y)` or `@aes(x, y)`
-- Option 3 (Deprecated): `aes` function, column names as strings, e.g. `aes(x = "x", y = "y")` or `aes("x", "y")`
 
 If you use Option 1, functions can be applied to columns with the `=>` operator to form a `Pair{Symbol, Function}`, similar to how `DataFrames.jl` functions work.
 
@@ -124,7 +125,7 @@ Sort your categorical variables in order of appearance with a single keyword rat
     @count(manufacturer)
     @arrange(n)
     ggplot(xticklabelrotation = .5)
-        geom_col(aes(y = :n, x = cat_inorder(:manufacturer)))
+        geom_col(@es(y = n, x = cat_inorder(manufacturer)))
 end
 ```
 ![](assets/in_order.png)
@@ -217,7 +218,7 @@ Add basic support for any Makie plot using `geom_template(name, required_aes, ma
 geom_raincloud = geom_template("geom_raincloud", ["x", "y"], :RainClouds)
 
 ggplot(penguins) +
-    geom_raincloud(aes(x = :species, y = :bill_depth_mm/10, color = :species), size = 4) +
+    geom_raincloud(@aes(x = species, y = bill_depth_mm/10, color = species), size = 4) +
     scale_y_continuous(labels = "{:.1f} cm") +
     labs(title = "Bill Depth by Species", x = "Species", y = "Bill Depth") +
     theme_minimal()

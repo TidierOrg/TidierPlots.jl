@@ -70,8 +70,8 @@ Compactly displays the distribution of continuous data.
 ggplot(penguins, @aes(x=species, y=bill_length_mm)) +
     geom_boxplot()
 
-ggplot(penguins, @aes(x=species, y=bill_length_mm)) +
-    geom_boxplot(orientation=:horizontal)
+ggplot(penguins, @aes(y=species, x=bill_length_mm)) +
+    geom_boxplot()
 
 ggplot(penguins, @aes(x=species, y=bill_length_mm, dodge=sex, color=sex)) +
     geom_boxplot()

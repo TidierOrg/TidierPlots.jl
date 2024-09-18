@@ -76,6 +76,7 @@ function stat_loess(
 )
     x = plot_data[!, :x]
     y = plot_data[!, :y]
+    group = first(plot_data[!, :group])
 
     model = Loess.loess(x, y; span = .75, degree = 2)
     x̂ = range(extrema(x)..., length=200)
@@ -83,7 +84,8 @@ function stat_loess(
 
     return_data = DataFrame(
         "x" => x̂,
-        "y" => ŷ
+        "y" => ŷ,
+        "group" => repeat([group], 200)
     )
 
     return (aes_dict, args_dict, required_aes, return_data)
@@ -97,6 +99,7 @@ function stat_linear(
 )
     x = plot_data[!, :x]
     y = plot_data[!, :y]
+    group = first(plot_data[!, :group])
 
     # thanks AlgebraOfGraphics
     function add_intercept_column(x::AbstractVector{T}) where {T}
@@ -116,7 +119,8 @@ function stat_linear(
         "x" => x̂,
         "y" => pred.prediction,
         "lower" => pred.lower,
-        "upper" => pred.upper
+        "upper" => pred.upper,
+        "group" => repeat([group], 100)
     )
 
     return (aes_dict, args_dict, required_aes, return_data)

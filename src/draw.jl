@@ -196,6 +196,10 @@ function Makie.SpecApi.Axis(plot::GGPlot)
                     end
                 end
 
+                if Symbol(a) in grouping_aes
+                    data = first(data)
+                end
+
                 push!(optional_aes_data, Symbol(a) => data)
             end
 
@@ -228,7 +232,9 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         expand_x = (xmax - xmin) * 0.05
         expand_y = (ymax - ymin) * 0.05
 
-        if !plot.facet_options.free_x && plot.facet_options.free_y
+        if any(isinf.([xmax, xmin, ymax, ymin]))
+            axis_options[:limits] = (nothing, nothing)
+        elseif !plot.facet_options.free_x && plot.facet_options.free_y
             expandx = (xmax - xmin) * 0.05
             axis_options[:limits] = ((xmin - expand_x, xmax + expand_x), nothing)
         elseif plot.facet_options.free_x && !plot.facet_options.free_y

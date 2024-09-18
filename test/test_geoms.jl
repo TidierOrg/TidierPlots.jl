@@ -234,8 +234,12 @@
     end
 
     @testset "geom_density" begin
-        t = ggplot(penguins, @aes(x = body_mass_g)) +
+        t = ggplot(penguins, @aes(x = body_mass_g, color = species)) +
             geom_density()
+
+        adelie = @filter(penguins, species == "Adelie")
+        gentoo = @filter(penguins, species == "Gentoo")
+        chin = @filter(penguins, species == "Chinstrap")
 
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
@@ -243,7 +247,16 @@
                     plots = [
                         Makie.PlotSpec(
                             :Density,
-                            penguins.body_mass_g)
+                            adelie.body_mass_g;
+                            color =RGB(0/255, 114/255, 178/255)),
+                        Makie.PlotSpec(
+                            :Density,
+                            gentoo.body_mass_g;
+                            color =RGB(0/255, 158/255, 115/255)),
+                        Makie.PlotSpec(
+                            :Density,
+                            chin.body_mass_g;
+                            color =RGB(230/255, 159/255, 0/255))
                     ]
                 )
             )

@@ -63,7 +63,7 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         if !("group" in names(aes_df))
             if length(grouping_aes) == 0
                 aes_df.group .= 1
-            elseif !("group" in names(aes_df))
+            else
                 aes_df.group = string.([aes_df[!, col] for col in grouping_aes]...)
             end
         end
@@ -94,6 +94,7 @@ function Makie.SpecApi.Axis(plot::GGPlot)
                 required_aes,
                 aes_df)
 
+
         if !isnothing(plot.color_palette)
             if eltype(aes_df.color) <: Number
                 aes_df = transform(aes_df, :color =>
@@ -101,6 +102,19 @@ function Makie.SpecApi.Axis(plot::GGPlot)
             else
                 aes_df = transform(aes_df, :color =>
                     (x -> plot.color_palette.(
+                        levelcode.(
+                            CategoricalArray(x)
+                        )
+                    )) => :color
+                )
+            end
+        elseif "color" in names(aes_df)
+            if eltype(aes_df.color) <: Number
+                aes_df = transform(aes_df, :color =>
+                    _default_continuous_palette => :color)
+            else
+                aes_df = transform(aes_df, :color =>
+                    (x -> _default_discrete_palette(
                         levelcode.(
                             CategoricalArray(x)
                         )
@@ -154,6 +168,8 @@ function Makie.SpecApi.Axis(plot::GGPlot)
                             string.(labels)
                         )
                     end
+                else
+                    data = String.(data)
                 end
                 push!(required_aes_data, data)
             end
@@ -175,6 +191,8 @@ function Makie.SpecApi.Axis(plot::GGPlot)
                 if eltype(data) <: Union{AbstractString,RGB{FixedPoint}}
                     if !(Symbol(a) in _verbatim_aes)
                         data = Categorical(data)
+                    else
+                        data = String.(data)
                     end
                 end
 

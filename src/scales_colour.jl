@@ -131,6 +131,23 @@ function color_scale_template(scale, f, type)
     return scale_function
 end
 
+# default palettes
+
+const _default_discrete_palette = make_color_lookup_manual(
+    Dict(:values => [
+        RGB(0/255, 114/255, 178/255), # blue
+        RGB(230/255, 159/255, 0/255), # orange
+        RGB(0/255, 158/255, 115/255), # green
+        RGB(204/255, 121/255, 167/255), # reddish purple
+        RGB(86/255, 180/255, 233/255), # sky blue
+        RGB(213/255, 94/255, 0/255), # vermillion
+        RGB(240/255, 228/255, 66/255), # yellow
+    ])
+)
+const _default_continuous_palette = make_color_lookup_continuous(
+    :palette => :viridis
+)
+
 # scale definitions
 
 scale_colour_manual = color_scale_template(

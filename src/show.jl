@@ -40,14 +40,14 @@ function Base.show(io::IO, geom::Geom)
                 println("$k: $v")
             end
         end
-    end 
+    end
 end
 
 function Base.show(io::IO, plot::GGPlot)
     if plot_log[]
         printstyled(io, "ggplot options\n", underline = true)
 
-        if !isnothing(plot.data)        
+        if !isnothing(plot.data)
             row_count = nrow(DataFrame(plot.data))
             col_count = ncol(DataFrame(plot.data))
             printstyled(io, "data: A DataFrame ($row_count rows, $col_count columns)\n", color = :blue)
@@ -92,10 +92,17 @@ function Base.show(io::IO, plot_grid::GGPlotGrid)
     end
 end
 
-
 function Base.show(io::IO, ::MIME"text/html", x::GGPlot)
-	show(io, MIME"text/html"(), 
-        with_theme(x.theme) do 
+	show(io, MIME"text/html"(),
+        with_theme(x.theme) do
+            draw_ggplot(x)
+        end
+    )
+end
+
+function Base.show(io::IO, ::MIME"text/html", x::GGPlotGrid)
+	show(io, MIME"text/html"(),
+        with_theme(x.theme) do
             draw_ggplot(x)
         end
     )

@@ -10,7 +10,7 @@
 
     m = Makie.plot(
         Makie.SpecApi.GridLayout(
-            Makie.SpecApi.Axis(
+            [Makie.SpecApi.Axis(
                 plots = [
                     Makie.PlotSpec(
                         :Scatter,
@@ -19,7 +19,7 @@
                         color = (x -> colours[x]).(levelcode.(cat_array))
                     )
                 ]
-            )
+            ) TidierPlots.build_legend(t)]
         )
     )
 
@@ -37,7 +37,7 @@ end
 
     m = Makie.plot(
         Makie.SpecApi.GridLayout(
-            Makie.SpecApi.Axis(
+            [Makie.SpecApi.Axis(
                 plots = [
                     Makie.PlotSpec(
                         :Scatter,
@@ -46,7 +46,7 @@ end
                         color = (x -> colours[x]).(levelcode.(cat_array))
                     )
                 ]
-            )
+            ) TidierPlots.build_legend(t)]
         )
     )
 
@@ -63,7 +63,7 @@ end
 
     m = Makie.plot(
         Makie.SpecApi.GridLayout(
-            Makie.SpecApi.Axis(
+            [Makie.SpecApi.Axis(
                 plots = [
                     Makie.PlotSpec(
                         :Scatter,
@@ -72,7 +72,7 @@ end
                         color = colours
                     )
                 ]
-            )
+            ) TidierPlots.build_legend(t)]
         )
     )
 
@@ -90,7 +90,7 @@ end
 
     m = Makie.plot(
         Makie.SpecApi.GridLayout(
-            Makie.SpecApi.Axis(
+            [Makie.SpecApi.Axis(
                 plots = [
                     Makie.PlotSpec(
                         :Scatter,
@@ -99,7 +99,7 @@ end
                         color = ColorSchemes.colorschemes[:Purples_5][colours]
                     )
                 ]
-            )
+            ) TidierPlots.build_legend(t)]
         )
     )
 

@@ -197,7 +197,7 @@
 
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
-                Makie.SpecApi.Axis(
+                [Makie.SpecApi.Axis(
                     plots = [
                         Makie.PlotSpec(
                         :Violin,
@@ -206,7 +206,7 @@
                         color = (x -> colours[x]).(levelcode.(cat_array))
                     )]; xticks = (unique(levelcode.(cat_array)),
                     unique(cat_array))
-                )
+                ) TidierPlots.build_legend(t)]
             )
         )
 
@@ -243,7 +243,7 @@
 
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
-                Makie.SpecApi.Axis(
+                [Makie.SpecApi.Axis(
                     plots = [
                         Makie.PlotSpec(
                             :Density,
@@ -258,7 +258,7 @@
                             chin.body_mass_g;
                             color =RGB(230/255, 159/255, 0/255))
                     ]
-                )
+                ) TidierPlots.build_legend(t)]
             )
         )
 

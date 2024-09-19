@@ -4,8 +4,8 @@ function build_legend(plot::GGPlot)
 
     palette_function = nothing
 
-    if !(any([haskey(geom.aes, "color") || haskey(geom.aes, "color") for geom in plot.geoms]) ||
-        haskey(plot.default_aes, "color") || haskey(plot.default_aes, "color"))
+    if !(any([haskey(geom.aes, :colour) || haskey(geom.aes, :color) for geom in plot.geoms]) ||
+        haskey(plot.default_aes, :colour) || haskey(plot.default_aes, :color))
         return nothing
     end
 
@@ -30,8 +30,8 @@ function build_legend(plot::GGPlot)
             all_aes = geom.aes
         end
 
-        color_colname = haskey(all_aes, "colour") ? all_aes["colour"] :
-            haskey(all_aes, "color") ? all_aes["color"] :
+        color_colname = haskey(all_aes, :colour) ? all_aes[:colour][1] :
+            haskey(all_aes, :color) ? all_aes[:color][1] :
             nothing
 
         if isnothing(color_colname)
@@ -39,6 +39,7 @@ function build_legend(plot::GGPlot)
         end
 
         plot_data = isnothing(geom.data) ? plot.data : geom.data
+        palette_function = plot.color_palette
 
         if isnothing(palette_function)
             if eltype(plot_data[!, color_colname]) <: Union{AbstractString, AbstractChar, CategoricalValue}
@@ -53,16 +54,17 @@ function build_legend(plot::GGPlot)
             else
                 plot = plot + scale_colour_continuous(palette = :viridis)
             end
-            #palette_function = plot.column_transformations[:color][2]
+            palette_function = plot.color_palette
         end
 
         if plot.legend_options[:color][:type] in ["manual", "discrete"]
-
-            plottable_data = palette_function(:color, [color_colname], plot_data)
-            labels = unique(plottable_data[:color].raw)
+            plottable_data = palette_function.(
+                levelcode.(CategoricalArray(plot_data[!, color_colname]))
+            )
+            labels = unique(plot_data[!, color_colname])
 
             append!(legend, sort(DataFrame(labels = labels,
-                colors = unique(plottable_data[:color].makie_function(plottable_data[:color].raw)),
+                colors = unique(plottable_data),
                 options = _legend_geom_symbols[geom.args["geom_name"]],
                 element = _legend_geom_elements[geom.args["geom_name"]]),
                 :labels))
@@ -72,13 +74,13 @@ function build_legend(plot::GGPlot)
 
         if plot.legend_options[:color][:type] in ["continuous", "binned"]
 
-            plottable_data = palette_function(:color, [color_colname], plot_data)
+            plottable_data = palette_function(plot_data[!, color_colname])
 
             colorbar_kwargs[:colormap] = plot.legend_options[:color][:type] == "continuous" ? Symbol(plot.legend_options[:color][:palette]) :
                 cgrad(Symbol(plot.legend_options[:color][:palette]), 5, categorical = true)
 
-            lowlim = min(minimum(plottable_data[:color].raw), lowlim)
-            highlim = max(maximum(plottable_data[:color].raw), highlim)
+            lowlim = min(minimum(plot_data[!, color_colname]), lowlim)
+            highlim = max(maximum(plot_data[!, color_colname]), highlim)
 
             colorbar = true
             title = get(plot.legend_options[:color], :name, titlecase(string(color_colname)))

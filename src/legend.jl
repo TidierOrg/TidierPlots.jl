@@ -39,7 +39,7 @@ function build_legend(plot::GGPlot)
         end
 
         plot_data = isnothing(geom.data) ? plot.data : geom.data
-        palette_function = plot.color_palette
+        palette_function = get(plot.palette, :color, nothing)
 
         if isnothing(palette_function)
             if eltype(plot_data[!, color_colname]) <: Union{AbstractString, AbstractChar, CategoricalValue}
@@ -54,7 +54,7 @@ function build_legend(plot::GGPlot)
             else
                 plot = plot + scale_colour_continuous(palette = :viridis)
             end
-            palette_function = plot.color_palette
+            palette_function = plot.palette[:color]
         end
 
         if plot.legend_options[:color][:type] in ["manual", "discrete"]

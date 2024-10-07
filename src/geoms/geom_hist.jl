@@ -37,4 +37,9 @@ ggplot(penguins, @aes(x = bill_length_mm)) +
 ```
 """
 geom_histogram = geom_template("geom_histogram", ["x"], :Hist;
-    grouping_aes=[:color, :colour])
+    grouping_aes=[:color, :colour],
+    special_aes=Dict(
+        :fill => :color,
+        :color => :strokecolor,
+        :colour => :strokecolor
+    ))

@@ -102,7 +102,7 @@ end
 
 function Base.show(io::IO, ::MIME"text/html", x::GGPlotGrid)
 	show(io, MIME"text/html"(),
-        with_theme(x.theme) do
+        with_theme(x.plots[1].theme) do
             draw_ggplot(x)
         end
     )

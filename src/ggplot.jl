@@ -20,7 +20,8 @@ function ggplot(args...; kwargs...)
            args_dict,
            theme_ggplot2(),
            Dict(),
-           nothing, nothing, nothing)
+           nothing,
+           Dict())
 end
 
 function ggplot(data::DataFrame, args...; kwargs...)
@@ -32,5 +33,6 @@ function ggplot(data::DataFrame, args...; kwargs...)
            args_dict,
            theme_ggplot2(),
            Dict(),
-           nothing, nothing, nothing)
+           nothing,
+           Dict())
 end

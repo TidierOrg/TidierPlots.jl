@@ -10,7 +10,7 @@ function labs(args...; kwargs...)
 
     return AxisOptions(
         Dict(ggplot_to_makie[k] => v for (k, v) in args_dict),
-        nothing, nothing,
+        Dict(),
         Dict()
     )
 end
@@ -50,7 +50,7 @@ function lims(args...; kwargs...)
         end
     end
 
-    return AxisOptions(lims_dict, nothing, nothing, Dict())
+    return AxisOptions(lims_dict, Dict(), Dict())
 end
 
 function lims(plot::GGPlot, args...; kwargs...)

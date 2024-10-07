@@ -20,8 +20,7 @@ function continuous_scale_to_ggoptions(args_dict::Dict)
 
     return AxisOptions(
         Dict(Symbol(k) => v for (k, v) in options_dict),
-        nothing,
-        nothing,
+        Dict(),
         Dict()
     )
 

@@ -7,7 +7,7 @@
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
                 Makie.SpecApi.Axis(
-                    plots = [
+                    plots=[
                         Makie.PlotSpec(
                             :Scatter,
                             penguins.bill_length_mm,
@@ -34,11 +34,11 @@
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
                 Makie.SpecApi.Axis(
-                    plots = [
+                    plots=[
                         Makie.PlotSpec(
                             :BarPlot,
                             penguins_count.count)
-                    ]; xticks = (1:3, penguins_count.species)
+                    ]; xticks=(1:3, penguins_count.species)
                 )
             )
         )
@@ -59,11 +59,11 @@
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
                 Makie.SpecApi.Axis(
-                    plots = [
+                    plots=[
                         Makie.PlotSpec(
                             :BarPlot,
                             penguins_count.count)
-                    ]; xticks = (1:3, penguins_count.species)
+                    ]; xticks=(1:3, penguins_count.species)
                 )
             )
         )
@@ -78,7 +78,7 @@
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
                 Makie.SpecApi.Axis(
-                    plots = [
+                    plots=[
                         Makie.PlotSpec(
                             :Lines,
                             penguins.bill_length_mm,
@@ -100,7 +100,7 @@
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
                 Makie.SpecApi.Axis(
-                    plots = [
+                    plots=[
                         Makie.PlotSpec(
                             :Lines,
                             penguins.bill_length_mm[perm],
@@ -115,7 +115,7 @@
 
     @testset "geom_step" begin
         xs = collect(rand(30) * 2pi)
-        df = DataFrame(x = xs, y = sin.(xs))
+        df = DataFrame(x=xs, y=sin.(xs))
 
         perm = sortperm(df.x)
 
@@ -124,7 +124,7 @@
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
                 Makie.SpecApi.Axis(
-                    plots = [
+                    plots=[
                         Makie.PlotSpec(
                             :Stairs,
                             df.x[perm],
@@ -146,13 +146,13 @@
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
                 Makie.SpecApi.Axis(
-                    plots = [
+                    plots=[
                         Makie.PlotSpec(
                             :BoxPlot,
                             levelcode.(cat_array),
                             penguins.bill_length_mm)
-                    ]; xticks = (unique(levelcode.(cat_array)),
-                                 unique(cat_array))
+                    ]; xticks=(unique(levelcode.(cat_array)),
+                        unique(cat_array))
                 )
             )
         )
@@ -169,13 +169,13 @@
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
                 Makie.SpecApi.Axis(
-                    plots = [
+                    plots=[
                         Makie.PlotSpec(
                             :Violin,
                             levelcode.(cat_array),
                             penguins.bill_length_mm)
-                    ]; xticks = (unique(levelcode.(cat_array)),
-                                 unique(cat_array))
+                    ]; xticks=(unique(levelcode.(cat_array)),
+                        unique(cat_array))
                 )
             )
         )
@@ -183,29 +183,29 @@
         @test plot_images_equal(t, m)
 
         colours = [
-            RGB(0/255, 114/255, 178/255), # blue
-            RGB(230/255, 159/255, 0/255), # orange
-            RGB(0/255, 158/255, 115/255), # green
-            RGB(204/255, 121/255, 167/255), # reddish purple
-            RGB(86/255, 180/255, 233/255), # sky blue
-            RGB(213/255, 94/255, 0/255), # vermillion
-            RGB(240/255, 228/255, 66/255), # yellow
+            RGB(0 / 255, 114 / 255, 178 / 255), # blue
+            RGB(230 / 255, 159 / 255, 0 / 255), # orange
+            RGB(0 / 255, 158 / 255, 115 / 255), # green
+            RGB(204 / 255, 121 / 255, 167 / 255), # reddish purple
+            RGB(86 / 255, 180 / 255, 233 / 255), # sky blue
+            RGB(213 / 255, 94 / 255, 0 / 255), # vermillion
+            RGB(240 / 255, 228 / 255, 66 / 255), # yellow
         ]
 
         t = ggplot(penguins) +
-            geom_violin(aes(x = :species, y = :bill_length_mm, color = :species)) + scale_color_manual(values = colours)
+            geom_violin(aes(x=:species, y=:bill_length_mm, color=:species)) + scale_color_manual(values=colours)
 
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
                 [Makie.SpecApi.Axis(
-                    plots = [
+                    plots=[
                         Makie.PlotSpec(
-                        :Violin,
-                        levelcode.(cat_array),
-                        penguins.bill_length_mm;
-                        color = (x -> colours[x]).(levelcode.(cat_array))
-                    )]; xticks = (unique(levelcode.(cat_array)),
-                    unique(cat_array))
+                            :Violin,
+                            levelcode.(cat_array),
+                            penguins.bill_length_mm;
+                            color=(x -> colours[x]).(levelcode.(cat_array))
+                        )]; xticks=(unique(levelcode.(cat_array)),
+                        unique(cat_array))
                 ) TidierPlots.build_legend(t)]
             )
         )
@@ -221,7 +221,7 @@
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
                 Makie.SpecApi.Axis(
-                    plots = [
+                    plots=[
                         Makie.PlotSpec(
                             :Hist,
                             penguins.bill_length_mm)
@@ -244,19 +244,19 @@
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
                 [Makie.SpecApi.Axis(
-                    plots = [
+                    plots=[
                         Makie.PlotSpec(
                             :Density,
                             adelie.body_mass_g;
-                            color =RGB(0/255, 114/255, 178/255)),
+                            color=RGB(0 / 255, 114 / 255, 178 / 255)),
                         Makie.PlotSpec(
                             :Density,
                             gentoo.body_mass_g;
-                            color =RGB(0/255, 158/255, 115/255)),
+                            color=RGB(0 / 255, 158 / 255, 115 / 255)),
                         Makie.PlotSpec(
                             :Density,
                             chin.body_mass_g;
-                            color =RGB(230/255, 159/255, 0/255))
+                            color=RGB(230 / 255, 159 / 255, 0 / 255))
                     ]
                 ) TidierPlots.build_legend(t)]
             )
@@ -266,29 +266,29 @@
     end
 
     @testset "geom_errorbar" begin
-        categories = [1, 2, 3, 4];
-        n = length(categories);
+        categories = [1, 2, 3, 4]
+        n = length(categories)
 
-        mean_values = rand(n);  # Random mean values for demonstration
-        errors = rand(n) / 2;   # Random error values for demonstration
+        mean_values = rand(n)  # Random mean values for demonstration
+        errors = rand(n) / 2   # Random error values for demonstration
 
-        LowerBound = mean_values .- errors;
-        UpperBound = mean_values .+ errors;
+        LowerBound = mean_values .- errors
+        UpperBound = mean_values .+ errors
 
         df_errorbar = DataFrame(
-            cat_numeric = categories,
-            MeanValue = mean_values,
-            LowerBound = LowerBound,
-            UpperBound = UpperBound);
+            cat_numeric=categories,
+            MeanValue=mean_values,
+            LowerBound=LowerBound,
+            UpperBound=UpperBound)
 
         t = ggplot(df_errorbar, @aes(x = cat_numeric, y = MeanValue, ymin = LowerBound, ymax = UpperBound)) +
             geom_point() + # to show the mean value
-            geom_errorbar(width = 0.2) # width of the horizontal line at the top and bottom of the error bar
+            geom_errorbar(width=0.2) # width of the horizontal line at the top and bottom of the error bar
 
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
                 Makie.SpecApi.Axis(
-                    plots = [
+                    plots=[
                         Makie.PlotSpec(
                             :Scatter,
                             df_errorbar.cat_numeric,
@@ -308,17 +308,17 @@
     end
 
     @testset "geom_smooth" begin
-        t = ggplot(penguins, aes(x = "bill_length_mm", y = "bill_depth_mm")) +
+        t = ggplot(penguins, aes(x="bill_length_mm", y="bill_depth_mm")) +
             geom_smooth() + geom_point()
 
-        model = Loess.loess(penguins.bill_length_mm, penguins.bill_depth_mm; span = .75, degree = 2)
+        model = Loess.loess(penguins.bill_length_mm, penguins.bill_depth_mm; span=0.75, degree=2)
         x̂ = range(extrema(penguins.bill_length_mm)..., length=200)
         ŷ = Loess.predict(model, x̂)
 
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
                 Makie.SpecApi.Axis(
-                    plots = [
+                    plots=[
                         Makie.PlotSpec(
                             :Lines,
                             x̂,
@@ -335,8 +335,8 @@
 
         @test plot_images_equal(t, m)
 
-        t = ggplot(penguins, aes(x = "bill_length_mm", y = "bill_depth_mm")) +
-            geom_smooth(method = "lm") + geom_point()
+        t = ggplot(penguins, aes(x="bill_length_mm", y="bill_depth_mm")) +
+            geom_smooth(method="lm") + geom_point()
 
 
         function add_intercept_column(x::AbstractVector{T}) where {T}
@@ -348,12 +348,12 @@
 
         lin_model = GLM.lm(add_intercept_column(penguins.bill_length_mm), penguins.bill_depth_mm)
         x̂ = range(extrema(penguins.bill_length_mm)..., length=100)
-        pred = DataFrame(GLM.predict(lin_model, add_intercept_column(x̂); interval = :confidence))
+        pred = DataFrame(GLM.predict(lin_model, add_intercept_column(x̂); interval=:confidence))
 
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
                 Makie.SpecApi.Axis(
-                    plots = [
+                    plots=[
                         Makie.PlotSpec(
                             :Lines,
                             x̂,
@@ -380,21 +380,21 @@
 
     @testset "geom_text" begin
         t = ggplot(penguins) +
-            geom_text(aes(x = :bill_length_mm, y = :bill_depth_mm, text = :species))
+            geom_text(aes(x=:bill_length_mm, y=:bill_depth_mm, text=:species))
 
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
                 Makie.SpecApi.Axis(
-                    plots = [
+                    plots=[
                         Makie.PlotSpec(
                             :Text,
                             penguins.bill_length_mm,
                             penguins.bill_depth_mm;
-                            text = String.(penguins.species))
-                        ]
-                    )
+                            text=String.(penguins.species))
+                    ]
                 )
             )
+        )
 
         @test plot_images_equal(t, m)
 
@@ -409,7 +409,7 @@
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
                 Makie.SpecApi.Axis(
-                    plots = [
+                    plots=[
                         Makie.PlotSpec(
                             :HLines,
                             yint
@@ -431,7 +431,7 @@
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
                 Makie.SpecApi.Axis(
-                    plots = [
+                    plots=[
                         Makie.PlotSpec(
                             :VLines,
                             xint

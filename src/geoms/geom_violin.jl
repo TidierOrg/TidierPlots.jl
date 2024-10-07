@@ -43,4 +43,9 @@ ggplot(penguins, @aes(x=species, y=bill_length_mm, dodge=sex, color=sex)) +
     geom_violin()
 ```
 """
-geom_violin = geom_template("geom_violin", ["x", "y"], :Violin)
+geom_violin = geom_template("geom_violin", ["x", "y"], :Violin;
+    special_aes=Dict(
+        :fill => :color,
+        :color => :strokecolor,
+        :colour => :strokecolor
+    ))

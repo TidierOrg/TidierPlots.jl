@@ -42,18 +42,18 @@ const _legend_geom_symbols = Dict{String,Dict}(
     "geom_vline" => Dict(:linestyle => nothing)
 );
 
-const _ggplot_to_makie = Dict{String,String}(
-    "colour" => "color",
-    "shape" => "marker",
-    "size" => "markersize",
-    "stroke" => "strokewidth",
-    "strokecolour" => "strokecolor",
-    "linetype" => "linestyle",
-    "glow" => "glowwidth",
-    "glowcolour" => "glowcolor",
-    "errorbar_direction" => "direction",
-    "label" => "text",
-    "palette" => "colormap"
+const _ggplot_to_makie = Dict{Symbol,Symbol}(
+    :colour => :color,
+    :shape => :marker,
+    :size => :markersize,
+    :stroke => :strokewidth,
+    :strokecolour => :strokecolor,
+    :linetype => :linestyle,
+    :glow => :glowwidth,
+    :glowcolour => :glowcolor,
+    :errorbar_direction => :direction,
+    :label => :text,
+    :palette => :colormap
 );
 
 
@@ -142,6 +142,11 @@ const _makie_expected_type = Dict{String,Type}(
     "xmax" => Real,
     "ymin" => Real,
     "ymax" => Real,
+
+    # Aes
+    "color" => Colorant,
+    "strokecolor" => Colorant,
+    "dodge" => Integer,
 );
 
 # options that are not meant to go to Makie
@@ -167,21 +172,21 @@ const _internal_geom_options = Symbol[
 # for each supported plot type, get the keyword args that it accepts
 
 const _accepted_options_by_type = Dict(
-    :BoxPlot   => Makie.attribute_names(Plot{Makie.boxplot}),
-    :Scatter   => Makie.attribute_names(Plot{Makie.scatter}),
-    :BarPlot   => Makie.attribute_names(Plot{Makie.barplot}),
-    :Contour   => Makie.attribute_names(Plot{Makie.contour}),
-    :Density   => Makie.attribute_names(Plot{Makie.density}),
+    :BoxPlot => Makie.attribute_names(Plot{Makie.boxplot}),
+    :Scatter => Makie.attribute_names(Plot{Makie.scatter}),
+    :BarPlot => Makie.attribute_names(Plot{Makie.barplot}),
+    :Contour => Makie.attribute_names(Plot{Makie.contour}),
+    :Density => Makie.attribute_names(Plot{Makie.density}),
     :Rangebars => Makie.attribute_names(Plot{Makie.rangebars}),
-    :Hist      => Makie.attribute_names(Plot{Makie.hist}),
-    :HLines    => Makie.attribute_names(Plot{Makie.hlines}),
-    :VLines    => Makie.attribute_names(Plot{Makie.vlines}),
-    :Lines     => Makie.attribute_names(Plot{Makie.lines}),
-    :Band      => Makie.attribute_names(Plot{Makie.band}),
-    :Text      => Makie.attribute_names(Plot{Makie.text}),
-    :Heatmap   => Makie.attribute_names(Plot{Makie.heatmap}),
-    :Violin    => Makie.attribute_names(Plot{Makie.violin}),
-    :Stairs    => Makie.attribute_names(Plot{Makie.stairs})
+    :Hist => Makie.attribute_names(Plot{Makie.hist}),
+    :HLines => Makie.attribute_names(Plot{Makie.hlines}),
+    :VLines => Makie.attribute_names(Plot{Makie.vlines}),
+    :Lines => Makie.attribute_names(Plot{Makie.lines}),
+    :Band => Makie.attribute_names(Plot{Makie.band}),
+    :Text => Makie.attribute_names(Plot{Makie.text}),
+    :Heatmap => Makie.attribute_names(Plot{Makie.heatmap}),
+    :Violin => Makie.attribute_names(Plot{Makie.violin}),
+    :Stairs => Makie.attribute_names(Plot{Makie.stairs})
 )
 
 # aesthetics that should not be treated as categorical variables

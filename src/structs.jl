@@ -29,8 +29,7 @@ struct GGPlot
     theme::Makie.Attributes
     legend_options::Dict
     facet_options::Union{FacetOptions,Nothing}
-    color_palette::Any
-    fill_palette::Any
+    palette::Dict
 end
 
 struct Aesthetics
@@ -40,8 +39,7 @@ end
 
 struct AxisOptions
     opt::Dict{Symbol,Any}
-    color_palette::Any
-    fill_palette::Any
+    palette::Dict
     legend_options::Dict
 end
 

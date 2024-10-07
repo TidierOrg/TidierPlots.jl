@@ -49,7 +49,7 @@ function Makie.SpecApi.Axis(plot::GGPlot)
 
         if !isnothing(plot.facet_options)
             push!(aes_df_list,
-                DataFrame(facet = plot_data[!, plot.facet_options.wrap]))
+                DataFrame(facet=plot_data[!, plot.facet_options.wrap]))
         end
 
         aes_df = hcat(aes_df_list...)
@@ -94,34 +94,25 @@ function Makie.SpecApi.Axis(plot::GGPlot)
                 required_aes,
                 aes_df)
 
+        # default palettes
 
-        if !isnothing(plot.color_palette)
-            if eltype(aes_df.color) <: Number
-                aes_df = transform(aes_df, :color =>
-                    plot.color_palette => :color)
-            else
-                aes_df = transform(aes_df, :color =>
-                    (x -> plot.color_palette.(
-                        levelcode.(
-                            CategoricalArray(x)
-                        )
-                    )) => :color
-                )
-            end
-        elseif "color" in names(aes_df)
-            if eltype(aes_df.color) <: Number
-                aes_df = transform(aes_df, :color =>
-                    _default_continuous_palette => :color)
-            else
-                aes_df = transform(aes_df, :color =>
-                    (x -> _default_discrete_palette(
-                        levelcode.(
-                            CategoricalArray(x)
-                        )
-                    )) => :color
-                )
+        plot_palette = plot.palette
+
+        for palette_aes in intersect([:strokecolor, :color], Symbol.(names(aes_df)))
+            if !haskey(plot_palette, palette_aes)
+                if eltype(aes_df[!, palette_aes]) <: Number
+                    plot_palette[palette_aes] = _default_continuous_palette
+                else
+                    plot_palette[palette_aes] = _default_discrete_palette
+                end
             end
         end
+
+        print(aes_df)
+
+        # convert all aes columns to the format expected by makie
+
+        aes_df = convert_aes_df_types(aes_df, plot_palette)
 
         # keep track of the global max and min on each axis
         if "x" in names(aes_df) && eltype(aes_df.x) <: Number
@@ -188,14 +179,12 @@ function Makie.SpecApi.Axis(plot::GGPlot)
 
                 data = group_aes_df[!, Symbol(a)]
 
-                if eltype(data) <: Union{AbstractString,RGB{FixedPoint}}
-                    if !(Symbol(a) in _verbatim_aes)
-                        data = Categorical(data)
-                    else
-                        data = String.(data)
-                    end
+                # for text and labels - strings for these are not categories
+                if (Symbol(a) in _verbatim_aes)
+                    data = string.(data)
                 end
 
+                # for geom_density and geom_line
                 if Symbol(a) in grouping_aes
                     data = first(data)
                 end
@@ -238,15 +227,15 @@ function Makie.SpecApi.Axis(plot::GGPlot)
             expandx = (xmax - xmin) * 0.05
             axis_options[:limits] = ((xmin - expand_x, xmax + expand_x), nothing)
         elseif plot.facet_options.free_x && !plot.facet_options.free_y
-                axis_options[:limits] = (nothing, (ymin - expand_y, ymax + expand_y))
+            axis_options[:limits] = (nothing, (ymin - expand_y, ymax + expand_y))
         elseif !plot.facet_options.free_x && !plot.facet_options.free_y
-                axis_options[:limits] = ((xmin - expand_x, xmax + expand_x), (ymin - expand_y, ymax + expand_y))
+            axis_options[:limits] = ((xmin - expand_x, xmax + expand_x), (ymin - expand_y, ymax + expand_y))
         end
     end
 
     return Makie.SpecApi.GridLayout(
         [k => Makie.SpecApi.Axis(plots=v; axis_options...) for
-            (k, v) in plot_list]...,
+         (k, v) in plot_list]...,
         facet_labels...,
         facet_boxes...
     )
@@ -297,17 +286,4 @@ end
 
 function draw_ggplot(plot_grid::GGPlotGrid, size::Tuple)
     Makie.plot(plot_grid.grid, figure=(; size=size))
-end
-
-try_convert(::Type{Any}, v, ::Any, ::Any) = v
-
-function try_convert(T::Type, v::S, arg, fname) where {S}
-    try
-        retvalue = T(v)
-        return retvalue
-    catch
-        msg = "Argument '$arg' in '$fname' has value '$v' and type '$S' which cannot be " *
-              "converted to the expected type '$T'."
-        throw(ArgumentError(msg))
-    end
 end

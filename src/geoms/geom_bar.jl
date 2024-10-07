@@ -1,5 +1,5 @@
 function handle_position(aes_dict::Dict{Symbol,Pair},
-    args_dict::Dict{Any, Any}, required_aes::Vector{String}, plot_data::DataFrame)
+    args_dict::Dict{Any,Any}, required_aes::Vector{String}, plot_data::DataFrame)
     # handles defaults and grouping for geom_bar/col
 
     split_var = nothing
@@ -30,8 +30,8 @@ function handle_position(aes_dict::Dict{Symbol,Pair},
         end
     else
         if haskey(aes_dict, :group)
-             aes_dict[:stack] = aes_dict[:group]
-             split_var = aes_dict[:stack][1]
+            aes_dict[:stack] = aes_dict[:group]
+            split_var = aes_dict[:stack][1]
         elseif haskey(aes_dict, :colour)
             aes_dict[:stack] = aes_dict[:colour]
             split_var = aes_dict[:stack][1]
@@ -141,7 +141,7 @@ ggplot(df) +
     geom_col(@aes(x = species, y = mean_bill_length_mm, color = sex))
 ```
 """
-geom_col = geom_template("geom_col", ["x", "y"], :BarPlot; pre_function = handle_position)
+geom_col = geom_template("geom_col", ["x", "y"], :BarPlot; pre_function=handle_position)
 
 """
     geom_bar(aes(...), ...)
@@ -191,7 +191,13 @@ ggplot(penguins) + geom_bar(@aes(x = species))
 # horizontal bar plot
 ggplot(penguins) + geom_bar(@aes(y = species))
 
-ggplot(penguins, @aes(x = species, color=sex, dodge=sex)) + geom_bar()
+ggplot(penguins, @aes(x = species, color=sex)) + geom_bar()
 ```
 """
-geom_bar = geom_template("geom_bar", String[], :BarPlot; pre_function = handle_position)
+geom_bar = geom_template("geom_bar", String[], :BarPlot;
+    pre_function=handle_position,
+    special_aes=Dict(
+        :fill => :color,
+        :color => :strokecolor,
+        :colour => :strokecolor
+    ))

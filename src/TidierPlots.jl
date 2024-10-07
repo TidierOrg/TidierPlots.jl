@@ -20,6 +20,7 @@ using Dates
 
 # For handling categorical data types
 using CategoricalArrays
+using PooledArrays
 
 # Data manipulation, expression parsing
 using TidierData
@@ -37,6 +38,7 @@ include("addplots.jl")
 include("aes.jl")
 include("attributes.jl")
 include("broadcasting.jl")
+include("convert.jl")
 include("draw.jl")
 include("extract_aes.jl")
 include("facets.jl")

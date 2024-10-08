@@ -5,6 +5,8 @@ function TidierPlots_set(option::AbstractString, value::Bool)
         plot_log[] = value
     elseif option == "plot_show"
         plot_show[] = value
+    elseif option == "verbose"
+        verbose[] = value
     else
         throw("That is not a valid option.")
     end

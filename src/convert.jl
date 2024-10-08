@@ -4,7 +4,9 @@ try_convert(::Type{Any}, v, ::Any, ::Any) = v
 
 function try_convert(T::Type, v::S, arg, fname) where {S}
     try
-        retvalue = T(v)
+        retvalue = typeof(v) <: T ?
+                   T(v) :
+                   parse(T, v)
         return retvalue
     catch
         msg = "Argument '$arg' in '$fname' has value '$v' and type '$S' which cannot be " *
@@ -18,7 +20,7 @@ function convert_aes_df_types(aes_df::DataFrame, palette::Dict)
     for col in Symbol.(names(aes_df))
         f = haskey(palette, col) ? palette[col] :
             x -> convert_aes_type(x,
-                get(_makie_expected_type, string(col), Any))
+            get(_makie_expected_type, string(col), Any))
 
         push!(typed_df, DataFrame(col => f(aes_df[!, col])))
     end

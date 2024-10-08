@@ -1,6 +1,4 @@
-import Makie.SpecApi
-
-function Makie.SpecApi.Axis(plot::GGPlot)
+function as_GridLayout(plot::GGPlot)
     plot_list = Dict{Tuple,Vector{Makie.PlotSpec}}()
     facet_boxes = Dict()
     facet_labels = Dict()
@@ -12,6 +10,7 @@ function Makie.SpecApi.Axis(plot::GGPlot)
     ymax = -Inf
 
     for geom in plot.geoms
+        verbose[] && println("Preparing geom: $(geom.args["geom_name"]).")
         # use the dataframe from the geom if present, else ggplot one
         plot_data = isnothing(geom.data) ?
                     plot.data :
@@ -26,16 +25,29 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         aes_dict, args_dict, required_aes, plot_data =
             geom.pre_function(aes_dict, geom.args, geom.required_aes, plot_data)
 
+        verbose[] && println("Using data:")
+        verbose[] && @glimpse(plot_data)
+
+        verbose[] && println("Using aes input:")
+        verbose[] && println(aes_dict)
+
         # make a master list of all possible accepted optional aesthetics and args
         ggplot_to_makie_geom = merge(_ggplot_to_makie, geom.special_aes)
+
+        verbose[] && println("Makie translations used:")
+        verbose[] && println(ggplot_to_makie_geom)
 
         aes_dict_makie = Dict{Symbol,Union{Symbol,Pair}}()
 
         # the name of the aes is translated to the makie term if needed
         for (aes_symbol, column_name) in aes_dict
-            aes = get(ggplot_to_makie_geom, aes_symbol, aes_symbol)
-            push!(aes_dict_makie, Symbol(aes) => column_name)
+            gg_aes = Symbol(aes_symbol)
+            aes = get(ggplot_to_makie_geom, gg_aes, gg_aes)
+            push!(aes_dict_makie, aes => column_name)
         end
+
+        verbose[] && println("Translated aes dict:")
+        verbose[] && println(aes_dict)
 
         # build a new dataframe with column names equal to the required aesthetics
         # this dataframe will take data from plot_data according to the rules outlined in the aes object
@@ -68,6 +80,9 @@ function Makie.SpecApi.Axis(plot::GGPlot)
             end
         end
 
+        verbose[] && println("Built aes df:")
+        verbose[] && @glimpse(aes_df)
+
         args_dict_makie = Dict{Symbol,Any}()
 
         supported_kwargs = get(_accepted_options_by_type, geom.visual,
@@ -77,7 +92,7 @@ function Makie.SpecApi.Axis(plot::GGPlot)
             if !(Symbol(arg) in _internal_geom_options)
                 ex_type = get(_makie_expected_type, arg, Any)
                 converted_value = try_convert(ex_type, value, arg, geom.args["geom_name"])
-                makie_attr = get(ggplot_to_makie_geom, arg, arg)
+                makie_attr = get(ggplot_to_makie_geom, Symbol(arg), Symbol(arg))
                 if isnothing(supported_kwargs) || Symbol(makie_attr) in supported_kwargs
                     args_dict_makie[Symbol(makie_attr)] = converted_value
                 else
@@ -107,8 +122,6 @@ function Makie.SpecApi.Axis(plot::GGPlot)
                 end
             end
         end
-
-        print(aes_df)
 
         # convert all aes columns to the format expected by makie
 
@@ -159,8 +172,6 @@ function Makie.SpecApi.Axis(plot::GGPlot)
                             string.(labels)
                         )
                     end
-                else
-                    data = String.(data)
                 end
                 push!(required_aes_data, data)
             end
@@ -194,6 +205,12 @@ function Makie.SpecApi.Axis(plot::GGPlot)
 
             args = Tuple([geom.visual, required_aes_data...])
             kwargs = merge(args_dict_makie, optional_aes_data)
+
+            verbose[] && println("Makie call args:")
+            verbose[] && println(args)
+
+            verbose[] && println("Makie call kwargs:")
+            verbose[] && println(kwargs)
 
             # push completed PlotSpec (type, args, and kwargs) to the list of plots in the appropriate facet
             facet_position = key[2]
@@ -233,51 +250,36 @@ function Makie.SpecApi.Axis(plot::GGPlot)
         end
     end
 
-    return Makie.SpecApi.GridLayout(
-        [k => Makie.SpecApi.Axis(plots=v; axis_options...) for
-         (k, v) in plot_list]...,
-        facet_labels...,
-        facet_boxes...
-    )
+    l = nothing
+
+    if isnothing(l)
+        return Makie.SpecApi.GridLayout(
+            [k => Makie.SpecApi.Axis(plots=v; axis_options...) for
+             (k, v) in plot_list]...,
+            facet_labels...,
+            facet_boxes...
+        )
+    else
+        return [Makie.SpecApi.GridLayout(
+            [k => Makie.SpecApi.Axis(plots=v; axis_options...) for
+             (k, v) in plot_list]...,
+            facet_labels...,
+            facet_boxes...
+        ) l]
+    end
 end
 
 
 function draw_ggplot(plot::GGPlot)
-    axis = Makie.SpecApi.Axis(plot)
-    legend = build_legend(plot)
-
-    if isnothing(legend)
-        Makie.plot(
-            Makie.SpecApi.GridLayout(
-                axis
-            )
-        )
-    else
-        Makie.plot(
-            Makie.SpecApi.GridLayout(
-                [axis legend]
-            )
-        )
-    end
+    Makie.plot(as_GridLayout(plot))
 end
 
 function draw_ggplot(plot::GGPlot, size::Tuple)
-    axis = Makie.SpecApi.Axis(plot)
-    legend = build_legend(plot)
-
-    if isnothing(legend)
-        Makie.plot(
-            Makie.SpecApi.GridLayout(
-                axis
-            ), figure=(; size=size)
-        )
-    else
-        Makie.plot(
-            Makie.SpecApi.GridLayout(
-                [axis legend]
-            ), figure=(; size=size)
-        )
-    end
+    Makie.plot(
+        Makie.SpecApi.GridLayout(
+            as_GridLayout(plot)
+        ), figure=(; size=size)
+    )
 end
 
 function draw_ggplot(plot_grid::GGPlotGrid)

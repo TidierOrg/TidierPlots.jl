@@ -4,6 +4,18 @@ function as_GridLayout(plot::GGPlot)
     facet_labels = Dict()
     axis_options = Dict{Symbol,Any}()
 
+    colorbar_kwargs = Dict()
+    colorbar_lowlim = Inf
+    colorbar_highlim = -Inf
+    colorbar = false
+
+    legend = DataFrame(
+        labels=String[],
+        colors=Any[],
+        options=Any[],
+        element=Any[],
+        title=String[])
+
     ymin = Inf
     xmin = Inf
     xmax = -Inf
@@ -125,33 +137,33 @@ function as_GridLayout(plot::GGPlot)
 
         # convert all aes columns to the format expected by makie
 
-        aes_df = convert_aes_df_types(aes_df, plot_palette)
+        typed_aes_df = convert_aes_df_types(aes_df, plot_palette)
 
         # keep track of the global max and min on each axis
-        if "x" in names(aes_df) && eltype(aes_df.x) <: Number
-            xmin = min(xmin, minimum(aes_df.x))
-            xmax = max(xmax, maximum(aes_df.x))
+        if "x" in names(typed_aes_df) && eltype(typed_aes_df.x) <: Number
+            xmin = min(xmin, minimum(typed_aes_df.x))
+            xmax = max(xmax, maximum(typed_aes_df.x))
         end
 
-        if "y" in names(aes_df) && eltype(aes_df.y) <: Number
-            ymin = min(ymin, minimum(aes_df.y))
-            ymax = max(ymax, maximum(aes_df.y))
+        if "y" in names(typed_aes_df) && eltype(typed_aes_df.y) <: Number
+            ymin = min(ymin, minimum(typed_aes_df.y))
+            ymax = max(ymax, maximum(typed_aes_df.y))
         end
 
         # if there are no facet options just plot everything in 1,1
         # if there are, make a column that indicates which facet each point belongs to
         if isnothing(plot.facet_options)
-            aes_df.facet .= [(1, 1)] # everything goes in the same "facet"
+            typed_aes_df.facet .= [(1, 1)] # everything goes in the same "facet"
         else
-            facet_names = unique(aes_df.facet)
+            facet_names = unique(typed_aes_df.facet)
             facet_positions, facet_labels, facet_boxes =
                 position_facets(facet_names,
                     plot.facet_options.nrow,
                     plot.facet_options.ncol)
-            aes_df.facet = [facet_positions[k] for k in aes_df.facet]
+            typed_aes_df.facet = [facet_positions[k] for k in typed_aes_df.facet]
         end
 
-        for (key, group_aes_df) in pairs(groupby(aes_df, [:group, :facet]))
+        for (key, group_aes_df) in pairs(groupby(typed_aes_df, [:group, :facet]))
             required_aes_data = []
 
             for a in required_aes
@@ -201,6 +213,17 @@ function as_GridLayout(plot::GGPlot)
                 end
 
                 push!(optional_aes_data, Symbol(a) => data)
+
+                append!(legend,
+                    sort(DataFrame(
+                        labels=labels,
+                        colors=unique(plottable_data),
+                        options=_legend_geom_symbols[geom.args["geom_name"]],
+                        element=_legend_geom_elements[geom.args["geom_name"]],
+                        title=get(plot.legend_options[:color], :name, titlecase(string(color_colname)))
+                        ),
+                    :labels)
+                )
             end
 
             args = Tuple([geom.visual, required_aes_data...])

@@ -20,8 +20,7 @@ function build_legend(plot::GGPlot)
 
     for geom in plot.geoms
         if !(geom.args["geom_name"] in keys(_legend_geom_symbols)) || !(geom.args["geom_name"] in keys(_legend_geom_elements))
-            no_default =
-                @warn "Legend defaults are not set for $(geom.args["geom_name"])."
+            @warn "Legend defaults are not set for $(geom.args["geom_name"])."
             continue
         end
 
@@ -107,4 +106,15 @@ function build_legend(plot::GGPlot)
     end
 
     return nothing
+end
+
+"""
+Sets which scales will get legends or colorbars. Use the name of the scale and either the string "legend" or "colorbar" to add a guide.
+"""
+function guides(args...; kwargs...)
+    return AxisOptions(
+        Dict{Symbol,Any}(),
+        Dict(),
+        Dict(k => Dict(:guide => Symbol(v)) for (k, v) in Dict(kwargs))
+    )
 end

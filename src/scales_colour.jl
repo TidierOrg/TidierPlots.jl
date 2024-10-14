@@ -111,6 +111,9 @@ function color_scale_to_ggoptions(args_dict::Dict)
 
     palette = Dict()
 
+    args_dict[:guide] = args_dict[:type] in ["manual", "discrete"] ?
+                        :legend : :colorbar
+
     if args_dict[:scale] == "color"
         palette[:color] = lookup
     elseif args_dict[:scale] == "fill"

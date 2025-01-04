@@ -8,10 +8,10 @@ function combine_plots(catfunc::Function, args::Union{GGPlot,GGPlotGrid}...)
             push!(all_plots, a.plots...)
         end
     end
-    all_axes = [isa(a, GGPlot) ? SpecApi.Axis(a) : a.grid for a in args]
+    all_axes = [isa(a, GGPlot) ? as_GridLayout(a) : a.grid for a in args]
     return GGPlotGrid(
         all_plots,
-        SpecApi.GridLayout(
+        Makie.SpecApi.GridLayout(
             catfunc(
                 all_axes...
             )
@@ -20,7 +20,7 @@ function combine_plots(catfunc::Function, args::Union{GGPlot,GGPlotGrid}...)
 end
 
 # + -> side by side
-function Base.:+(args::Union{GGPlot, GGPlotGrid, GGPlotGridSpec}...)
+function Base.:+(args::Union{GGPlot,GGPlotGrid,GGPlotGridSpec}...)
     if any(isa.(args, GGPlotGridSpec))
         return add_gridspec(args...)
     else
@@ -29,17 +29,17 @@ function Base.:+(args::Union{GGPlot, GGPlotGrid, GGPlotGridSpec}...)
 end
 
 # | -> side by side
-Base.:|(args::Union{GGPlot, GGPlotGrid}...) = combine_plots(hcat, args...)
+Base.:|(args::Union{GGPlot,GGPlotGrid}...) = combine_plots(hcat, args...)
 
 # / -> p1 above p2
-Base.:/(args::Union{GGPlot, GGPlotGrid}...) = combine_plots(vcat, args...)
+Base.:/(args::Union{GGPlot,GGPlotGrid}...) = combine_plots(vcat, args...)
 
 # Define plot layout
-function plot_layout(;ncol=0, nrow=0, byrow=false, widths=Int[], heights=Int[])
+function plot_layout(; ncol=0, nrow=0, byrow=false, widths=Int[], heights=Int[])
     return GGPlotGridSpec(ncol, nrow, byrow, widths, heights)
 end
 
-function add_gridspec(args::Union{GGPlot, GGPlotGrid, GGPlotGridSpec}...)
+function add_gridspec(args::Union{GGPlot,GGPlotGrid,GGPlotGridSpec}...)
     # Separate plots from gridspec
     plots = Union{GGPlot,GGPlotGrid}[]
     gridspec = nothing
@@ -73,13 +73,13 @@ function add_gridspec(args::Union{GGPlot, GGPlotGrid, GGPlotGridSpec}...)
         # As many cols as needed
         ncol = Int(ceil(nplots / nrow))
     end
-    layout = Pair{Tuple{Int64,Int64}, Union{Makie.BlockSpec, Makie.GridLayoutSpec}}[]
+    layout = Pair{Tuple{Int64,Int64},Union{Makie.BlockSpec,Makie.GridLayoutSpec}}[]
     plot_i = 1
     if gridspec.byrow
         for j in 1:ncol, i in 1:nrow
             if plot_i <= nplots
                 tmp_plot = plots[plot_i]
-                axis = tmp_plot isa GGPlot ? SpecApi.Axis(tmp_plot) : tmp_plot.grid
+                axis = tmp_plot isa GGPlot ? as_GridLayout(tmp_plot) : tmp_plot.grid
                 push!(layout, (i, j) => axis)
                 plot_i += 1
             end
@@ -88,7 +88,7 @@ function add_gridspec(args::Union{GGPlot, GGPlotGrid, GGPlotGridSpec}...)
         for i in 1:nrow, j in 1:ncol
             if plot_i <= nplots
                 tmp_plot = plots[plot_i]
-                axis = tmp_plot isa GGPlot ? SpecApi.Axis(tmp_plot) : tmp_plot.grid
+                axis = tmp_plot isa GGPlot ? as_GridLayout(tmp_plot) : tmp_plot.grid
                 push!(layout, (i, j) => axis)
                 plot_i += 1
             end
@@ -110,11 +110,10 @@ function add_gridspec(args::Union{GGPlot, GGPlotGrid, GGPlotGridSpec}...)
     end
     return GGPlotGrid(
         all_plots,
-        SpecApi.GridLayout(
+        Makie.SpecApi.GridLayout(
             layout,
-            colsizes = [Relative(w/total_width) for w in widths],
-            rowsizes = [Relative(h/total_height) for h in heights]
+            colsizes=[Relative(w / total_width) for w in widths],
+            rowsizes=[Relative(h / total_height) for h in heights]
         )
     )
 end
-

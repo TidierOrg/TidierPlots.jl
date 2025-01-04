@@ -39,7 +39,7 @@ ggplot(penguins, @aes(x=species, y=bill_length_mm)) +
 ggplot(penguins, @aes(x=species, y=bill_length_mm)) +
     geom_violin(orientation=:horizontal)
 
-ggplot(penguins, @aes(x=species, y=bill_length_mm, dodge=sex, color=sex)) +
+ggplot(penguins, @aes(x=species, y=bill_length_mm, fill=sex)) +
     geom_violin()
 ```
 """
@@ -48,4 +48,6 @@ geom_violin = geom_template("geom_violin", ["x", "y"], :Violin;
         :fill => :color,
         :color => :strokecolor,
         :colour => :strokecolor
-    ))
+    ),
+    grouping_aes=[:strokecolor, :color]
+)

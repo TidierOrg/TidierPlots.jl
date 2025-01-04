@@ -63,11 +63,16 @@ function build_legend(plot::GGPlot)
             )
             labels = unique(plot_data[!, color_colname])
 
-            append!(legend, sort(DataFrame(labels=labels,
-                    colors=unique(plottable_data),
-                    options=_legend_geom_symbols[geom.args["geom_name"]],
-                    element=_legend_geom_elements[geom.args["geom_name"]]),
-                :labels))
+            append!(legend,
+                sort(
+                    DataFrame(
+                        labels=labels,
+                        colors=unique(plottable_data),
+                        options=_legend_geom_symbols[geom.args["geom_name"]],
+                        element=_legend_geom_elements[geom.args["geom_name"]]
+                    ),
+                    :labels)
+            )
 
             title = get(plot.legend_options[:color], :name, titlecase(string(color_colname)))
         end

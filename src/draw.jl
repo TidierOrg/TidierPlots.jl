@@ -135,9 +135,24 @@ function as_GridLayout(plot::GGPlot)
             end
         end
 
+        # handle axis ticks when the input variable is a string
+
+        for a in required_aes
+            if eltype(aes_df[!, Symbol(a)]) <: AbstractString
+                plot_palette[Symbol(a)] = CategoricalArray
+                axis_options[Symbol(a * "ticks")] = (
+                    1:maximum(levelcode.(CategoricalArray(aes_df[!, Symbol(a)]))),
+                    string.(levels(CategoricalArray(aes_df[!, Symbol(a)])))
+                )
+            end
+        end
+
         # convert all aes columns to the format expected by makie
 
         typed_aes_df = convert_aes_df_types(aes_df, plot_palette)
+
+        verbose[] && println("Typed DataFrame:")
+        verbose[] && @glimpse typed_aes_df
 
         # keep track of the global max and min on each axis
         if "x" in names(typed_aes_df) && eltype(typed_aes_df.x) <: Number
@@ -169,20 +184,9 @@ function as_GridLayout(plot::GGPlot)
             for a in required_aes
                 data = group_aes_df[!, Symbol(a)]
                 if !(Symbol(a) in _verbatim_aes)
-                    if eltype(data) <: AbstractString
-                        labels = levels(CategoricalArray(data))
-                        data = levelcode.(CategoricalArray(data))
-                        axis_options[Symbol(a * "ticks")] = (
-                            1:maximum(data),
-                            string.(labels)
-                        )
-                    elseif eltype(data) <: CategoricalValue
+                    if eltype(data) <: CategoricalValue
                         labels = levels(data)
                         data = levelcode.(data)
-                        axis_options[Symbol(a * "ticks")] = (
-                            1:maximum(data),
-                            string.(labels)
-                        )
                     end
                 end
                 push!(required_aes_data, data)
@@ -214,15 +218,25 @@ function as_GridLayout(plot::GGPlot)
 
                 push!(optional_aes_data, Symbol(a) => data)
 
+                palette_function = get(plot.palette, :color, nothing)
+
+                isnothing(palette_function) && continue
+
+                labels = unique(plot_data[!, :color])
+
+                plottable_data = palette_function.(
+                    levelcode.(CategoricalArray(plot_data[!, :color]))
+                )
+
                 append!(legend,
                     sort(DataFrame(
-                        labels=labels,
-                        colors=unique(plottable_data),
-                        options=_legend_geom_symbols[geom.args["geom_name"]],
-                        element=_legend_geom_elements[geom.args["geom_name"]],
-                        title=get(plot.legend_options[:color], :name, titlecase(string(color_colname)))
+                            labels=labels,
+                            colors=unique(plottable_data),
+                            options=_legend_geom_symbols[geom.args["geom_name"]],
+                            element=_legend_geom_elements[geom.args["geom_name"]],
+                            title=get(plot.legend_options[:color], :name, titlecase(string(:color)))
                         ),
-                    :labels)
+                        :labels)
                 )
             end
 

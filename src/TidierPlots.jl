@@ -127,6 +127,6 @@ export scale_fill_continuous, scale_fill_discrete, scale_fill_manual, scale_fill
 const plot_log = Ref{Bool}(true)
 const plot_show = Ref{Bool}(true)
 const plot_pluto = Ref{Bool}(true)
-const verbose = Ref{Bool}(false)
+const verbose = Ref{Bool}(true)
 
 end

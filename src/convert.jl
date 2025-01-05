@@ -27,6 +27,22 @@ function convert_aes_df_types(aes_df::DataFrame, palette::Dict)
     return hcat(typed_df...)
 end
 
+function get_unique_labels(aes_df::DataFrame, palette::Dict)
+    labels_df = DataFrame[]
+    for col in Symbol.(names(aes_df))
+        f = haskey(palette, col) ? palette[col] :
+            x -> convert_aes_type(x,
+            get(_makie_expected_type, string(col), Any))
+
+        push!(labels_df, DataFrame(
+            col_name=string(col),
+            original_value=aes_df[!, col],
+            new_value=f(aes_df[!, col])
+        ))
+    end
+    return unique(vcat(labels_df...))
+end
+
 # fallback methods - if there isn't a method defined, just do nothing
 
 function convert_aes_type(aes_col::Any, ::Type{T}) where {T}

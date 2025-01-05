@@ -140,6 +140,7 @@ function as_GridLayout(plot::GGPlot)
         for a in required_aes
             if eltype(aes_df[!, Symbol(a)]) <: AbstractString
                 plot_palette[Symbol(a)] = CategoricalArray
+
                 axis_options[Symbol(a * "ticks")] = (
                     1:maximum(levelcode.(CategoricalArray(aes_df[!, Symbol(a)]))),
                     string.(levels(CategoricalArray(aes_df[!, Symbol(a)])))
@@ -150,6 +151,7 @@ function as_GridLayout(plot::GGPlot)
         # convert all aes columns to the format expected by makie
 
         typed_aes_df = convert_aes_df_types(aes_df, plot_palette)
+        labels_aes_df = get_unique_labels(aes_df, plot_palette)
 
         verbose[] && println("Typed DataFrame:")
         verbose[] && @glimpse typed_aes_df
@@ -222,16 +224,13 @@ function as_GridLayout(plot::GGPlot)
 
                 isnothing(palette_function) && continue
 
-                labels = unique(plot_data[!, :color])
-
-                plottable_data = palette_function.(
-                    levelcode.(CategoricalArray(plot_data[!, :color]))
-                )
+                labels_for_this_aes = subset(labels_aes_df,
+                    :col_name => ByRow(x -> x == a))
 
                 append!(legend,
                     sort(DataFrame(
-                            labels=labels,
-                            colors=unique(plottable_data),
+                            labels=labels_for_this_aes.original_value,
+                            colors=labels_for_this_aes.new_value,
                             options=_legend_geom_symbols[geom.args["geom_name"]],
                             element=_legend_geom_elements[geom.args["geom_name"]],
                             title=get(plot.legend_options[:color], :name, titlecase(string(:color)))
@@ -287,7 +286,29 @@ function as_GridLayout(plot::GGPlot)
         end
     end
 
-    l = nothing
+    verbose[] && "Legend dataframe:"
+    verbose[] && @glimpse legend
+
+    if nrow(legend) == 0
+        l = nothing
+    else
+        labels = String[]
+        elems = Any[]
+
+        #title = get(plot.legend_options[:color], :name, " ")
+
+        for (k, v) in pairs(groupby(legend, :labels))
+            push!(elems, [l.element(color=l.colors; l.options...) for l in eachrow(v)])
+            push!(labels, string(v.labels[1]))
+        end
+
+        println(elems)
+        println(labels)
+
+        l = Makie.SpecApi.Legend(elems, labels, "Legend")
+    end
+
+    println("legend created sucessfully")
 
     if isnothing(l)
         return Makie.SpecApi.GridLayout(
@@ -297,12 +318,12 @@ function as_GridLayout(plot::GGPlot)
             facet_boxes...
         )
     else
-        return [Makie.SpecApi.GridLayout(
-            [k => Makie.SpecApi.Axis(plots=v; axis_options...) for
-             (k, v) in plot_list]...,
+        return Makie.SpecApi.GridLayout(
+            [[k => Makie.SpecApi.Axis(plots=v; axis_options...) for
+              (k, v) in plot_list]...; (1, 2) => Makie.SpecApi.GridLayout(l)]...,
             facet_labels...,
             facet_boxes...
-        ) l]
+        )
     end
 end
 

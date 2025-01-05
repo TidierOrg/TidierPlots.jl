@@ -227,16 +227,36 @@ function as_GridLayout(plot::GGPlot)
                 labels_for_this_aes = subset(labels_aes_df,
                     :col_name => ByRow(x -> x == a))
 
-                append!(legend,
-                    sort(DataFrame(
-                            labels=labels_for_this_aes.original_value,
-                            colors=labels_for_this_aes.new_value,
-                            options=_legend_geom_symbols[geom.args["geom_name"]],
-                            element=_legend_geom_elements[geom.args["geom_name"]],
-                            title=get(plot.legend_options[:color], :name, titlecase(string(:color)))
-                        ),
-                        :labels)
-                )
+                if plot.legend_options[:color][:type] in
+                   ["manual", "discrete"]
+
+                    append!(legend,
+                        sort(DataFrame(
+                                labels=labels_for_this_aes.original_value,
+                                colors=labels_for_this_aes.new_value,
+                                options=_legend_geom_symbols[geom.args["geom_name"]],
+                                element=_legend_geom_elements[geom.args["geom_name"]],
+                                title=get(plot.legend_options[:color], :name, titlecase(string(:color)))
+                            ),
+                            :labels)
+                    )
+                end
+                if plot.legend_options[:color][:type] in
+                   ["continuous", "binned"]
+
+                    colorbar_kwargs[:colormap] =
+                        plot.legend_options[:color][:type] == "continuous" ? Symbol(plot.legend_options[:color][:palette]) :
+                        cgrad(Symbol(plot.legend_options[:color][:palette]), 5, categorical=true)
+
+                    colorbar_lowlim = min(
+                        minimum(labels_for_this_aes.original_value), colorbar_lowlim)
+
+                    colorbar_highlim = max(
+                        maximum(labels_for_this_aes.original_value), colorbar_highlim)
+
+                    colorbar = true
+                end
+
             end
 
             args = Tuple([geom.visual, required_aes_data...])
@@ -289,26 +309,27 @@ function as_GridLayout(plot::GGPlot)
     verbose[] && "Legend dataframe:"
     verbose[] && @glimpse legend
 
-    if nrow(legend) == 0
+    if nrow(legend) == 0 && !colorbar
         l = nothing
-    else
+    elseif nrow(legend) != 0
         labels = String[]
         elems = Any[]
 
-        #title = get(plot.legend_options[:color], :name, " ")
+        title = get(plot.legend_options[:color], :name, " ")
 
         for (k, v) in pairs(groupby(legend, :labels))
             push!(elems, [l.element(color=l.colors; l.options...) for l in eachrow(v)])
             push!(labels, string(v.labels[1]))
         end
 
-        println(elems)
-        println(labels)
-
-        l = Makie.SpecApi.Legend(elems, labels, "Legend")
+        l = (1, 2) => Makie.SpecApi.GridLayout(
+            Makie.SpecApi.Legend(elems, labels, title))
+    else
+        title = get(plot.legend_options[:color], :name, " ")
+        l = (1, 2) => Makie.SpecApi.GridLayout(
+            Makie.SpecApi.Colorbar(; colorbar_kwargs...,
+                limits=(colorbar_lowlim, colorbar_highlim), label=title))
     end
-
-    println("legend created sucessfully")
 
     if isnothing(l)
         return Makie.SpecApi.GridLayout(
@@ -319,11 +340,13 @@ function as_GridLayout(plot::GGPlot)
         )
     else
         return Makie.SpecApi.GridLayout(
-            [[k => Makie.SpecApi.Axis(plots=v; axis_options...) for
-              (k, v) in plot_list]...; (1, 2) => Makie.SpecApi.GridLayout(l)]...,
-            facet_labels...,
-            facet_boxes...
-        )
+            (1, 1) => Makie.SpecApi.GridLayout(
+                [k => Makie.SpecApi.Axis(plots=v; axis_options...) for
+                 (k, v) in plot_list]...,
+                facet_labels...,
+                facet_boxes...
+            ),
+            l)
     end
 end
 

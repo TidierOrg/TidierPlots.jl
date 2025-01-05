@@ -145,8 +145,15 @@ function as_GridLayout(plot::GGPlot)
                     1:maximum(levelcode.(CategoricalArray(aes_df[!, Symbol(a)]))),
                     string.(levels(CategoricalArray(aes_df[!, Symbol(a)])))
                 )
+            elseif eltype(aes_df[!, Symbol(a)]) <: CategoricalValue
+                axis_options[Symbol(a * "ticks")] = (
+                    unique(levelcode.(aes_df[!, Symbol(a)])),
+                    unique(aes_df[!, Symbol(a)]))
             end
         end
+
+        println("axis_options")
+        println(axis_options)
 
         # convert all aes columns to the format expected by makie
 

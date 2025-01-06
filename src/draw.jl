@@ -142,18 +142,15 @@ function as_GridLayout(plot::GGPlot)
                 plot_palette[Symbol(a)] = CategoricalArray
 
                 axis_options[Symbol(a * "ticks")] = (
-                    1:maximum(levelcode.(CategoricalArray(aes_df[!, Symbol(a)]))),
-                    string.(levels(CategoricalArray(aes_df[!, Symbol(a)])))
+                    unique(levelcode.(CategoricalArray(aes_df[!, Symbol(a)]))),
+                    unique(aes_df[!, Symbol(a)])
                 )
             elseif eltype(aes_df[!, Symbol(a)]) <: CategoricalValue
                 axis_options[Symbol(a * "ticks")] = (
                     unique(levelcode.(aes_df[!, Symbol(a)])),
-                    unique(aes_df[!, Symbol(a)]))
+                    unique(string.(aes_df[!, Symbol(a)])))
             end
         end
-
-        println("axis_options")
-        println(axis_options)
 
         # convert all aes columns to the format expected by makie
 
@@ -313,8 +310,8 @@ function as_GridLayout(plot::GGPlot)
         end
     end
 
-    verbose[] && "Legend dataframe:"
-    verbose[] && @glimpse legend
+    verbose[] && println("Legend dataframe:")
+    verbose[] && println(unique(legend))
 
     if nrow(legend) == 0 && !colorbar
         l = nothing

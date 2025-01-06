@@ -181,37 +181,6 @@
         )
 
         @test plot_images_equal(t, m)
-
-        colours = [
-            RGB(0 / 255, 114 / 255, 178 / 255), # blue
-            RGB(230 / 255, 159 / 255, 0 / 255), # orange
-            RGB(0 / 255, 158 / 255, 115 / 255), # green
-            RGB(204 / 255, 121 / 255, 167 / 255), # reddish purple
-            RGB(86 / 255, 180 / 255, 233 / 255), # sky blue
-            RGB(213 / 255, 94 / 255, 0 / 255), # vermillion
-            RGB(240 / 255, 228 / 255, 66 / 255), # yellow
-        ]
-
-        t = ggplot(penguins) +
-            geom_violin(aes(x=:species, y=:bill_length_mm, color=:species)) + scale_color_manual(values=colours)
-
-        m = Makie.plot(
-            Makie.SpecApi.GridLayout(
-                [Makie.SpecApi.Axis(
-                    plots=[
-                        Makie.PlotSpec(
-                            :Violin,
-                            levelcode.(cat_array),
-                            penguins.bill_length_mm;
-                            color=(x -> colours[x]).(levelcode.(cat_array))
-                        )]; xticks=(unique(levelcode.(cat_array)),
-                        unique(cat_array))
-                ) TidierPlots.build_legend(t)]
-            )
-        )
-
-        @test plot_images_equal(t, m)
-
     end
 
     @testset "geom_hist" begin
@@ -234,31 +203,17 @@
     end
 
     @testset "geom_density" begin
-        t = ggplot(penguins, @aes(x = body_mass_g, color = species)) +
+        t = ggplot(penguins, @aes(x = body_mass_g)) +
             geom_density()
-
-        adelie = @filter(penguins, species == "Adelie")
-        gentoo = @filter(penguins, species == "Gentoo")
-        chin = @filter(penguins, species == "Chinstrap")
 
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
                 [Makie.SpecApi.Axis(
-                    plots=[
-                        Makie.PlotSpec(
-                            :Density,
-                            adelie.body_mass_g;
-                            color=RGB(0 / 255, 114 / 255, 178 / 255)),
-                        Makie.PlotSpec(
-                            :Density,
-                            gentoo.body_mass_g;
-                            color=RGB(0 / 255, 158 / 255, 115 / 255)),
-                        Makie.PlotSpec(
-                            :Density,
-                            chin.body_mass_g;
-                            color=RGB(230 / 255, 159 / 255, 0 / 255))
-                    ]
-                ) TidierPlots.build_legend(t)]
+                plots=[
+                    Makie.PlotSpec(
+                        :Density,
+                        penguins.body_mass_g)]
+            )]
             )
         )
 

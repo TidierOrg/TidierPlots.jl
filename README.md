@@ -116,20 +116,6 @@ geom_point(@aes(x = x / y))
 
 **Right now, you probably wouldn't.** This package is still early in development, and is not ready for production use. However, there are a couple of advantages already and the list will hopefully get longer over time.
 
-### Easier Factor Handling
-
-Sort your categorical variables in order of appearance with a single keyword rather than wrestle with factor ordering!
-
-```julia
-@chain cars begin
-    @count(manufacturer)
-    @arrange(n)
-    ggplot(xticklabelrotation = .5)
-        geom_col(@es(y = n, x = cat_inorder(manufacturer)))
-end
-```
-![](assets/in_order.png)
-
 ### Flexible access to Makie options
 
 Access to all axis and plot options from `Makie` lets you use Makie's extensive capabilities for plot customization (example adapted from [beautiful.makie.org](https://beautiful.makie.org/examples/2d/scatters/bubble_plot_logxy)):

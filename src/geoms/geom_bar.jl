@@ -15,6 +15,9 @@ function handle_position(aes_dict::Dict{Symbol,Pair},
             elseif haskey(aes_dict, :color)
                 aes_dict[:dodge] = aes_dict[:color]
                 split_var = aes_dict[:dodge][1]
+            elseif haskey(aes_dict, :fill)
+                aes_dict[:dodge] = aes_dict[:fill]
+                split_var = aes_dict[:dodge][1]
             end
         elseif args_dict["position"] != "none"
             if haskey(aes_dict, :group)
@@ -25,6 +28,9 @@ function handle_position(aes_dict::Dict{Symbol,Pair},
                 split_var = aes_dict[:stack][1]
             elseif haskey(aes_dict, :color)
                 aes_dict[:stack] = aes_dict[:color]
+                split_var = aes_dict[:stack][1]
+            elseif haskey(aes_dict, :fill)
+                aes_dict[:stack] = aes_dict[:fill]
                 split_var = aes_dict[:stack][1]
             end
         end
@@ -37,6 +43,9 @@ function handle_position(aes_dict::Dict{Symbol,Pair},
             split_var = aes_dict[:stack][1]
         elseif haskey(aes_dict, :color)
             aes_dict[:stack] = aes_dict[:color]
+            split_var = aes_dict[:stack][1]
+        elseif haskey(aes_dict, :fill)
+            aes_dict[:stack] = aes_dict[:fill]
             split_var = aes_dict[:stack][1]
         end
     end
@@ -58,7 +67,7 @@ function handle_position(aes_dict::Dict{Symbol,Pair},
 
         if !isnothing(split_var)
             plot_data = @chain plot_data begin
-                groupby([grouping_var, split_var])
+                groupby([grouping_var; split_var])
                 @summarize(count = n())
                 @ungroup
             end

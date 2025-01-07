@@ -147,6 +147,7 @@ const _makie_expected_type = Dict{String,Type}(
     "color" => Colorant,
     "strokecolor" => Colorant,
     "dodge" => Integer,
+    "stack" => Integer,
 );
 
 # options that are not meant to go to Makie

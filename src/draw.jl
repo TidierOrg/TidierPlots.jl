@@ -16,6 +16,8 @@ function as_GridLayout(plot::GGPlot)
         element=Any[],
         title=String[])
 
+    legend_title = " "
+
     ymin = Inf
     xmin = Inf
     xmax = -Inf
@@ -59,15 +61,17 @@ function as_GridLayout(plot::GGPlot)
         end
 
         verbose[] && println("Translated aes dict:")
-        verbose[] && println(aes_dict)
+        verbose[] && println(aes_dict_makie)
 
         # build a new dataframe with column names equal to the required aesthetics
         # this dataframe will take data from plot_data according to the rules outlined in the aes object
         aes_df_list = DataFrame[]
 
         for (aes, rule) in aes_dict_makie
+            println(aes)
             # aes is a symbol, the target column name
             # rule is a pair, the source columns and function to apply
+            println(plot_data)
             push!(aes_df_list, select(plot_data, rule[1] => rule[2] => aes))
         end
 
@@ -154,6 +158,9 @@ function as_GridLayout(plot::GGPlot)
 
         # convert all aes columns to the format expected by makie
 
+        println(plot_palette)
+        println(aes_df)
+
         typed_aes_df = convert_aes_df_types(aes_df, plot_palette)
         labels_aes_df = get_unique_labels(aes_df, plot_palette)
 
@@ -231,22 +238,15 @@ function as_GridLayout(plot::GGPlot)
                 labels_for_this_aes = subset(labels_aes_df,
                     :col_name => ByRow(x -> x == a))
 
-                if plot.legend_options[:color][:type] in
-                   ["manual", "discrete"]
-
-                    append!(legend,
-                        sort(DataFrame(
-                                labels=labels_for_this_aes.original_value,
-                                colors=labels_for_this_aes.new_value,
-                                options=_legend_geom_symbols[geom.args["geom_name"]],
-                                element=_legend_geom_elements[geom.args["geom_name"]],
-                                title=get(plot.legend_options[:color], :name, titlecase(string(:color)))
-                            ),
-                            :labels)
-                    )
+                if haskey(plot.legend_options, :color)
+                    draw_colorbar = get(plot.legend_options[:color], :type, "na")
+                    legend_title = get(plot.legend_options[:color], :name, " ")
+                else
+                    draw_colorbar = "na"
+                    legend_title = " "
                 end
-                if plot.legend_options[:color][:type] in
-                   ["continuous", "binned"]
+
+                if draw_colorbar in ["continuous", "binned"]
 
                     colorbar_kwargs[:colormap] =
                         plot.legend_options[:color][:type] == "continuous" ? Symbol(plot.legend_options[:color][:palette]) :
@@ -259,6 +259,17 @@ function as_GridLayout(plot::GGPlot)
                         maximum(labels_for_this_aes.original_value), colorbar_highlim)
 
                     colorbar = true
+                else
+                    append!(legend,
+                        sort(DataFrame(
+                                labels=labels_for_this_aes.original_value,
+                                colors=labels_for_this_aes.new_value,
+                                options=_legend_geom_symbols[geom.args["geom_name"]],
+                                element=_legend_geom_elements[geom.args["geom_name"]],
+                                title=legend_title
+                            ),
+                            :labels)
+                    )
                 end
 
             end
@@ -319,7 +330,9 @@ function as_GridLayout(plot::GGPlot)
         labels = String[]
         elems = Any[]
 
-        title = get(plot.legend_options[:color], :name, " ")
+        title = legend_title
+
+        legend = subset(legend, :colors => ByRow(x -> typeof(x) <: Colorant))
 
         for (k, v) in pairs(groupby(legend, :labels))
             push!(elems, [l.element(color=l.colors; l.options...) for l in eachrow(v)])

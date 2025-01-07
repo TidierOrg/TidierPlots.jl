@@ -43,4 +43,5 @@ set_theme!(theme_ggplot2())
     include("test_lims.jl")
     include("test_patchwork.jl")
     include("test_scale_colour.jl")
+    include("test_docs_will_render.jl")
 end

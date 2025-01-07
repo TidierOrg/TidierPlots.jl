@@ -211,16 +211,12 @@ ggplot(penguins) +
 ```
 ![](assets/raincloud.png)
 
-See the [documentation](https://tidierorg.github.io/TidierPlots.jl/latest) for more information and examples.
-
-### Mix Makie Plots and Tidier Plots
+### Mix Makie Plots and TidierPlots
 
 TidierPlots is creating Makie `SpecApi.GridLayout` objects under the hood, so you can easily combine TidierPlots output with Makie output for more flexibility:
 
 ```julia
 using WGLMakie
-using DelimitedFiles
-using Makie.FileIO
 import Makie.SpecApi as S
 using TidierPlots
 using DataFrames
@@ -236,6 +232,8 @@ gg = ggplot(d) + geom_line(aes(x = :r, y = :r2))
 plot(S.GridLayout([TidierPlots.as_GridLayout(gg) ax_cube]))
 ```
 ![](assets/makie_integration.png)
+
+See the [documentation](https://tidierorg.github.io/TidierPlots.jl/latest) for more information and examples.
 
 # What's New
 

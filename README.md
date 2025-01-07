@@ -213,6 +213,30 @@ ggplot(penguins) +
 
 See the [documentation](https://tidierorg.github.io/TidierPlots.jl/latest) for more information and examples.
 
+### Mix Makie Plots and Tidier Plots
+
+TidierPlots is creating Makie `SpecApi.GridLayout` objects under the hood, so you can easily combine TidierPlots output with Makie output for more flexibility:
+
+```julia
+using WGLMakie
+using DelimitedFiles
+using Makie.FileIO
+import Makie.SpecApi as S
+using TidierPlots
+using DataFrames
+
+r = LinRange(-1, 1, 100)
+cube = [(x .^ 2 + y .^ 2 + z .^ 2) for x = r, y = r, z = r]
+cube_contour = S.Contour(cube, alpha=0.5)
+ax_cube = S.Axis3(; plots=[cube_contour], protrusions = (50, 20, 10, 0))
+
+d = DataFrame(r = r, r2 = r .^ 2)
+gg = ggplot(d) + geom_line(aes(x = :r, y = :r2))
+
+plot(S.GridLayout([TidierPlots.as_GridLayout(gg) ax_cube]))
+```
+![](assets/makie_integration.png)
+
 # What's New
 
 See [NEWS.md](https://github.com/TidierOrg/TidierPlots.jl/blob/main/NEWS.md) for the latest updates.

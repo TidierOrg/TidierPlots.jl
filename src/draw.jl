@@ -99,8 +99,7 @@ function as_GridLayout(plot::GGPlot)
 
         args_dict_makie = Dict{Symbol,Any}()
 
-        supported_kwargs = get(_accepted_options_by_type, geom.visual,
-            nothing)
+        supported_kwargs = accepted_options_by_type(geom.visual)
 
         for (arg, value) in args_dict
             if !(Symbol(arg) in _internal_geom_options)
@@ -229,6 +228,10 @@ function as_GridLayout(plot::GGPlot)
                 palette_function = get(plot.palette, :color, nothing)
 
                 isnothing(palette_function) && continue
+                !haskey(_legend_geom_symbols,
+                    geom.args["geom_name"]) && continue
+                !haskey(_legend_geom_elements,
+                    geom.args["geom_name"]) && continue
 
                 labels_for_this_aes = subset(labels_aes_df,
                     :col_name => ByRow(x -> x == a))
@@ -259,8 +262,16 @@ function as_GridLayout(plot::GGPlot)
                         sort(DataFrame(
                                 labels=labels_for_this_aes.original_value,
                                 colors=labels_for_this_aes.new_value,
-                                options=_legend_geom_symbols[geom.args["geom_name"]],
-                                element=_legend_geom_elements[geom.args["geom_name"]],
+                                options=get(
+                                    _legend_geom_symbols,
+                                    geom.args["geom_name"],
+                                    Dict(:marker => :circle, :markersize => 12)
+                                ),
+                                element=get(
+                                    _legend_geom_elements,
+                                    geom.args["geom_name"],
+                                    MarkerElement
+                                ),
                                 title=legend_title
                             ),
                             :labels)

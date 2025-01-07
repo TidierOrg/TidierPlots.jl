@@ -170,26 +170,6 @@ const _internal_geom_options = Symbol[
     :ymin
 ]
 
-# for each supported plot type, get the keyword args that it accepts
-
-const _accepted_options_by_type = Dict(
-    :BoxPlot => Makie.attribute_names(Plot{Makie.boxplot}),
-    :Scatter => Makie.attribute_names(Plot{Makie.scatter}),
-    :BarPlot => Makie.attribute_names(Plot{Makie.barplot}),
-    :Contour => Makie.attribute_names(Plot{Makie.contour}),
-    :Density => Makie.attribute_names(Plot{Makie.density}),
-    :Rangebars => Makie.attribute_names(Plot{Makie.rangebars}),
-    :Hist => Makie.attribute_names(Plot{Makie.hist}),
-    :HLines => Makie.attribute_names(Plot{Makie.hlines}),
-    :VLines => Makie.attribute_names(Plot{Makie.vlines}),
-    :Lines => Makie.attribute_names(Plot{Makie.lines}),
-    :Band => Makie.attribute_names(Plot{Makie.band}),
-    :Text => Makie.attribute_names(Plot{Makie.text}),
-    :Heatmap => Makie.attribute_names(Plot{Makie.heatmap}),
-    :Violin => Makie.attribute_names(Plot{Makie.violin}),
-    :Stairs => Makie.attribute_names(Plot{Makie.stairs})
-)
-
 # aesthetics that should not be treated as categorical variables
 
 const _verbatim_aes = [:label, :text]

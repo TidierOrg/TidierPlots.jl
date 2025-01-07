@@ -68,10 +68,8 @@ function as_GridLayout(plot::GGPlot)
         aes_df_list = DataFrame[]
 
         for (aes, rule) in aes_dict_makie
-            println(aes)
             # aes is a symbol, the target column name
             # rule is a pair, the source columns and function to apply
-            println(plot_data)
             push!(aes_df_list, select(plot_data, rule[1] => rule[2] => aes))
         end
 
@@ -225,7 +223,7 @@ function as_GridLayout(plot::GGPlot)
                 end
 
                 # for geom_density and geom_line
-                if Symbol(a) in grouping_aes
+                if length(unique(group_aes_df[!, Symbol(a)])) == 1
                     data = first(data)
                 end
 

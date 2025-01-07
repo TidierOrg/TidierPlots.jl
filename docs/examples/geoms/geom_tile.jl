@@ -6,8 +6,8 @@ function mandelbrot(x, y)
     for i in 1:30.0; abs(z) > 2 && return i; z = z^2 + c; end; 0
 end
 
-xs = -2:0.001:1
-ys = -1.1:0.001:1.1
+xs = -2:0.01:1
+ys = -1.1:0.01:1.1
 xys = Iterators.product(xs, ys) |> collect |> vec
 zs = map(xy -> mandelbrot(xy[1], xy[2]), xys)
 
@@ -17,4 +17,4 @@ df = DataFrame(
     z = zs
 )
 
-ggplot(df, @aes(x = x, y = y, z = z)) + geom_tile(colormap = :deep)
+ggplot(df, @aes(x = x, y = y, z = z)) + geom_tile()

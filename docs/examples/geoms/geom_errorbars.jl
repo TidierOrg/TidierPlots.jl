@@ -9,16 +9,8 @@ df = DataFrame(
     upper = [1.1, 5.3, 3.3, 4.2],
 )
 
-md"""
-## geom_errorbar
-"""
-
 ggplot(df, @aes(x = trt, ymin = lower, ymax = upper)) +
     geom_errorbar(width=20, linewidth=2)
-
-md"""
-## geom_errorbarh
-"""
 
 ggplot(df, @aes(y = trt, xmin = lower, xmax = upper)) +
     geom_errorbarh(width=20, linewidth=2)

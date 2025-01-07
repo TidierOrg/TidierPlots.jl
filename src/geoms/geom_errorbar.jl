@@ -42,8 +42,6 @@ ggplot(df, @aes(x = trt, ymin = lower, ymax = upper)) +
     geom_errorbar(width=20, linewidth=2)
 ```
 """
-function geom_errorbar end
-
 function geom_errorbar(args...; kwargs...)
     aes_dict, args_dict = extract_aes(args, kwargs)
 
@@ -104,9 +102,6 @@ ggplot(df, @aes(y = trt, xmin = lower, xmax = upper)) +
     geom_errorbarh(width=20, linewidth=2)
 ```
 """
-function geom_errorbarh end
-
-
 function geom_errorbarh(args...; kwargs...)
     aes_dict, args_dict = extract_aes(args, kwargs)
 

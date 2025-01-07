@@ -18,7 +18,7 @@ function boxplot_groups(aes_dict::Dict{Symbol,Pair},
     end
 
     if length(dodge_aes) != 0
-        aes_dict[:dodge] = aes_dict[dodge_aes[1]] => identity
+        aes_dict[:dodge] = aes_dict[dodge_aes[1]][1] => identity
     end
 
     return (aes_dict, args_dict, required_aes, plot_data)
@@ -73,7 +73,7 @@ ggplot(penguins, @aes(x=species, y=bill_length_mm)) +
 ggplot(penguins, @aes(y=species, x=bill_length_mm)) +
     geom_boxplot()
 
-ggplot(penguins, @aes(x=species, y=bill_length_mm, dodge=sex, color=sex)) +
+ggplot(penguins, @aes(x=species, y=bill_length_mm, dodge=sex, fill=sex)) +
     geom_boxplot()
 ```
 """

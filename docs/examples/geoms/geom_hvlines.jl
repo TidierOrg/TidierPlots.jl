@@ -1,10 +1,6 @@
 using TidierPlots
 using DataFrames
 
-md"""
-## geom_hline
-"""
-
 # Plot only a single y-intercept
 ggplot() + geom_hline(yintercept = 3)
 
@@ -14,10 +10,6 @@ ggplot() + geom_hline(yintercept = [-1, 4])
 # Plot multiple y-intercepts mapped to a column
 df = DataFrame(y = rand(4))
 ggplot(df, @aes(yintercept = y)) + geom_hline()
-
-md"""
-## geom_vline
-"""
 
 # Plot only a single x-intercept
 ggplot() + geom_vline(xintercept = 3)

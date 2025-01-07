@@ -39,7 +39,7 @@ ggplot(penguins, @aes(x=species, y=bill_length_mm)) +
 ggplot(penguins, @aes(x=species, y=bill_length_mm)) +
     geom_violin(orientation=:horizontal)
 
-ggplot(penguins, @aes(x=species, y=bill_length_mm, fill=sex)) +
+ggplot(penguins, @aes(x=species, y=bill_length_mm, fill=sex, dodge=sex)) +
     geom_violin()
 ```
 """

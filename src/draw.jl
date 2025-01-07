@@ -156,9 +156,6 @@ function as_GridLayout(plot::GGPlot)
 
         # convert all aes columns to the format expected by makie
 
-        println(plot_palette)
-        println(aes_df)
-
         typed_aes_df = convert_aes_df_types(aes_df, plot_palette)
         labels_aes_df = get_unique_labels(aes_df, plot_palette)
 

@@ -44,7 +44,6 @@ function get_unique_labels(aes_df::DataFrame, palette::Dict)
             new_value=f(aes_df[!, col])
         ))
     end
-    println(unique(vcat(labels_df...)))
 
     return unique(vcat(labels_df...))
 

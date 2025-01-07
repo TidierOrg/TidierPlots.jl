@@ -182,19 +182,19 @@ n = 200
 df = DataFrame(x = randn(n) / 2, y = randn(n))
 
 top = ggplot(df) +
-    geom_histogram(aes(x = :x), color = (:orangered, 0.5), strokewidth = 0.5) +
+    geom_histogram(aes(x = :x), fill = :orangered, strokewidth = 0.5) +
     lims(x = c(-4, 4)) +
     theme(xticklabelsvisible = false, xgridvisible = false) +
     beautiful_makie_theme
 
 right = ggplot(df) +
-    geom_histogram(aes(:y), color = (:dodgerblue, 0.5),
+    geom_histogram(aes(x = :y), fill = :dodgerblue,
         direction = :x, strokewidth = 0.5) +
     lims(y = c(-3, 3)) +
     theme(yticklabelsvisible = false, ygridvisible = false) +
     beautiful_makie_theme
 
-middle = ggplot(df) + geom_point(aes(:x, :y), size = 10) +
+middle = ggplot(df) + geom_point(aes(x = :x, y = :y), size = 10) +
     lims(x = c(-4, 4), y = c(-3, 3)) + labs(x = "x", y = "y") +
     beautiful_makie_theme
 

@@ -34,7 +34,7 @@ Represent data as a smooth density curve.
 ggplot(penguins, @aes(x=bill_length_mm)) + geom_density()
 
 ggplot(penguins, @aes(x=bill_length_mm)) +
-    geom_density(color = (:red, 0.3), strokecolor = :red, stroke = 2)
+    geom_density(color = :black, stroke = 2)
 ```
 """
 geom_density = geom_template("geom_density", ["x"], :Density;

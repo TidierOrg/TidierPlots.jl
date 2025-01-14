@@ -1,3 +1,7 @@
+# this only works locally
+# uncomment the include statement in runtests to check
+# if the examples in the docs will run without errors
+
 @testset "docs-render" begin
     @testset "geom_bar" begin
         include("../docs/examples/geoms/geom_bar.jl")

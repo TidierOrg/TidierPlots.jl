@@ -11,7 +11,7 @@ function aes(args...; kwargs...)
 
     for arg in args
         if arg isa Pair
-            push!(aes_args, arg)
+            throw(ErrorException("Calculations are not supported in positional aes specs."))
         else
             push!(aes_args, Symbol(arg) => identity)
         end
@@ -43,7 +43,7 @@ macro aes(exprs...)
         if aes isa QuoteNode # positional aes with no transformations
             push!(aes_args, aes.value => identity)
         elseif aes.args[1] == :Cols
-            throw("Calculations are not supported in positional aes specs.")
+            throw(ErrorException("Calculations are not supported in positional aes specs."))
         elseif aes.args[2] isa QuoteNode
             push!(aes_kw, aes.args[3].value => aes.args[2].value => identity)
         else
@@ -54,6 +54,8 @@ macro aes(exprs...)
 
     return Aesthetics(aes_args, aes_kw)
 end
+
+# COV_EXCL_START
 
 function Base.show(io::IO, aes::Aesthetics)
     println("A TidierPlots aes mapping object.")
@@ -69,5 +71,7 @@ function Base.show(io::IO, aes::Aesthetics)
         println("$k : $v")
     end
 end
+
+# COV_EXCL_STOP
 
 @eval const $(Symbol("@es")) = $(Symbol("@aes"))

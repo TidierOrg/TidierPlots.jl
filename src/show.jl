@@ -42,6 +42,8 @@ function Base.show(io::IO, geom::Geom)
     end
 end
 
+# COV_EXCL_START
+
 function Base.show(io::IO, plot::GGPlot)
     if plot_log[]
         printstyled(io, "ggplot options\n", underline=true)
@@ -106,3 +108,5 @@ function Base.show(io::IO, ::MIME"text/html", x::GGPlotGrid)
         end
     )
 end
+
+# COV_EXCL_STOP

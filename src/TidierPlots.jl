@@ -111,7 +111,7 @@ export facet_wrap, facet_grid
 
 # scales
 
-export labs, lims, c
+export labs, lims, c, guides
 export label_bytes, label_currency, label_date, label_log, label_number, label_ordinal, label_percent, label_pvalue, label_scientific, label_wrap
 export scale_x_continuous, scale_y_continuous
 export scale_x_log10, scale_y_log10, scale_x_log2, scale_y_log2, scale_x_log, scale_y_log

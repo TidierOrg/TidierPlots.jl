@@ -6,6 +6,8 @@
     @test lf(.195) == "0.2"
     @test lf(101) == "101"
     @test lf(-101) == "-101"
+    @test_throws ErrorException lf = label_number(style_positive = :error)
+    @test_throws ErrorException lf = label_number(style_negative = :error)
     lf = label_number(;precision=1)
     @test lf(.1) == "0.1"
     @test lf(.95) == "0.9"

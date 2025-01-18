@@ -4,6 +4,9 @@
         t = ggplot(penguins) +
             geom_point(@aes(x = bill_length_mm, y = bill_depth_mm))
 
+        t2 = ggplot() +
+            geom_point(penguins, @aes(x = bill_length_mm, y = bill_depth_mm))
+
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
                 Makie.SpecApi.Axis(
@@ -18,6 +21,7 @@
         )
 
         @test plot_images_equal(t, m)
+        @test plot_images_equal(t2, m)
     end
 
 

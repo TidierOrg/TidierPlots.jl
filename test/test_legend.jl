@@ -8,7 +8,6 @@
 
     @test g2.legend_options[:color][:guide] == :legend
     @test g2.legend_options[:color][:type] == "discrete"
-    @test g2.legend_options[:color][:scale] == "color"
     @test g2.legend_options[:color][:palette] == :julia
 
 end

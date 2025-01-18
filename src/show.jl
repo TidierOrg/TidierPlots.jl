@@ -1,3 +1,7 @@
+# these functions are not tested since logging is currently turned off for testing
+
+# COV_EXCL_START
+
 function Base.show(io::IO, geom::Geom)
     if plot_log[]
         printstyled(io, "$(geom.args["geom_name"])\n", underline=true)
@@ -41,8 +45,6 @@ function Base.show(io::IO, geom::Geom)
         end
     end
 end
-
-# COV_EXCL_START
 
 function Base.show(io::IO, plot::GGPlot)
     if plot_log[]

@@ -27,6 +27,8 @@ penguins = DataFrame(Parquet2.readfile(joinpath(@__DIR__, "penguins.parq")))
 
 TidierPlots_set("plot_show", false)
 TidierPlots_set("plot_log", false)
+TidierPlots_set("plot_pluto", false)
+TidierPlots_set("verbose", false)
 
 # configure Makie to use the ggplot2 theme
 
@@ -34,6 +36,7 @@ set_theme!(theme_ggplot2())
 
 # see files for tests
 @testset "TidierPlots" verbose = true begin
+    @test_throws ArgumentError TidierPlots_set("na", true)
     include("test_aes.jl")
     include("test_aes_ops.jl")
     include("test_broadcasting.jl")

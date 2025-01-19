@@ -42,8 +42,6 @@ df = DataFrame(y = rand(4))
 ggplot(df, @aes(yintercept = y)) + geom_hline()
 ```
 """
-function geom_hline end
-
 function geom_hline(args...; kwargs...)
     aes_dict, args_dict = extract_aes(args, kwargs)
 
@@ -103,8 +101,6 @@ df = DataFrame(x = rand(4))
 ggplot(df, @aes(xintercept = x)) + geom_vline()
 ```
 """
-function geom_vline end
-
 function geom_vline(args...; kwargs...)
     aes_dict, args_dict = extract_aes(args, kwargs)
 

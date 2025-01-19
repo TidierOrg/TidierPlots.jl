@@ -1,5 +1,5 @@
 @testset "labs" begin
-    t = ggplot(penguins) + 
+    t = ggplot(penguins) +
         geom_point(@aes(x = bill_length_mm, y = bill_depth_mm))
 
     m_title = Makie.plot(
@@ -7,7 +7,7 @@
             Makie.SpecApi.Axis(
                 plots = [
                     Makie.PlotSpec(
-                        :Scatter, 
+                        :Scatter,
                         penguins.bill_length_mm,
                         penguins.bill_depth_mm)
                 ]; title = "Title"
@@ -22,7 +22,7 @@
             Makie.SpecApi.Axis(
                 plots = [
                     Makie.PlotSpec(
-                        :Scatter, 
+                        :Scatter,
                         penguins.bill_length_mm,
                         penguins.bill_depth_mm)
                 ]; xlabel = "X"
@@ -37,7 +37,7 @@
             Makie.SpecApi.Axis(
                 plots = [
                     Makie.PlotSpec(
-                        :Scatter, 
+                        :Scatter,
                         penguins.bill_length_mm,
                         penguins.bill_depth_mm)
                 ]; ylabel = "Y"
@@ -52,7 +52,7 @@
             Makie.SpecApi.Axis(
                 plots = [
                     Makie.PlotSpec(
-                        :Scatter, 
+                        :Scatter,
                         penguins.bill_length_mm,
                         penguins.bill_depth_mm)
                 ]; xlabel = "X", ylabel = "Y"
@@ -67,7 +67,7 @@
             Makie.SpecApi.Axis(
                 plots = [
                     Makie.PlotSpec(
-                        :Scatter, 
+                        :Scatter,
                         penguins.bill_length_mm,
                         penguins.bill_depth_mm)
                 ]; xlabel = "X", ylabel = "Y", title = "Title"
@@ -76,5 +76,9 @@
     )
 
     @test plot_images_equal(t + labs(x = "X", y = "Y", title = "Title"), m_xylab_title)
+
+    l = labs(ggplot(), x = "Test")
+
+    @test l.axis_options[:xlabel] == "Test"
 
 end

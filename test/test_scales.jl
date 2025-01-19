@@ -35,4 +35,8 @@
     )
     @test scale.opt[:xreversed] == true
     @test scale.opt[:xscale] == log
+
+    scale = scale_x_reverse()
+
+    @test scale.opt[:xreversed] == true
 end

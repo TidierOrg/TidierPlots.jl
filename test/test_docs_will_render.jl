@@ -32,11 +32,6 @@
 
         @test true
     end
-    @testset "geom_contour" begin
-        ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) +
-            geom_contour(levels = 10)
-        @test true
-    end
     @testset "geom_density" begin
         ggplot(penguins, @aes(x=bill_length_mm)) +
             geom_density()

@@ -171,6 +171,116 @@
         )
 
         @test ae[:fill] == (:a => identity)
+
+        ae, ar, r, df = TidierPlots.handle_position(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :color => :a => identity
+            ),
+            Dict{Any,Any}("geom_name" => "geom_bar", "position" => "stack"),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        @test ae[:stack] == (:a => identity)
+
+        ae, ar, r, df = TidierPlots.handle_position(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :colour => :a => identity
+            ),
+            Dict{Any,Any}("geom_name" => "geom_bar", "position" => "stack"),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        @test ae[:stack] == (:a => identity)
+
+        ae, ar, r, df = TidierPlots.handle_position(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :group => :a => identity
+            ),
+            Dict{Any,Any}("geom_name" => "geom_bar", "position" => "stack"),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        @test ae[:stack] == (:a => identity)
+
+        ae, ar, r, df = TidierPlots.handle_position(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :fill => :a => identity
+            ),
+            Dict{Any,Any}("geom_name" => "geom_bar", "position" => "stack"),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        @test ae[:fill] == (:a => identity)
+
+        ae, ar, r, df = TidierPlots.handle_position(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :color => :a => identity
+            ),
+            Dict{Any,Any}("geom_name" => "geom_bar", "position" => "dodge"),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        @test ae[:dodge] == (:a => identity)
+
+        ae, ar, r, df = TidierPlots.handle_position(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :colour => :a => identity
+            ),
+            Dict{Any,Any}("geom_name" => "geom_bar", "position" => "dodge"),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        @test ae[:dodge] == (:a => identity)
+
+        ae, ar, r, df = TidierPlots.handle_position(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :group => :a => identity
+            ),
+            Dict{Any,Any}("geom_name" => "geom_bar", "position" => "dodge"),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        @test ae[:dodge] == (:a => identity)
+
+        ae, ar, r, df = TidierPlots.handle_position(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :fill => :a => identity
+            ),
+            Dict{Any,Any}("geom_name" => "geom_bar", "position" => "dodge"),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        @test ae[:dodge] == (:a => identity)
+
+        ae, ar, r, df = TidierPlots.handle_position(
+            Dict{Symbol,Pair}(
+                :y => :b => identity,
+                :fill => :a => identity
+            ),
+            Dict{Any,Any}("geom_name" => "geom_bar", "position" => "dodge"),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        @test ae[:dodge] == (:a => identity)
+        @test ar["direction"] == "x"
+        @test r == ["y", "x"]
     end
 
     @testset "geom_col" begin

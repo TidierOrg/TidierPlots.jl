@@ -34,6 +34,9 @@
 
         @test_throws MethodError md = TidierPlots.make_color_lookup_discrete()
         @test_throws ArgumentError md = TidierPlots.make_color_lookup_discrete(
+            Dict(:wrongname => [1])
+        )
+        @test_throws ArgumentError md = TidierPlots.make_color_lookup_discrete(
             Dict(:palette => [1])
         )
 
@@ -41,6 +44,8 @@
         @test s.palette[:color](1) == Colors.RGB{N0f8}(0.122, 0.514, 1.0)
         @test s.palette[:color](["a"])[1] == Colors.RGB{N0f8}(0.122, 0.514, 1.0)
         @test s.palette[:color](1.2) == Colors.RGB{N0f8}(0.122, 0.514, 1.0)
+        @test s.palette[:color](CategoricalArray(["a"]))[1] ==
+              Colors.RGB{N0f8}(0.122, 0.514, 1.0)
     end
 
     @testset "manual" begin
@@ -115,6 +120,9 @@
         @test_throws MethodError md = TidierPlots.make_color_lookup_continuous()
         @test_throws ArgumentError md =
             TidierPlots.make_color_lookup_continuous(Dict(:palette => [1]))
+        @test_throws ArgumentError md =
+            TidierPlots.make_color_lookup_continuous(Dict(:wrongname => [1]))
+
 
         s = scale_color_continuous(palette="julia")
         @test s.palette[:color](1) == RGB{Float64}(
@@ -157,6 +165,8 @@
         @test_throws MethodError md = TidierPlots.make_color_lookup_binned()
         @test_throws ArgumentError md =
             TidierPlots.make_color_lookup_binned(Dict(:palette => [1]))
+        @test_throws ArgumentError md =
+            TidierPlots.make_color_lookup_binned(Dict(:wrongname => [1]))
     end
 
     @test_throws ArgumentError TidierPlots.color_scale_to_ggoptions(

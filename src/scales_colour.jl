@@ -9,10 +9,6 @@ function make_color_lookup_manual(args_dict::Dict)
     function color_lookup_manual(input::Integer)
         return [colors[x] for x in input]
     end
-    function color_lookup_manual(input::AbstractFloat)
-        @warn "Rounding non-discrete input to manual $(args_dict[:type]) scale"
-        return [colors[round(Integer, x)] for x in input]
-    end
     return color_lookup_manual
 end
 

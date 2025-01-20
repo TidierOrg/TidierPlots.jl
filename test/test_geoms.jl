@@ -112,6 +112,65 @@
         )
 
         @test plot_images_equal(t, m)
+
+        @test_throws ArgumentError TidierPlots.handle_position(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :y => :c => identity,
+                :color => :a => identity
+            ),
+            Dict{Any,Any}("geom_name" => "geom_bar"),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        ae, ar, r, df = TidierPlots.handle_position(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :color => :a => identity
+            ),
+            Dict{Any,Any}("geom_name" => "geom_bar"),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        @test ae[:stack] == (:a => identity)
+
+        ae, ar, r, df = TidierPlots.handle_position(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :colour => :a => identity
+            ),
+            Dict{Any,Any}("geom_name" => "geom_bar"),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        @test ae[:stack] == (:a => identity)
+
+        ae, ar, r, df = TidierPlots.handle_position(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :group => :a => identity
+            ),
+            Dict{Any,Any}("geom_name" => "geom_bar"),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        @test ae[:stack] == (:a => identity)
+
+        ae, ar, r, df = TidierPlots.handle_position(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :fill => :a => identity
+            ),
+            Dict{Any,Any}("geom_name" => "geom_bar"),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        @test ae[:fill] == (:a => identity)
     end
 
     @testset "geom_col" begin

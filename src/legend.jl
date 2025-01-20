@@ -5,6 +5,6 @@ function guides(args...; kwargs...)
     return AxisOptions(
         Dict{Symbol,Any}(),
         Dict(),
-        Dict(k => Dict(:guide => Symbol(v)) for (k, v) in Dict(kwargs))
+        Dict(k => Dict(:type => string(v)) for (k, v) in Dict(kwargs))
     )
 end

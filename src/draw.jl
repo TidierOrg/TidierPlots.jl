@@ -257,7 +257,7 @@ function as_GridLayout(plot::GGPlot)
                         maximum(labels_for_this_aes.original_value), colorbar_highlim)
 
                     colorbar = true
-                else
+                elseif draw_colorbar in ["discrete", "manual"]
                     append!(legend,
                         sort(DataFrame(
                                 labels=labels_for_this_aes.original_value,

@@ -57,7 +57,7 @@
     @test haskey(b, (1, 1, Top()))
     @test haskey(l, (1, 2, Top()))
     @test haskey(l, (1, 1, Top()))
-    @test_throws ArgumentError TidierPlots.position_facets(["a", "b"], cols = nothing)
-    @test_throws ArgumentError TidierPlots.position_facets(["a", "b"], rows = 1, cols = 1)
+    @test_throws ArgumentError TidierPlots.position_facets(["a", "b"], nothing, nothing)
+    @test_throws ArgumentError TidierPlots.position_facets(["a", "b"], 1, 1)
 
 end

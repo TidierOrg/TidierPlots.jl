@@ -5,7 +5,7 @@
             geom_point(@aes(x = bill_length_mm, y = bill_depth_mm))
 
         t2 = ggplot() +
-            geom_point(penguins, @aes(x = bill_length_mm, y = bill_depth_mm))
+             geom_point(penguins, @aes(x = bill_length_mm, y = bill_depth_mm))
 
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
@@ -24,21 +24,21 @@
         @test plot_images_equal(t2, m)
 
         t3 = ggplot() +
-            geom_point(penguins,
-                @aes(x = bill_length_mm, y = bill_depth_mm, color = sex))
+             geom_point(penguins,
+            @aes(x = bill_length_mm, y = bill_depth_mm, color = sex))
         t4 = ggplot() +
-            geom_point(penguins,
-                @aes(x = bill_length_mm, y = bill_depth_mm, fill = sex))
+             geom_point(penguins,
+            @aes(x = bill_length_mm, y = bill_depth_mm, fill = sex))
 
         @test plot_images_equal(t3, t4)
 
         t5 = ggplot(penguins) +
-            geom_point(
-                @aes(x = bill_length_mm,
+             geom_point(
+                 @aes(x = bill_length_mm,
                      y = bill_depth_mm,
                      color = sex,
                      fill = species),
-                strokewidth = 1) + guides(color = "none", fill = "none")
+                 strokewidth=1) + guides(color="none", fill="none")
 
         cat_species = CategoricalArrays.CategoricalArray(penguins.species)
         cat_sex = CategoricalArrays.CategoricalArray(penguins.sex)
@@ -48,9 +48,9 @@
                 :Scatter,
                 penguins.bill_length_mm,
                 penguins.bill_depth_mm;
-                color = TidierPlots._default_discrete_palette(cat_species),
-                strokecolor = TidierPlots._default_discrete_palette(cat_sex),
-                strokewidth = 1)
+                color=TidierPlots._default_discrete_palette(cat_species),
+                strokecolor=TidierPlots._default_discrete_palette(cat_sex),
+                strokewidth=1)
             ]
         )))
 
@@ -277,7 +277,7 @@
             geom_point() + # to show the mean value
             geom_errorbar() # width of the horizontal line at the top and bottom of the error bar
 
-        t2 = @chain ggplot(df_errorbar, @aes(x = cat_numeric, y = MeanValue, ymin = LowerBound, ymax = UpperBound))  begin
+        t2 = @chain ggplot(df_errorbar, @aes(x = cat_numeric, y = MeanValue, ymin = LowerBound, ymax = UpperBound)) begin
             geom_point()
             geom_errorbar()
         end
@@ -309,8 +309,8 @@
         end
 
         t4 = ggplot(df_errorbar, @aes(y = cat_numeric, x = MeanValue, xmin = LowerBound, xmax = UpperBound)) +
-            geom_point() + # to show the mean value
-            geom_errorbarh()
+             geom_point() + # to show the mean value
+             geom_errorbarh()
 
         m2 = Makie.plot(
             Makie.SpecApi.GridLayout(
@@ -324,7 +324,7 @@
                             :Rangebars,
                             df_errorbar.cat_numeric,
                             df_errorbar.LowerBound,
-                            df_errorbar.UpperBound; direction = :x)
+                            df_errorbar.UpperBound; direction=:x)
                     ]
                 )
             )
@@ -362,6 +362,13 @@
         )
 
         @test plot_images_equal(t, m)
+
+        t2 = @chain ggplot(penguins, aes(x="bill_length_mm", y="bill_depth_mm")) begin
+            geom_smooth
+            geom_point
+        end
+
+        @test plot_images_equal(t, t2)
 
         t = ggplot(penguins, aes(x="bill_length_mm", y="bill_depth_mm")) +
             geom_smooth(method="lm") + geom_point()
@@ -448,6 +455,10 @@
         )
 
         @test plot_images_equal(t, m)
+
+        t2 = geom_hline(ggplot(penguins), yintercept=yint)
+
+        @test plot_images_equal(t, t2)
     end
 
     @testset "geom_vline" begin
@@ -470,5 +481,9 @@
         )
 
         @test plot_images_equal(t, m)
+
+        t2 = geom_vline(ggplot(penguins), xintercept=xint)
+
+        @test plot_images_equal(t, t2)
     end
 end

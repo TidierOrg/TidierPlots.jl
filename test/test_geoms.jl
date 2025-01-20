@@ -207,7 +207,7 @@
             DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
         )
 
-        @test ae[:dodge] == :a => identity
+        @test ae[:dodge] == (:a => identity)
         @test ar["orientation"] == :horizontal
 
         @test_throws ArgumentError TidierPlots.boxplot_groups(

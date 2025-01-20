@@ -195,6 +195,33 @@
         )
 
         @test plot_images_equal(t, m)
+
+        ae, ar, r, d = TidierPlots.boxplot_groups(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :y => :c => identity,
+                :color => :a => identity
+            ),
+            Dict(),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        @test ae[:dodge] == :a => identity
+        @test ar["orientation"] == :horizontal
+
+        @test_throws ArgumentError TidierPlots.boxplot_groups(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :y => :c => identity,
+                :color => :a => identity,
+                :fill => :d => identity
+            ),
+            Dict(),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"], d=["e", "f"])
+        )
+
     end
 
     @testset "geom_violin" begin

@@ -62,7 +62,7 @@ function handle_position(aes_dict::Dict{Symbol,Pair},
             args_dict["direction"] = "x"
             required_aes = ["y", "x"]
         else
-            @error "geom_bar requires either an x or y aesthetic, but not both."
+            throw(ArgumentError("geom_bar requires either an x or y aesthetic, but not both."))
         end
 
         if !isnothing(split_var)

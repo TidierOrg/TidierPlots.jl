@@ -81,6 +81,96 @@
         )
 
         @test plot_images_equal(t, m)
+
+        penguins_count_by_sex = @chain penguins begin
+            groupby([:species, :sex])
+            @summarize(count = n())
+            @arrange(species)
+            @ungroup
+        end
+
+        t = ggplot(penguins) +
+            geom_bar(@aes(x = species, fill = sex), position="dodge")
+
+        cat_sex = TidierPlots._default_discrete_palette(levelcode.(CategoricalArray(penguins_count_by_sex.sex)))
+        cat_spec = levelcode.(CategoricalArray(penguins_count_by_sex.species))
+        dodge = levelcode.(CategoricalArray(penguins_count_by_sex.sex))
+
+        m = Makie.plot(
+            Makie.SpecApi.GridLayout(
+                Makie.SpecApi.Axis(
+                    plots=[
+                        Makie.PlotSpec(
+                            :BarPlot,
+                            cat_spec,
+                            penguins_count_by_sex.count;
+                            dodge=dodge,
+                            color=cat_sex)
+                    ]; xticks=(1:3, unique(penguins_count_by_sex.species))
+                )
+            )
+        )
+
+        @test plot_images_equal(t, m)
+
+        @test_throws ArgumentError TidierPlots.handle_position(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :y => :c => identity,
+                :color => :a => identity
+            ),
+            Dict{Any,Any}("geom_name" => "geom_bar"),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        ae, ar, r, df = TidierPlots.handle_position(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :color => :a => identity
+            ),
+            Dict{Any,Any}("geom_name" => "geom_bar"),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        @test ae[:stack] == (:a => identity)
+
+        ae, ar, r, df = TidierPlots.handle_position(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :colour => :a => identity
+            ),
+            Dict{Any,Any}("geom_name" => "geom_bar"),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        @test ae[:stack] == (:a => identity)
+
+        ae, ar, r, df = TidierPlots.handle_position(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :group => :a => identity
+            ),
+            Dict{Any,Any}("geom_name" => "geom_bar"),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        @test ae[:stack] == (:a => identity)
+
+        ae, ar, r, df = TidierPlots.handle_position(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :fill => :a => identity
+            ),
+            Dict{Any,Any}("geom_name" => "geom_bar"),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        @test ae[:fill] == (:a => identity)
     end
 
     @testset "geom_col" begin

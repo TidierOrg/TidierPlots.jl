@@ -1,4 +1,4 @@
-function make_color_lookup_manual(args_dict)
+function make_color_lookup_manual(args_dict::Dict)
     colors = parse.(Colorant, args_dict[:values])
     function color_lookup_manual(input::Any)
         return [colors[x] for x in levelcode.(CategoricalArray(input))]
@@ -11,17 +11,17 @@ function make_color_lookup_manual(args_dict)
     end
     function color_lookup_manual(input::AbstractFloat)
         @warn "Rounding non-discrete input to manual $(args_dict[:type]) scale"
-        return [colors[round(x)] for x in input]
+        return [colors[round(Integer, x)] for x in input]
     end
     return color_lookup_manual
 end
 
-function make_color_lookup_discrete(args_dict)
+function make_color_lookup_discrete(args_dict::Dict)
     palette = haskey(args_dict, :palette) ? args_dict[:palette] :
               haskey(args_dict, :values) ? args_dict[:values][1] : nothing
 
     if isnothing(palette)
-        @error "Invalid palette specification in discrete color scale."
+        throw(ArgumentError("Invalid palette specification in discrete color scale."))
     end
 
     scheme = palette isa Symbol ? ColorSchemes.colorschemes[palette] :
@@ -29,7 +29,7 @@ function make_color_lookup_discrete(args_dict)
              palette isa ColorScheme ? palette : nothing
 
     if isnothing(scheme)
-        @error "Palette should be a String, a Symbol, or a ColorScheme, not a $(typeof(palette))"
+        throw(ArgumentError("Palette should be a String, a Symbol, or a ColorScheme, not a $(typeof(palette))"))
     end
 
     function color_lookup_discrete(input::Any)
@@ -42,57 +42,55 @@ function make_color_lookup_discrete(args_dict)
         return scheme[input]
     end
     function color_lookup_discrete(input::AbstractFloat)
-        return scheme[round.(input)]
+        return scheme[round.(Integer, input)]
     end
 
     return color_lookup_discrete
 end
 
-function make_color_lookup_continuous(args_dict)
+function make_color_lookup_continuous(args_dict::Dict)
+    palette = haskey(args_dict, :palette) ? args_dict[:palette] :
+              haskey(args_dict, :values) ? args_dict[:values][1] : nothing
+
+    if isnothing(palette)
+        throw(ArgumentError("Invalid palette specification in continuous color scale."))
+    end
+
+    scheme = palette isa Symbol ? ColorSchemes.colorschemes[palette] :
+             palette isa String ? ColorSchemes.colorschemes[Symbol(palette)] :
+             palette isa ColorScheme ? palette : nothing
+
+    if isnothing(scheme)
+        throw(ArgumentError("Palette should be a String, a Symbol, or a ColorScheme, not a $(typeof(palette))"))
+    end
+
     function color_lookup_continuous(input)
-        scaled_input = input ./ maximum(input)
-
-        palette = haskey(args_dict, :palette) ? args_dict[:palette] :
-                  haskey(args_dict, :values) ? args_dict[:values][1] : nothing
-
-        if isnothing(palette)
-            @error "Invalid palette specification in continuous color scale."
-        end
-
-        scheme = palette isa Symbol ? ColorSchemes.colorschemes[palette] :
-                 palette isa String ? ColorSchemes.colorschemes[Symbol(palette)] :
-                 palette isa ColorScheme ? palette : nothing
-
-        if isnothing(scheme)
-            @error "Palette should be a String, a Symbol, or a ColorScheme, not a $(typeof(palette))"
-        end
-
-        return get(scheme, scaled_input)
+        return get(scheme, input ./ maximum(input))
     end
     return color_lookup_continuous
 end
 
-function make_color_lookup_binned(args_dict)
+function make_color_lookup_binned(args_dict::Dict)
+    palette = haskey(args_dict, :palette) ? args_dict[:palette] :
+              haskey(args_dict, :values) ? args_dict[:values][1] : nothing
+
+    if isnothing(palette)
+        throw(ArgumentError("Invalid palette specification in binned color scale."))
+    end
+
+    scheme = palette isa Symbol ? ColorSchemes.colorschemes[palette] :
+             palette isa String ? ColorSchemes.colorschemes[Symbol(palette)] :
+             palette isa ColorScheme ? palette : nothing
+
+    if isnothing(scheme)
+        palette_type = typeof(palette)
+        throw(ArgumentError("Palette should be a String, a Symbol, or a ColorScheme, not a $palette_type"))
+    end
+
     function color_lookup_binned(input)
         input = convert.(Float64, input)
 
         binned_input = ceil.(Int, 1 .+ 4 .* ((input .- minimum(input)) ./ (maximum(input) - minimum(input))))
-
-        palette = haskey(args_dict, :palette) ? args_dict[:palette] :
-                  haskey(args_dict, :values) ? args_dict[:values][1] : nothing
-
-        if isnothing(palette)
-            @error "Invalid palette specification in binned color scale."
-        end
-
-        scheme = palette isa Symbol ? ColorSchemes.colorschemes[palette] :
-                 palette isa String ? ColorSchemes.colorschemes[Symbol(palette)] :
-                 palette isa ColorScheme ? palette : nothing
-
-        if isnothing(scheme)
-            palette_type = typeof(palette)
-            @error "Palette should be a String, a Symbol, or a ColorScheme, not a $palette_type"
-        end
 
         return scheme[binned_input]
     end
@@ -119,7 +117,7 @@ function color_scale_to_ggoptions(args_dict::Dict)
     elseif args_dict[:scale] == "fill"
         palette[:fill] = lookup
     else
-        throw("Unrecognized scale: $(args_dict[:scale])")
+        throw(ArgumentError("Unrecognized scale: $(args_dict[:scale])"))
     end
 
     return AxisOptions(
@@ -165,7 +163,7 @@ const _default_discrete_palette = make_color_lookup_manual(
     ])
 )
 const _default_continuous_palette = make_color_lookup_continuous(
-    :palette => :viridis
+    Dict(:palette => :viridis)
 )
 
 # scale definitions

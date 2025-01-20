@@ -22,6 +22,37 @@
 
         @test plot_images_equal(t, m)
         @test plot_images_equal(t2, m)
+
+        t3 = ggplot() +
+            geom_point(penguins,
+                @aes(x = bill_length_mm, y = bill_depth_mm, color = sex))
+        t4 = ggplot() +
+            geom_point(penguins,
+                @aes(x = bill_length_mm, y = bill_depth_mm, fill = sex))
+
+        @test plot_images_equal(t3, t4)
+
+        t5 = ggplot(penguins) +
+            geom_point(
+                @aes(x = bill_length_mm,
+                     y = bill_depth_mm,
+                     color = sex,
+                     fill = species),
+                strokewidth = 1) + guides(color = "none", fill = "none")
+
+        cat_species = CategoricalArrays.CategoricalArray(penguins.species)
+        cat_sex = CategoricalArrays.CategoricalArray(penguins.sex)
+
+        m2 = Makie.plot(Makie.SpecApi.GridLayout(Makie.SpecApi.Axis(
+            plots=[Makie.PlotSpec(
+                :Scatter,
+                penguins.bill_length_mm,
+                penguins.bill_depth_mm;
+                color = TidierPlots._default_discrete_palette(cat_species),
+                strokecolor = TidierPlots._default_discrete_palette(cat_sex),
+                strokewidth = 1)
+            ]
+        )))
     end
 
 
@@ -242,7 +273,12 @@
 
         t = ggplot(df_errorbar, @aes(x = cat_numeric, y = MeanValue, ymin = LowerBound, ymax = UpperBound)) +
             geom_point() + # to show the mean value
-            geom_errorbar(width=0.2) # width of the horizontal line at the top and bottom of the error bar
+            geom_errorbar() # width of the horizontal line at the top and bottom of the error bar
+
+        t2 = @chain ggplot(df_errorbar, @aes(x = cat_numeric, y = MeanValue, ymin = LowerBound, ymax = UpperBound))  begin
+            geom_point()
+            geom_errorbar()
+        end
 
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
@@ -263,6 +299,37 @@
         )
 
         @test plot_images_equal(t, m)
+        @test plot_images_equal(t2, m)
+
+        t3 = @chain ggplot(df_errorbar, @aes(y = cat_numeric, x = MeanValue, xmin = LowerBound, xmax = UpperBound)) begin
+            geom_point()
+            geom_errorbarh()
+        end
+
+        t4 = ggplot(df_errorbar, @aes(y = cat_numeric, x = MeanValue, xmin = LowerBound, xmax = UpperBound)) +
+            geom_point() + # to show the mean value
+            geom_errorbarh()
+
+        m2 = Makie.plot(
+            Makie.SpecApi.GridLayout(
+                Makie.SpecApi.Axis(
+                    plots=[
+                        Makie.PlotSpec(
+                            :Scatter,
+                            df_errorbar.MeanValue,
+                            df_errorbar.cat_numeric),
+                        Makie.PlotSpec(
+                            :Rangebars,
+                            df_errorbar.cat_numeric,
+                            df_errorbar.LowerBound,
+                            df_errorbar.UpperBound; direction = :x)
+                    ]
+                )
+            )
+        )
+
+        @test plot_images_equal(t3, m2)
+        @test plot_images_equal(t4, m2)
 
     end
 

@@ -1,6 +1,6 @@
 @testset "legend operations" begin
     g = ggplot() + guides(color = "legend")
-    @test g.legend_options[:color][:guide] == "legend"
+    @test g.legend_options[:color][:guide] == :legend
 
     g2 = ggplot() +
         scale_color_discrete(palette = :julia) +

@@ -239,22 +239,22 @@ function as_GridLayout(plot::GGPlot)
                 if haskey(plot.legend_options, :color)
                     l_type = get(plot.legend_options[:color], :type, "na")
                     legend_title = get(plot.legend_options[:color], :name, " ")
-                    l_guide = get(plot.legend_options[:color], :guide, "auto")
-                    if l_guide == "auto"
+                    draw_colorbar = get(plot.legend_options[:color], :guide, :auto)
+                    if draw_colorbar == :auto
                         if l_type in ["continuous", "binned"]
-                            draw_colorbar = "colorbar"
+                            draw_colorbar = :colorbar
                         elseif l_type in ["discrete", "manual"]
-                            draw_colorbar = "legend"
+                            draw_colorbar = :legend
                         else
-                            draw_colorbar = "na"
+                            draw_colorbar = :none
                         end
                     end
                 else
-                    draw_colorbar = "na"
+                    draw_colorbar = :none
                     legend_title = " "
                 end
 
-                if draw_colorbar == "colorbar"
+                if draw_colorbar == :colorbar
 
                     colorbar_kwargs[:colormap] =
                         plot.legend_options[:color][:type] == "continuous" ? Symbol(plot.legend_options[:color][:palette]) :
@@ -267,7 +267,7 @@ function as_GridLayout(plot::GGPlot)
                         maximum(labels_for_this_aes.original_value), colorbar_highlim)
 
                     colorbar = true
-                elseif draw_colorbar == "legend"
+                elseif draw_colorbar == :legend
                     append!(legend,
                         sort(DataFrame(
                                 labels=labels_for_this_aes.original_value,

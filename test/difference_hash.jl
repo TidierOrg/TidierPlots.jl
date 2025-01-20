@@ -32,15 +32,18 @@ function difference_hash(image, n_size_side=8)
     return hash
 end
 
-function plot_images_equal(tidier, makie)
-    tidierpath = tempname() * ".png"
-    makiepath = tempname() * ".png"
+function plot_images_equal(plots...)
+    temp_paths = [tempname() * ".png" for p in plots]
 
-    ggsave(tidierpath, tidier)
-    save(makiepath, makie)
+    for (path, plot) in zip(temp_paths, plots)
+        if typeof(plot) <: Union{TidierPlots.GGPlot,TidierPlots.GGPlotGrid}
+            ggsave(path, plot)
+        else
+            save(path, plot)
+        end
+    end
 
-    t_img = load(tidierpath)
-    m_img = load(makiepath)
-    
-    return difference_hash(t_img) == difference_hash(m_img)
+    img_hashes = [difference_hash(load(p)) for p in temp_paths]
+
+    return length(unique(img_hashes)) == 1
 end

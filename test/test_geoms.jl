@@ -43,21 +43,16 @@
         cat_species = CategoricalArrays.CategoricalArray(penguins.species)
         cat_sex = CategoricalArrays.CategoricalArray(penguins.sex)
 
-        m2 = Makie.plot(
-            Makie.SpecApi.GridLayout(
-                Makie.SpecApi.Axis(
-                    plots=[
-                        Makie.PlotSpec(
-                            :Scatter,
-                            penguins.bill_length_mm,
-                            penguins.bill_depth_mm;
-                            color = _default_discrete_palette(cat_species),
-                            strokecolor = _default_discrete_palette(cat_sex),
-                            strokewidth = 1)
-                    ]
-                )
-            )
-        )
+        m2 = Makie.plot(Makie.SpecApi.GridLayout(Makie.SpecApi.Axis(
+            plots=[Makie.PlotSpec(
+                :Scatter,
+                penguins.bill_length_mm,
+                penguins.bill_depth_mm;
+                color = TidierPlots._default_discrete_palette(cat_species),
+                strokecolor = TidierPlots._default_discrete_palette(cat_sex),
+                strokewidth = 1)
+            ]
+        )))
     end
 
 

@@ -53,6 +53,8 @@
                 strokewidth = 1)
             ]
         )))
+
+        @test plot_images_equal(t5, m2)
     end
 
 

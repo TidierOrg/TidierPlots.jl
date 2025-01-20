@@ -12,11 +12,13 @@ function handle_point_color_and_fill(aes_dict::Dict{Symbol,Pair},
 
     if !has_fill
         return (aes_dict, args_dict, required_aes, plot_data)
-    elseif !has_color && has_fill
-        aes_dict[:color] = aes_dict[:fill]
     else
-        aes_dict[:strokecolor] = aes_dict[colorname]
-        aes_dict[colorname] = aes_dict[:fill]
+        if !has_color
+            aes_dict[:color] = aes_dict[:fill]
+        else
+            aes_dict[:strokecolor] = aes_dict[colorname]
+            aes_dict[colorname] = aes_dict[:fill]
+        end
     end
 
     delete!(aes_dict, :fill)

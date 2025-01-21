@@ -130,11 +130,15 @@
             0.34901960784313724,
             0.6392156862745098)
 
-        def = ggplot(DataFrame(x = [1.0,2.2], y = [1.1,2.3])) +
+        gg1 = ggplot(DataFrame(x = [1.0,2.2], y = [1.1,2.3])) +
             geom_point(aes(x = :x, y = :y, color = :x))
 
-        @test def.palette[:color](1) ==
-            RGB{Float64}(0.993248, 0.906157, 0.143936)
+        gg2 = ggplot(DataFrame(x = [1.0,2.2], y = [1.1,2.3])) +
+            geom_point(aes(x = :x, y = :y, color = :x)) + scale_colour_continuous(palette = :viridis) +
+            guides(color = "none")
+
+        @test plot_images_equal(gg1, gg2)
+
     end
 
     @testset "binned" begin

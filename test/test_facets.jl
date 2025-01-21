@@ -68,4 +68,7 @@
 
     p, b, l = TidierPlots.position_facets(["a", "b"], 2, 1, :none)
     @test length(l) == 0
+
+    p, b, l = TidierPlots.position_facets(["a", "b"], 2, nothing, :none)
+    @test length(l) == 0
 end

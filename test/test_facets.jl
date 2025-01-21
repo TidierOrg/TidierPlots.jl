@@ -1,11 +1,13 @@
 @testset "facets" begin
-    @test_nowarn ggplot(penguins) +
+    t1 = ggplot(penguins) +
                  geom_point(aes(x=:bill_length_mm, y=:bill_depth_mm)) +
                  facet_wrap(:species)
 
-    @test_nowarn ggplot(penguins) +
+    t2 = ggplot(penguins) +
                  geom_point(aes(x=:bill_length_mm, y=:bill_depth_mm)) +
                  facet_wrap(facets=:species)
+
+    @test plot_images_equal(t1, t2)
 
     @test_nowarn @chain ggplot(penguins) begin
         geom_point(aes(x=:bill_length_mm, y=:bill_depth_mm))

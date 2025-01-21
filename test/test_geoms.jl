@@ -482,6 +482,22 @@
         )
 
         @test plot_images_equal(t, m)
+
+        t1 = ggplot(penguins) +
+            geom_density(aes(
+                x = :bill_length_mm,
+                color = :sex,
+                fill = :species
+            ), strokewidth = 1)
+
+        t2 = ggplot(penguins) +
+            geom_density(aes(
+                x = :bill_length_mm,
+                color = :sex,
+                fill = :species
+            ))
+
+        @test plot_images_equal(t1, t2)
     end
 
     @testset "geom_errorbar" begin

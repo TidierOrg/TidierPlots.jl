@@ -60,6 +60,12 @@ function as_GridLayout(plot::GGPlot)
             push!(aes_dict_makie, aes => column_name)
         end
 
+        # makie does not show strokes by default
+        if haskey(aes_dict_makie, :strokecolor) &&
+            !haskey(args_dict, "strokewidth")
+            args_dict["strokewidth"] = 1
+        end
+
         verbose[] && println("Translated aes dict:")
         verbose[] && println(aes_dict_makie)
 

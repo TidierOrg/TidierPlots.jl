@@ -130,15 +130,14 @@
             0.34901960784313724,
             0.6392156862745098)
 
-        gg1 = ggplot(DataFrame(x = [1.0,2.2], y = [1.1,2.3])) +
-            geom_point(aes(x = :x, y = :y, color = :x))
+        gg1 = ggplot(DataFrame(x=[1.0, 2.2], y=[1.1, 2.3])) +
+              geom_point(aes(x=:x, y=:y, color=:x))
 
-        gg2 = ggplot(DataFrame(x = [1.0,2.2], y = [1.1,2.3])) +
-            geom_point(aes(x = :x, y = :y, color = :x)) + scale_colour_continuous(palette = :viridis) +
-            guides(color = "none")
+        gg2 = ggplot(DataFrame(x=[1.0, 2.2], y=[1.1, 2.3])) +
+              geom_point(aes(x=:x, y=:y, color=:x)) + scale_colour_continuous(palette=:viridis) +
+              guides(color="none")
 
         @test plot_images_equal(gg1, gg2)
-
     end
 
     @testset "binned" begin

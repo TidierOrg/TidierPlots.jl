@@ -43,6 +43,7 @@ function add_gridspec(args::Union{GGPlot,GGPlotGrid,GGPlotGridSpec}...)
     # Separate plots from gridspec
     plots = Union{GGPlot,GGPlotGrid}[]
     gridspecl = GGPlotGridSpec[]
+    gridspec = nothing
     for arg in args
         if arg isa GGPlotGridSpec
             push!(gridspecl, arg)
@@ -53,13 +54,13 @@ function add_gridspec(args::Union{GGPlot,GGPlotGrid,GGPlotGridSpec}...)
 
     if length(gridspecl) > 1
         ncol = all([f.ncol == 0 for f in gridspecl]) ? 0 :
-            last([f.ncol for f in gridspecl if f > 0])
-        nnow = all([f.nrow == 0 for f in gridspecl]) ? 0 :
-            last([f.nrow for f in gridspecl if f > 0])
+            last([f.ncol for f in gridspecl if f.ncol > 0])
+        nrow = all([f.nrow == 0 for f in gridspecl]) ? 0 :
+            last([f.nrow for f in gridspecl if f.nrow > 0])
         widths = all([length(f.widths) == 0 for f in gridspecl]) ? Int64[] :
-            last([f.widths for f in gridspecl if length(f) > 0])
+            last([f.widths for f in gridspecl if length(f.widths) > 0])
         heights = all([length(f.heights) == 0 for f in gridspecl]) ? Int64[] :
-            last([f.heights for f in gridspecl if length(f) > 0])
+            last([f.heights for f in gridspecl if length(f.heights) > 0])
         gridspec = GGPlotGridSpec(ncol,nrow,
             any([f.byrow for f in gridspecl]),widths,heights)
     else length(gridspecl) == 1

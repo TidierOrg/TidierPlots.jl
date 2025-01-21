@@ -109,7 +109,7 @@ function as_GridLayout(plot::GGPlot)
                 if isnothing(supported_kwargs) || Symbol(makie_attr) in supported_kwargs
                     args_dict_makie[Symbol(makie_attr)] = converted_value
                 else
-                    @warn "Dropping unsupported argument: $makie_attr"
+                    throw(ArgumentError("Unsupported argument: $makie_attr"))
                 end
             end
         end

@@ -31,6 +31,21 @@
         )
 
         @test plot_images_equal(t, m)
+
+        @test_throws MethodError md = TidierPlots.make_color_lookup_discrete()
+        @test_throws ArgumentError md = TidierPlots.make_color_lookup_discrete(
+            Dict(:wrongname => [1])
+        )
+        @test_throws ArgumentError md = TidierPlots.make_color_lookup_discrete(
+            Dict(:palette => [1])
+        )
+
+        s = scale_color_discrete(palette="julia")
+        @test s.palette[:color](1) == Colors.RGB{N0f8}(0.122, 0.514, 1.0)
+        @test s.palette[:color](["a"])[1] == Colors.RGB{N0f8}(0.122, 0.514, 1.0)
+        @test s.palette[:color](1.2) == Colors.RGB{N0f8}(0.122, 0.514, 1.0)
+        @test s.palette[:color](CategoricalArray(["a"]))[1] ==
+              Colors.RGB{N0f8}(0.122, 0.514, 1.0)
     end
 
     @testset "manual" begin
@@ -65,6 +80,12 @@
         )
 
         @test plot_images_equal(t, m)
+
+        ml = TidierPlots.make_color_lookup_manual(
+            Dict(:values => [:red, :blue, :white])
+        )
+
+        @test all(ml([1.2, 1.8]) .== [Colors.RGB(1.0, 0.0, 0.0), Colors.RGB(0.0, 0.0, 1.0)])
     end
 
     @testset "continuous" begin
@@ -95,6 +116,28 @@
         )
 
         @test plot_images_equal(t, m)
+
+        @test_throws MethodError md = TidierPlots.make_color_lookup_continuous()
+        @test_throws ArgumentError md =
+            TidierPlots.make_color_lookup_continuous(Dict(:palette => [1]))
+        @test_throws ArgumentError md =
+            TidierPlots.make_color_lookup_continuous(Dict(:wrongname => [1]))
+
+
+        s = scale_color_continuous(palette="julia")
+        @test s.palette[:color](1) == RGB{Float64}(
+            0.5725490196078431,
+            0.34901960784313724,
+            0.6392156862745098)
+
+        gg1 = ggplot(DataFrame(x=[1.0, 2.2], y=[1.1, 2.3])) +
+              geom_point(aes(x=:x, y=:y, color=:x))
+
+        gg2 = ggplot(DataFrame(x=[1.0, 2.2], y=[1.1, 2.3])) +
+              geom_point(aes(x=:x, y=:y, color=:x)) + scale_colour_continuous(palette=:viridis) +
+              guides(color="none")
+
+        @test plot_images_equal(gg1, gg2)
     end
 
     @testset "binned" begin
@@ -127,5 +170,28 @@
         )
 
         @test plot_images_equal(t, m)
+
+        @test_throws MethodError md = TidierPlots.make_color_lookup_binned()
+        @test_throws ArgumentError md =
+            TidierPlots.make_color_lookup_binned(Dict(:palette => [1]))
+        @test_throws ArgumentError md =
+            TidierPlots.make_color_lookup_binned(Dict(:wrongname => [1]))
     end
+
+    @test_throws ArgumentError TidierPlots.color_scale_to_ggoptions(
+        Dict(
+            :type => "manual",
+            :scale => "bad",
+            :values => [:red, :blue]
+        )
+    )
+
+    tfill = TidierPlots.color_scale_to_ggoptions(
+        Dict(
+            :type => "manual",
+            :scale => "fill",
+            :values => [:red, :blue]
+        )
+    )
+    @test tfill.palette[:fill](1)[1] == Colors.RGB(1.0, 0.0, 0.0)
 end

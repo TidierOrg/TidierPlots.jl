@@ -14,7 +14,7 @@ function boxplot_groups(aes_dict::Dict{Symbol,Pair},
     dodge_aes = [aes for aes in factor_aes if aes_dict[aes][1] != aes_dict[main_factor_aes][1]]
 
     if length(dodge_aes) > 1
-        @warn "Too many categorical aes specified, can't select dodge automatically"
+        throw(ArgumentError("Too many categorical aes specified, can't select dodge automatically"))
     end
 
     if length(dodge_aes) != 0
@@ -73,7 +73,7 @@ ggplot(penguins, @aes(x=species, y=bill_length_mm)) +
 ggplot(penguins, @aes(y=species, x=bill_length_mm)) +
     geom_boxplot()
 
-ggplot(penguins, @aes(x=species, y=bill_length_mm, dodge=sex, fill=sex)) +
+ggplot(penguins, @aes(x=species, y=bill_length_mm, fill=sex)) +
     geom_boxplot()
 ```
 """

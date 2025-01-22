@@ -4,6 +4,9 @@
         t = ggplot(penguins) +
             geom_point(@aes(x = bill_length_mm, y = bill_depth_mm))
 
+        t2 = ggplot() +
+             geom_point(penguins, @aes(x = bill_length_mm, y = bill_depth_mm))
+
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
                 Makie.SpecApi.Axis(
@@ -18,6 +21,40 @@
         )
 
         @test plot_images_equal(t, m)
+        @test plot_images_equal(t2, m)
+
+        t3 = ggplot() +
+             geom_point(penguins,
+            @aes(x = bill_length_mm, y = bill_depth_mm, color = sex))
+        t4 = ggplot() +
+             geom_point(penguins,
+            @aes(x = bill_length_mm, y = bill_depth_mm, fill = sex))
+
+        @test plot_images_equal(t3, t4)
+
+        t5 = ggplot(penguins) +
+             geom_point(
+                 @aes(x = bill_length_mm,
+                     y = bill_depth_mm,
+                     color = sex,
+                     fill = species),
+                 strokewidth=1) + guides(color="none", fill="none")
+
+        cat_species = CategoricalArrays.CategoricalArray(penguins.species)
+        cat_sex = CategoricalArrays.CategoricalArray(penguins.sex)
+
+        m2 = Makie.plot(Makie.SpecApi.GridLayout(Makie.SpecApi.Axis(
+            plots=[Makie.PlotSpec(
+                :Scatter,
+                penguins.bill_length_mm,
+                penguins.bill_depth_mm;
+                color=TidierPlots._default_discrete_palette(cat_species),
+                strokecolor=TidierPlots._default_discrete_palette(cat_sex),
+                strokewidth=1)
+            ]
+        )))
+
+        @test plot_images_equal(t5, m2)
     end
 
 
@@ -44,6 +81,206 @@
         )
 
         @test plot_images_equal(t, m)
+
+        penguins_count_by_sex = @chain penguins begin
+            groupby([:species, :sex])
+            @summarize(count = n())
+            @arrange(species)
+            @ungroup
+        end
+
+        t = ggplot(penguins) +
+            geom_bar(@aes(x = species, fill = sex), position="dodge")
+
+        cat_sex = TidierPlots._default_discrete_palette(levelcode.(CategoricalArray(penguins_count_by_sex.sex)))
+        cat_spec = levelcode.(CategoricalArray(penguins_count_by_sex.species))
+        dodge = levelcode.(CategoricalArray(penguins_count_by_sex.sex))
+
+        m = Makie.plot(
+            Makie.SpecApi.GridLayout(
+                Makie.SpecApi.Axis(
+                    plots=[
+                        Makie.PlotSpec(
+                            :BarPlot,
+                            cat_spec,
+                            penguins_count_by_sex.count;
+                            dodge=dodge,
+                            color=cat_sex)
+                    ]; xticks=(1:3, unique(penguins_count_by_sex.species))
+                )
+            )
+        )
+
+        @test plot_images_equal(t, m)
+
+        @test_throws ArgumentError TidierPlots.handle_position(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :y => :c => identity,
+                :color => :a => identity
+            ),
+            Dict{Any,Any}("geom_name" => "geom_bar"),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        ae, ar, r, df = TidierPlots.handle_position(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :color => :a => identity
+            ),
+            Dict{Any,Any}("geom_name" => "geom_bar"),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        @test ae[:stack] == (:a => identity)
+
+        ae, ar, r, df = TidierPlots.handle_position(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :colour => :a => identity
+            ),
+            Dict{Any,Any}("geom_name" => "geom_bar"),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        @test ae[:stack] == (:a => identity)
+
+        ae, ar, r, df = TidierPlots.handle_position(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :group => :a => identity
+            ),
+            Dict{Any,Any}("geom_name" => "geom_bar"),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        @test ae[:stack] == (:a => identity)
+
+        ae, ar, r, df = TidierPlots.handle_position(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :fill => :a => identity
+            ),
+            Dict{Any,Any}("geom_name" => "geom_bar"),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        @test ae[:fill] == (:a => identity)
+
+        ae, ar, r, df = TidierPlots.handle_position(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :color => :a => identity
+            ),
+            Dict{Any,Any}("geom_name" => "geom_bar", "position" => "stack"),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        @test ae[:stack] == (:a => identity)
+
+        ae, ar, r, df = TidierPlots.handle_position(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :colour => :a => identity
+            ),
+            Dict{Any,Any}("geom_name" => "geom_bar", "position" => "stack"),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        @test ae[:stack] == (:a => identity)
+
+        ae, ar, r, df = TidierPlots.handle_position(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :group => :a => identity
+            ),
+            Dict{Any,Any}("geom_name" => "geom_bar", "position" => "stack"),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        @test ae[:stack] == (:a => identity)
+
+        ae, ar, r, df = TidierPlots.handle_position(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :fill => :a => identity
+            ),
+            Dict{Any,Any}("geom_name" => "geom_bar", "position" => "stack"),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        @test ae[:fill] == (:a => identity)
+
+        ae, ar, r, df = TidierPlots.handle_position(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :color => :a => identity
+            ),
+            Dict{Any,Any}("geom_name" => "geom_bar", "position" => "dodge"),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        @test ae[:dodge] == (:a => identity)
+
+        ae, ar, r, df = TidierPlots.handle_position(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :colour => :a => identity
+            ),
+            Dict{Any,Any}("geom_name" => "geom_bar", "position" => "dodge"),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        @test ae[:dodge] == (:a => identity)
+
+        ae, ar, r, df = TidierPlots.handle_position(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :group => :a => identity
+            ),
+            Dict{Any,Any}("geom_name" => "geom_bar", "position" => "dodge"),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        @test ae[:dodge] == (:a => identity)
+
+        ae, ar, r, df = TidierPlots.handle_position(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :fill => :a => identity
+            ),
+            Dict{Any,Any}("geom_name" => "geom_bar", "position" => "dodge"),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        @test ae[:dodge] == (:a => identity)
+
+        ae, ar, r, df = TidierPlots.handle_position(
+            Dict{Symbol,Pair}(
+                :y => :b => identity,
+                :fill => :a => identity
+            ),
+            Dict{Any,Any}("geom_name" => "geom_bar", "position" => "dodge"),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        @test ae[:dodge] == (:a => identity)
+        @test ar["direction"] == "x"
+        @test r == ["y", "x"]
     end
 
     @testset "geom_col" begin
@@ -158,6 +395,33 @@
         )
 
         @test plot_images_equal(t, m)
+
+        ae, ar, r, d = TidierPlots.boxplot_groups(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :y => :c => identity,
+                :color => :a => identity
+            ),
+            Dict(),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+        )
+
+        @test ae[:dodge] == (:a => identity)
+        @test ar["orientation"] == :horizontal
+
+        @test_throws ArgumentError TidierPlots.boxplot_groups(
+            Dict{Symbol,Pair}(
+                :x => :b => identity,
+                :y => :c => identity,
+                :color => :a => identity,
+                :fill => :d => identity
+            ),
+            Dict(),
+            ["x"],
+            DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"], d=["e", "f"])
+        )
+
     end
 
     @testset "geom_violin" begin
@@ -218,6 +482,22 @@
         )
 
         @test plot_images_equal(t, m)
+
+        t1 = ggplot(penguins) +
+            geom_density(aes(
+                x = :bill_length_mm,
+                color = :sex,
+                fill = :species
+            ), strokewidth = 1)
+
+        t2 = ggplot(penguins) +
+            geom_density(aes(
+                x = :bill_length_mm,
+                color = :sex,
+                fill = :species
+            ))
+
+        @test plot_images_equal(t1, t2)
     end
 
     @testset "geom_errorbar" begin
@@ -238,7 +518,12 @@
 
         t = ggplot(df_errorbar, @aes(x = cat_numeric, y = MeanValue, ymin = LowerBound, ymax = UpperBound)) +
             geom_point() + # to show the mean value
-            geom_errorbar(width=0.2) # width of the horizontal line at the top and bottom of the error bar
+            geom_errorbar() # width of the horizontal line at the top and bottom of the error bar
+
+        t2 = @chain ggplot(df_errorbar, @aes(x = cat_numeric, y = MeanValue, ymin = LowerBound, ymax = UpperBound)) begin
+            geom_point()
+            geom_errorbar()
+        end
 
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
@@ -259,6 +544,37 @@
         )
 
         @test plot_images_equal(t, m)
+        @test plot_images_equal(t2, m)
+
+        t3 = @chain ggplot(df_errorbar, @aes(y = cat_numeric, x = MeanValue, xmin = LowerBound, xmax = UpperBound)) begin
+            geom_point()
+            geom_errorbarh()
+        end
+
+        t4 = ggplot(df_errorbar, @aes(y = cat_numeric, x = MeanValue, xmin = LowerBound, xmax = UpperBound)) +
+             geom_point() + # to show the mean value
+             geom_errorbarh()
+
+        m2 = Makie.plot(
+            Makie.SpecApi.GridLayout(
+                Makie.SpecApi.Axis(
+                    plots=[
+                        Makie.PlotSpec(
+                            :Scatter,
+                            df_errorbar.MeanValue,
+                            df_errorbar.cat_numeric),
+                        Makie.PlotSpec(
+                            :Rangebars,
+                            df_errorbar.cat_numeric,
+                            df_errorbar.LowerBound,
+                            df_errorbar.UpperBound; direction=:x)
+                    ]
+                )
+            )
+        )
+
+        @test plot_images_equal(t3, m2)
+        @test plot_images_equal(t4, m2)
 
     end
 
@@ -289,6 +605,13 @@
         )
 
         @test plot_images_equal(t, m)
+
+        t2 = @chain ggplot(penguins, aes(x="bill_length_mm", y="bill_depth_mm")) begin
+            geom_smooth
+            geom_point
+        end
+
+        @test plot_images_equal(t, t2)
 
         t = ggplot(penguins, aes(x="bill_length_mm", y="bill_depth_mm")) +
             geom_smooth(method="lm") + geom_point()
@@ -375,6 +698,10 @@
         )
 
         @test plot_images_equal(t, m)
+
+        t2 = geom_hline(ggplot(penguins), yintercept=yint)
+
+        @test plot_images_equal(t, t2)
     end
 
     @testset "geom_vline" begin
@@ -397,5 +724,9 @@
         )
 
         @test plot_images_equal(t, m)
+
+        t2 = geom_vline(ggplot(penguins), xintercept=xint)
+
+        @test plot_images_equal(t, t2)
     end
 end

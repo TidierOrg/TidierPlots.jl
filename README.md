@@ -4,6 +4,7 @@
 [![Docs: Latest](https://img.shields.io/badge/Docs-Latest-blue.svg)](https://tidierorg.github.io/TidierPlots.jl/latest)
 [![Downloads](https://img.shields.io/badge/dynamic/json?url=http%3A%2F%2Fjuliapkgstats.com%2Fapi%2Fv1%2Fmonthly_downloads%2FTidierPlots&query=total_requests&suffix=%2Fmonth&label=Downloads)](http://juliapkgstats.com/pkg/TidierPlots)
 [![Coverage Status](https://coveralls.io/repos/github/TidierOrg/TidierPlots.jl/badge.svg?branch=main&kill=1)](https://coveralls.io/github/TidierOrg/TidierPlots.jl?branch=main&kill=3)
+[![codecov](https://codecov.io/gh/TidierOrg/TidierPlots.jl/graph/badge.svg?token=F29JJT3M70)](https://codecov.io/gh/TidierOrg/TidierPlots.jl)
 
 <img src="/assets/logo.png" align="right" style="padding-left:10px;" width="150"/>
 
@@ -239,6 +240,10 @@ See the [documentation](https://tidierorg.github.io/TidierPlots.jl/latest) for m
 # What's New
 
 See [NEWS.md](https://github.com/TidierOrg/TidierPlots.jl/blob/main/NEWS.md) for the latest updates.
+
+# Coverage
+
+![](https://codecov.io/gh/TidierOrg/TidierPlots.jl/graphs/tree.svg?token=F29JJT3M70)
 
 # What's Missing
 

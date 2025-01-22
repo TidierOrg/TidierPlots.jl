@@ -238,7 +238,7 @@ df_errorbar = DataFrame(
 
 ggplot(df_errorbar, @aes(x = Category, y = MeanValue, ymin = LowerBound, ymax = UpperBound)) +
     geom_point() + # to show the mean value
-    geom_errorbar(width = 0.2) + # width of the horizontal line at the top and bottom of the error bar
+    geom_errorbar() +
     labs(title = "Error Bar Plot Example", x = "Category", y = "Mean Value")
 
 # ## `ggsave`

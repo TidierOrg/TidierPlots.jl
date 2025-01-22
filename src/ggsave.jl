@@ -2,7 +2,7 @@ function ggsave(path::String, plot::Union{GGPlot,GGPlotGrid};
     scale=2, height=nothing, width=nothing)
 
     if xor(isnothing(height), isnothing(width))
-        throw("Specify either: both height and width OR neither height nor width.")
+        throw(ArgumentError("Specify either: both height and width OR neither height nor width."))
     end
 
     # does not support different themes per plot in a grid

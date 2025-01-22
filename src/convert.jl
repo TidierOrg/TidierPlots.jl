@@ -58,13 +58,14 @@ end
 
 # aes_col is a Number
 
-function convert_aes_type(aes_col::Vector{Number}, ::Type{Colorant}, col::Symbol)
+function convert_aes_type(aes_col::AbstractVector{T}, ::Type{Colors.Colorant}, col::Symbol) where {T <: Number}
     verbose[] && println("Converting $col to Colorant")
     return _default_continuous_palette(aes_col)
 end
 
-function convert_aes_type(aes_col::Vector{Number}, ::Type{Integer}, col::Symbol)    verbose[] && println("Converting $col to Integer")
-    return round.(aes_col)
+function convert_aes_type(aes_col::AbstractVector{T}, ::Type{Integer}, col::Symbol) where {T <: Number}
+    verbose[] && println("Converting $col to Integer")
+    return round.(Int, aes_col)
 end
 
 # aes_col is a String

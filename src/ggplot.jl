@@ -6,9 +6,7 @@ function ggplot(args...; kwargs...)
             plot_data = args_dict["data"]
             delete!(args_dict, "data")
         else
-            type = typeof(args_dict["data"])
-            @warn "Data was provided in ggplot function with unsupported type: $type. Data argument ignored."
-            plot_data = nothing
+            throw(ArgumentError("Data should be provided as a DataFrame, not as a $(typeof(args_dict["data"]))"))
         end
     else
         plot_data = nothing

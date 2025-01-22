@@ -29,5 +29,14 @@
         )
 
     @test plot_images_equal(t, m)
-end
 
+    scale = TidierPlots.continuous_scale_to_ggoptions(
+        Dict("scale" => "x", "trans" => log, "reversed" => true)
+    )
+    @test scale.opt[:xreversed] == true
+    @test scale.opt[:xscale] == log
+
+    scale = scale_x_reverse()
+
+    @test scale.opt[:xreversed] == true
+end

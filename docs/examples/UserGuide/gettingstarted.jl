@@ -100,7 +100,7 @@ ggplot(df_line, @aes(x = X, y = Y)) +
 # `geom_boxplot` creates a boxplot.
 
 ggplot()+
-  geom_boxplot(data=penguins, @aes(x = island, y = bill_length_mm),  alpha = .3)
+  geom_boxplot(data=penguins, @aes(x = island, y = bill_length_mm))
 
 # In this example, a boxplot is created where different island of penguins are mapped to the x position, and the bill length is mapped to the y position. Finally, the each species will be mapped to a different color
 
@@ -238,7 +238,7 @@ df_errorbar = DataFrame(
 
 ggplot(df_errorbar, @aes(x = Category, y = MeanValue, ymin = LowerBound, ymax = UpperBound)) +
     geom_point() + # to show the mean value
-    geom_errorbar(width = 0.2) + # width of the horizontal line at the top and bottom of the error bar
+    geom_errorbar() +
     labs(title = "Error Bar Plot Example", x = "Category", y = "Mean Value")
 
 # ## `ggsave`

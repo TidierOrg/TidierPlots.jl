@@ -1,7 +1,10 @@
+# these functions are not tested since logging is currently turned off for testing
+
+# COV_EXCL_START
+
 function Base.show(io::IO, geom::Geom)
     if plot_log[]
-        name = geom.args["geom_name"]
-        printstyled(io, "$name\n", underline = true)
+        printstyled(io, "$(geom.args["geom_name"])\n", underline=true)
         if haskey(geom.args, "data")
             if geom.args["data"] isa DataFrame
                 ref_data = "A DataFrame"
@@ -11,26 +14,26 @@ function Base.show(io::IO, geom::Geom)
 
             row_count = nrow(geom.data)
             col_count = ncol(geom.data)
-            printstyled(io, "data: $ref_data ($row_count rows, $col_count columns)\n", color = :green)
+            printstyled(io, "data: $ref_data ($row_count rows, $col_count columns)\n", color=:green)
         else
-            printstyled(io, "data: inherits from plot\n", color = :blue)
+            printstyled(io, "data: inherits from plot\n", color=:blue)
         end
 
         for aes in geom.required_aes
             if haskey(geom.aes, aes)
                 colname = geom.aes[aes]
-                printstyled(io, "$aes: ", color = :green)
+                printstyled(io, "$aes: ", color=:green)
                 if haskey(geom.args, "data")
                     if String(colname) in names(DataFrame(geom.data))
-                        printstyled(io, "$colname \n", color = :green)
+                        printstyled(io, "$colname \n", color=:green)
                     else
-                        printstyled(io, "$colname \n", color = :red)
+                        printstyled(io, "$colname \n", color=:red)
                     end
                 else
-                    printstyled(io, "$colname \n", color = :blue)
+                    printstyled(io, "$colname \n", color=:blue)
                 end
             else
-                printstyled(io, "$aes: inherits from plot \n", color = :yellow)
+                printstyled(io, "$aes: inherits from plot \n", color=:yellow)
             end
         end
 
@@ -45,16 +48,16 @@ end
 
 function Base.show(io::IO, plot::GGPlot)
     if plot_log[]
-        printstyled(io, "ggplot options\n", underline = true)
+        printstyled(io, "ggplot options\n", underline=true)
 
         if !isnothing(plot.data)
             row_count = nrow(DataFrame(plot.data))
             col_count = ncol(DataFrame(plot.data))
-            printstyled(io, "data: A DataFrame ($row_count rows, $col_count columns)\n", color = :blue)
+            printstyled(io, "data: A DataFrame ($row_count rows, $col_count columns)\n", color=:blue)
         end
 
         for (k, v) in plot.default_aes
-            printstyled(io, "$k: $v\n", color = :yellow)
+            printstyled(io, "$k: $v\n", color=:yellow)
         end
 
         for k in keys(plot.axis_options)
@@ -93,7 +96,7 @@ function Base.show(io::IO, plot_grid::GGPlotGrid)
 end
 
 function Base.show(io::IO, ::MIME"text/html", x::GGPlot)
-	show(io, MIME"text/html"(),
+    show(io, MIME"text/html"(),
         with_theme(x.theme) do
             draw_ggplot(x)
         end
@@ -101,9 +104,11 @@ function Base.show(io::IO, ::MIME"text/html", x::GGPlot)
 end
 
 function Base.show(io::IO, ::MIME"text/html", x::GGPlotGrid)
-	show(io, MIME"text/html"(),
+    show(io, MIME"text/html"(),
         with_theme(x.plots[1].theme) do
             draw_ggplot(x)
         end
     )
 end
+
+# COV_EXCL_STOP

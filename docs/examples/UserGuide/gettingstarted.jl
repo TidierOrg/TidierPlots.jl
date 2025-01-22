@@ -100,7 +100,7 @@ ggplot(df_line, @aes(x = X, y = Y)) +
 # `geom_boxplot` creates a boxplot.
 
 ggplot()+
-  geom_boxplot(data=penguins, @aes(x = island, y = bill_length_mm),  alpha = .3)
+  geom_boxplot(data=penguins, @aes(x = island, y = bill_length_mm))
 
 # In this example, a boxplot is created where different island of penguins are mapped to the x position, and the bill length is mapped to the y position. Finally, the each species will be mapped to a different color
 

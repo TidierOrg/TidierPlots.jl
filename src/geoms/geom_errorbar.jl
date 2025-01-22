@@ -99,7 +99,7 @@ df = DataFrame(
 )
 
 ggplot(df, @aes(y = trt, xmin = lower, xmax = upper)) +
-    geom_errorbarh(width=20, linewidth=2)
+    geom_errorbarh(linewidth=2)
 ```
 """
 function geom_errorbarh(args...; kwargs...)

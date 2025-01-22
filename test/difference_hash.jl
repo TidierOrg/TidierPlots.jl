@@ -47,3 +47,9 @@ function plot_images_equal(plots...)
 
     return length(unique(img_hashes)) == 1
 end
+
+function plot_will_render(plot)
+    temp_path = tempname() * ".png"
+    ggsave(plot, temp_path)
+    return true
+end

@@ -251,8 +251,6 @@ function as_GridLayout(plot::GGPlot)
                             draw_colorbar = :colorbar
                         elseif l_type in ["discrete", "manual"]
                             draw_colorbar = :legend
-                        else
-                            draw_colorbar = :none
                         end
                     end
                 else

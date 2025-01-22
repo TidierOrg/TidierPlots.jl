@@ -1,11 +1,11 @@
 @testset "facets" begin
     t1 = ggplot(penguins) +
-                 geom_point(aes(x=:bill_length_mm, y=:bill_depth_mm)) +
-                 facet_wrap(:species)
+        geom_point(aes(x=:bill_length_mm, y=:bill_depth_mm)) +
+        facet_wrap(:species)
 
     t2 = ggplot(penguins) +
-                 geom_point(aes(x=:bill_length_mm, y=:bill_depth_mm)) +
-                 facet_wrap(facets=:species)
+        geom_point(aes(x=:bill_length_mm, y=:bill_depth_mm)) +
+        facet_wrap(facets=:species)
 
     @test plot_images_equal(t1, t2)
 
@@ -25,6 +25,7 @@
 
     @test_throws ArgumentError facet_grid(:col1)
     fg = facet_grid(rows=:col1, cols=:col2)
+
     @test fg.cols == :col2
     @test fg.rows == :col1
 

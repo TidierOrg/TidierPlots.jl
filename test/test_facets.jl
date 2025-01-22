@@ -1,11 +1,11 @@
 @testset "facets" begin
     t1 = ggplot(penguins) +
-                 geom_point(aes(x=:bill_length_mm, y=:bill_depth_mm)) +
-                 facet_wrap(:species)
+        geom_point(aes(x=:bill_length_mm, y=:bill_depth_mm)) +
+        facet_wrap(:species)
 
     t2 = ggplot(penguins) +
-                 geom_point(aes(x=:bill_length_mm, y=:bill_depth_mm)) +
-                 facet_wrap(facets=:species)
+        geom_point(aes(x=:bill_length_mm, y=:bill_depth_mm)) +
+        facet_wrap(facets=:species)
 
     @test plot_images_equal(t1, t2)
 
@@ -25,6 +25,7 @@
 
     @test_throws ArgumentError facet_grid(:col1)
     fg = facet_grid(rows=:col1, cols=:col2)
+
     @test fg.cols == :col2
     @test fg.rows == :col1
 
@@ -68,4 +69,52 @@
 
     p, b, l = TidierPlots.position_facets(["a", "b"], 2, 1, :none)
     @test length(l) == 0
+
+    p, b, l = TidierPlots.position_facets(["a", "b"], 2, nothing, :none)
+    @test length(l) == 0
+
+    # test that non-numeric automatic limit scaling is working with facets
+
+    t1 = ggplot(penguins) +
+        geom_bar(aes(x=:sex)) +
+        facet_wrap(:sex)
+
+    t2 = ggplot(penguins) +
+        geom_bar(aes(x=:sex)) +
+        facet_wrap(facets = :sex)
+
+    @test plot_images_equal(t1, t2)
+
+    # free_x and free_y
+
+    t1 = ggplot(penguins) +
+        geom_point(aes(x=:bill_length_mm, y=:bill_depth_mm)) +
+        facet_wrap(:species, scales="free_x")
+
+    t2 = ggplot(penguins) +
+        geom_point(aes(x=:bill_length_mm, y=:bill_depth_mm)) +
+        facet_wrap(facets=:species, scales="free_x")
+
+    @test plot_images_equal(t1, t2)
+
+    t1 = ggplot(penguins) +
+        geom_point(aes(x=:bill_length_mm, y=:bill_depth_mm)) +
+        facet_wrap(:species, scales="free_y")
+
+    t2 = ggplot(penguins) +
+        geom_point(aes(x=:bill_length_mm, y=:bill_depth_mm)) +
+        facet_wrap(facets=:species, scales="free_y")
+
+    @test plot_images_equal(t1, t2)
+
+    t1 = ggplot(penguins) +
+        geom_point(aes(x=:bill_length_mm, y=:bill_depth_mm)) +
+        facet_wrap(:species, scales="free")
+
+    t2 = ggplot(penguins) +
+        geom_point(aes(x=:bill_length_mm, y=:bill_depth_mm)) +
+        facet_wrap(facets=:species, scales="free")
+
+    @test plot_images_equal(t1, t2)
+
 end

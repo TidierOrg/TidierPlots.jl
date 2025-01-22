@@ -10,7 +10,7 @@ df = DataFrame(
 )
 
 ggplot(df, @aes(x = trt, ymin = lower, ymax = upper)) +
-    geom_errorbar(width=20, linewidth=2)
+geom_errorbar(linewidth=2)
 
 ggplot(df, @aes(y = trt, xmin = lower, xmax = upper)) +
-    geom_errorbarh(width=20, linewidth=2)
+    geom_errorbarh(linewidth=2)

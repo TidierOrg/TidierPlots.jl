@@ -62,7 +62,7 @@ function as_GridLayout(plot::GGPlot)
 
         # makie does not show strokes by default
         if haskey(aes_dict_makie, :strokecolor) &&
-            !haskey(args_dict, "strokewidth")
+           !haskey(args_dict, "strokewidth")
             args_dict["strokewidth"] = 1
         end
 
@@ -80,8 +80,21 @@ function as_GridLayout(plot::GGPlot)
         end
 
         if !isnothing(plot.facet_options)
-            push!(aes_df_list,
-                DataFrame(facet=plot_data[!, plot.facet_options.wrap]))
+            if !isnothing(plot.facet_options.wrap)
+                # facet_wrap
+                push!(aes_df_list,
+                    DataFrame(facet=plot_data[!, plot.facet_options.wrap]))
+            else
+                # facet_grid
+                rows = isnothing(plot.facet_options.rows) ?
+                       repeat([nothing], nrow(plot_data)) :
+                       plot_data[!, plot.facet_options.rows]
+                cols = isnothing(plot.facet_options.cols) ?
+                       repeat([nothing], nrow(plot_data)) :
+                       plot_data[!, plot.facet_options.cols]
+                push!(aes_df_list,
+                    DataFrame(facet=[(r, c) for (r, c) in zip(rows, cols)]))
+            end
         end
 
         aes_df = hcat(aes_df_list...)

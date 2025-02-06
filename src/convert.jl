@@ -4,6 +4,10 @@ try_convert(::Type{Any}, v, ::Any, ::Any) = v
 
 function try_convert(T::Type, v::S, arg, fname) where {S}
     try
+        if typeof(v) == T
+            return v
+        end
+
         retvalue = typeof(v) <: T || T == Symbol ?
                    T(v) :
                    parse(T, v)
@@ -58,12 +62,12 @@ end
 
 # aes_col is a Number
 
-function convert_aes_type(aes_col::AbstractVector{T}, ::Type{Colors.Colorant}, col::Symbol) where {T <: Number}
+function convert_aes_type(aes_col::AbstractVector{T}, ::Type{Colors.Colorant}, col::Symbol) where {T<:Number}
     verbose[] && println("Converting $col to Colorant")
     return _default_continuous_palette(aes_col)
 end
 
-function convert_aes_type(aes_col::AbstractVector{T}, ::Type{Integer}, col::Symbol) where {T <: Number}
+function convert_aes_type(aes_col::AbstractVector{T}, ::Type{Integer}, col::Symbol) where {T<:Number}
     verbose[] && println("Converting $col to Integer")
     return round.(Int, aes_col)
 end
@@ -71,13 +75,13 @@ end
 # aes_col is a String
 
 function convert_aes_type(aes_col::AbstractVector{T}, ::Type{Colorant}, col::Symbol) where
-    {T <: AbstractString}
+{T<:AbstractString}
     verbose[] && println("Converting $col to Colorant")
     return _default_discrete_palette(aes_col)
 end
 
 function convert_aes_type(aes_col::AbstractVector{T}, ::Type{Integer}, col::Symbol) where
-    {T <: AbstractString}
+{T<:AbstractString}
     verbose[] && println("Converting $col to Integer")
     return levelcode.(CategoricalArray(aes_col))
 end

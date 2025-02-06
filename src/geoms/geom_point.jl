@@ -41,6 +41,9 @@ The point geom is used to create scatterplots. The scatterplot is most useful fo
 - `inherit_aes`: should the geom inherit aes from the ggplot?
 - `...`: options that are not mapped to a column (passed to Makie.Scatter)
 
+# Overplotting
+
+The biggest potential problem with a scatterplot is overplotting: whenever you have more than a few points, points may be plotted on top of one another. This can severely distort the visual appearance of the plot. There is no one solution to this problem, but there are some techniques that can help. You can add additional information with geom_smooth(), or if you have few unique x values, geom_boxplot() may also be useful. Another technique is to make the points transparent (e.g. geom_point(alpha = 0.05)) or very small (e.g. geom_point(shape = '.')).
 
 # Required Aesthetics
 
@@ -70,10 +73,11 @@ The point geom is used to create scatterplots. The scatterplot is most useful fo
 # Examples
 
 ```julia
-ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) + geom_point()
+p = ggplot(penguins, @aes(bill_length_mm, bill_depth_mm))
+p + geom_point()
 
-ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) +
-    geom_point(@aes(color = sex), size=20, stroke=1, alpha=0.6)
+# add aesthetic mappings
+p + geom_point(aes(colour = :sex))
 ```
 """
 geom_point = geom_template("geom_point", ["x", "y"], :Scatter;

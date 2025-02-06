@@ -2,32 +2,6 @@
 
 # COV_EXCL_START
 
-function Base.show(io::IO, geom::Geom)
-    if plot_log[]
-        mapping = Pair[]
-
-        for aes in geom.required_aes
-            if haskey(geom.aes, aes)
-                push!(mapping, aes => geom.aes[aes])
-            end
-        end
-
-        for k in keys(geom.aes)
-            if !(k in geom.required_aes)
-                push!(mapping, k => geom.aes[k])
-            end
-        end
-
-        for k in keys(geom.args)
-            if k != "geom_name"
-                push!(mapping, Symbol(k) => geom.args[k])
-            end
-        end
-
-        @info "$(geom.args["geom_name"])" mapping...
-    end
-end
-
 function Base.show(io::IO, plot::GGPlot)
     if plot_log[]
         log = Pair[]
@@ -39,17 +13,39 @@ function Base.show(io::IO, plot::GGPlot)
             push!(log, k => v)
         end
 
-        for k in keys(plot.axis_options)
+        for k in keys(plot.axis_options.opt)
             if k != "data"
-                v = plot.axis_options[k]
+                v = plot.axis_options.opt[k]
                 push!(log, k => v)
             end
         end
 
-        @info "ggplot" log...
-        for g in plot.geoms
-            println(g)
+        geoms = Pair[]
+        for geom in plot.geoms
+            mapping = Pair[]
+
+            for aes in geom.required_aes
+                if haskey(geom.aes, aes)
+                    push!(mapping, aes => geom.aes[aes])
+                end
+            end
+
+            for k in keys(geom.aes)
+                if !(k in geom.required_aes)
+                    push!(mapping, k => geom.aes[k])
+                end
+            end
+
+            for k in keys(geom.args)
+                if k != "geom_name"
+                    push!(mapping, Symbol(k) => geom.args[k])
+                end
+            end
+            push!(geoms, Symbol(geom.args["geom_name"]) => mapping)
         end
+
+        @info "ggplot" log... geoms...
+
     end
 
     if plot_show[]

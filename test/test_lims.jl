@@ -6,51 +6,51 @@
     m_xlim = Makie.plot(
         Makie.SpecApi.GridLayout(
             Makie.SpecApi.Axis(
-                plots = [
+                plots=[
                     Makie.PlotSpec(
                         :Scatter,
                         penguins.bill_length_mm,
                         penguins.bill_depth_mm)
-                ]; limits = ((30, 60), (nothing, nothing))
+                ]; limits=((30, 60), (nothing, nothing))
             )
         )
     )
 
-    @test plot_images_equal(t + lims(x = (30, 60)), m_xlim)
+    @test plot_images_equal(t + lims(x=(30, 60)), m_xlim)
 
     m_ylim = Makie.plot(
         Makie.SpecApi.GridLayout(
             Makie.SpecApi.Axis(
-                plots = [
+                plots=[
                     Makie.PlotSpec(
                         :Scatter,
                         penguins.bill_length_mm,
                         penguins.bill_depth_mm)
-                ]; limits = ((nothing, nothing), (10, 25))
+                ]; limits=((nothing, nothing), (10, 25))
             )
         )
     )
 
-    @test plot_images_equal(t + lims(y = (10, 25)), m_ylim)
+    @test plot_images_equal(t + lims(y=(10, 25)), m_ylim)
 
     m_xylim = Makie.plot(
         Makie.SpecApi.GridLayout(
             Makie.SpecApi.Axis(
-                plots = [
+                plots=[
                     Makie.PlotSpec(
                         :Scatter,
                         penguins.bill_length_mm,
                         penguins.bill_depth_mm)
-                ]; limits = ((30, 60), (10, 25))
+                ]; limits=((30, 60), (10, 25))
             )
         )
     )
 
-    @test plot_images_equal(t + lims(x = (30, 60), y = (10, 25)), m_xylim)
+    @test plot_images_equal(t + lims(x=(30, 60), y=(10, 25)), m_xylim)
 
-    lm = lims(ggplot(), x = (30, 60))
+    lm = lims(ggplot(), x=(30, 60))
 
-    @test lm.axis_options[:limits] == ((30, 60), nothing)
+    @test lm.axis_options.opt[:limits] == ((30, 60), nothing)
 
     no_limits = lims()
 

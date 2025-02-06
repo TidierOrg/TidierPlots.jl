@@ -1,12 +1,12 @@
 function build_geom(
-        aes_dict,
-        args_dict,
-        required_aes,
-        spec_api_function;
-        pre_function = do_nothing,
-        post_function = do_nothing,
-        special_aes = Dict(),
-        grouping_aes = Symbol[])
+    aes_dict,
+    args_dict,
+    required_aes,
+    spec_api_function;
+    pre_function=do_nothing,
+    post_function=do_nothing,
+    special_aes=Dict(),
+    grouping_aes=Symbol[])
 
     if haskey(args_dict, "data")
         if args_dict["data"] isa DataFrame
@@ -26,7 +26,7 @@ function build_geom(
         special_aes,
         plot_data,
         spec_api_function,
-        Dict(),
+        AxisOptions(Dict(), Dict(), Dict()),
         pre_function,
         post_function,
         grouping_aes

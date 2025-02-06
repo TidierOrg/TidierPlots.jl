@@ -143,7 +143,7 @@ function as_GridLayout(plot::GGPlot)
 
         # default palettes
 
-        plot_palette = plot.palette
+        plot_palette = plot.axis_options.palette
 
         for palette_aes in intersect([:strokecolor, :color], Symbol.(names(aes_df)))
             if !haskey(plot_palette, palette_aes)
@@ -244,7 +244,7 @@ function as_GridLayout(plot::GGPlot)
 
                 push!(optional_aes_data, Symbol(a) => data)
 
-                palette_function = get(plot.palette, :color, nothing)
+                palette_function = get(plot.axis_options.palette, :color, nothing)
 
                 isnothing(palette_function) && continue
                 !haskey(_legend_geom_symbols,
@@ -255,10 +255,10 @@ function as_GridLayout(plot::GGPlot)
                 labels_for_this_aes = subset(labels_aes_df,
                     :col_name => ByRow(x -> x == a))
 
-                if haskey(plot.legend_options, :color)
-                    l_type = get(plot.legend_options[:color], :type, "na")
-                    legend_title = get(plot.legend_options[:color], :name, " ")
-                    draw_colorbar = get(plot.legend_options[:color], :guide, :auto)
+                if haskey(plot.axis_options.legend_options, :color)
+                    l_type = get(plot.axis_options.legend_options[:color], :type, "na")
+                    legend_title = get(plot.axis_options.legend_options[:color], :name, " ")
+                    draw_colorbar = get(plot.axis_options.legend_options[:color], :guide, :auto)
                     if draw_colorbar == :auto
                         if l_type in ["continuous", "binned"]
                             draw_colorbar = :colorbar
@@ -274,8 +274,8 @@ function as_GridLayout(plot::GGPlot)
                 if draw_colorbar == :colorbar
 
                     colorbar_kwargs[:colormap] =
-                        plot.legend_options[:color][:type] == "continuous" ? Symbol(plot.legend_options[:color][:palette]) :
-                        cgrad(Symbol(plot.legend_options[:color][:palette]), 5, categorical=true)
+                        plot.axis_options.legend_options[:color][:type] == "continuous" ? Symbol(plot.axis_options.legend_options[:color][:palette]) :
+                        cgrad(Symbol(plot.axis_options.legend_options[:color][:palette]), 5, categorical=true)
 
                     colorbar_lowlim = min(
                         minimum(labels_for_this_aes.original_value), colorbar_lowlim)
@@ -329,7 +329,7 @@ function as_GridLayout(plot::GGPlot)
     end
 
     # rename and correct types on all axis options
-    for (arg, value) in plot.axis_options
+    for (arg, value) in plot.axis_options.opt
         if !(Symbol(arg) in _internal_geom_options)
             ex_type = get(_makie_expected_type, arg, Any)
             converted_value = try_convert(ex_type, value, arg, "ggplot")
@@ -375,7 +375,7 @@ function as_GridLayout(plot::GGPlot)
         l = (1, 2) => Makie.SpecApi.GridLayout(
             Makie.SpecApi.Legend(elems, labels, title))
     else
-        title = get(plot.legend_options[:color], :name, " ")
+        title = get(plot.axis_options.legend_options[:color], :name, " ")
         l = (1, 2) => Makie.SpecApi.GridLayout(
             Makie.SpecApi.Colorbar(; colorbar_kwargs...,
                 limits=(colorbar_lowlim, colorbar_highlim), label=title))

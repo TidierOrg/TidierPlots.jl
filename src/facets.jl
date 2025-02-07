@@ -19,6 +19,8 @@ function facet_grid(args...; kwargs...)
         end
     end
 
+    labels = get(d, :labels, :topright)
+
     return FacetOptions(
         Symbol(get(d, :rows, nothing)),
         Symbol(get(d, :cols, nothing)),
@@ -26,7 +28,8 @@ function facet_grid(args...; kwargs...)
         nothing,
         nothing,
         free_x,
-        free_y
+        free_y,
+        labels
     )
 end
 
@@ -55,6 +58,8 @@ function facet_wrap(args...; kwargs...)
             free_y = true
         end
     end
+
+    labels = get(d, :labels, :all)
 
     return FacetOptions(
         nothing,
@@ -149,6 +154,19 @@ function position_facets(names::Vector{Tuple{T,T}}, rows=nothing, cols=nothing, 
     if labels in [:bottomright, :topright]
         label_dict = merge(label_dict, Dict{Tuple,Any}((i, j, Makie.Right()) => Makie.SpecApi.Label(text=name, padding=(8, 10, 8, 10), rotation = 3π/2) for (i, j, name) in zip(1:rows, repeat([length(unique_cols)], rows), unique_rows)))
         box_dict = merge(box_dict, Dict{Tuple,Any}((i, j, Makie.Right()) => Makie.SpecApi.Box() for (i, j, name) in zip(1:rows, repeat([length(unique_cols)], rows), unique_rows)))
+    end
+
+    #put labels on bottom
+
+    if labels in [:bottomright, :bottomleft]
+        label_dict = merge(label_dict, Dict{Tuple,Any}((i, j, Makie.Bottom()) => Makie.SpecApi.Label(text=name, padding=(8, 10, 8, 10)) for (i, j, name) in zip(repeat([length(unique_rows)], cols), 1:cols, unique_cols)))
+        box_dict = merge(box_dict, Dict{Tuple,Any}((i, j, Makie.Bottom()) => Makie.SpecApi.Box() for (i, j, name) in zip(repeat([length(unique_rows)], cols), 1:cols, unique_cols)))
+    end
+
+    #put labels on left
+    if labels in [:bottomleft, :topleft]
+        label_dict = merge(label_dict, Dict{Tuple,Any}((i, j, Makie.Left()) => Makie.SpecApi.Label(text=name, padding=(8, 10, 8, 10), rotation = π/2) for (i, j, name) in zip(1:rows, repeat([1], rows), unique_rows)))
+        box_dict = merge(box_dict, Dict{Tuple,Any}((i, j, Makie.Left()) => Makie.SpecApi.Box() for (i, j, name) in zip(1:rows, repeat([1], rows), unique_rows)))
     end
 
     return (plot_positions, box_dict, label_dict)

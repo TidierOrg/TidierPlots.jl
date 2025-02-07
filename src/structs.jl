@@ -25,6 +25,7 @@ struct FacetOptions
     ncol::Union{Integer,Nothing}
     free_x::Bool
     free_y::Bool
+    labels::Symbol
 end
 
 struct GGPlot

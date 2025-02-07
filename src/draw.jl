@@ -200,7 +200,8 @@ function as_GridLayout(plot::GGPlot)
             facet_positions, facet_labels, facet_boxes =
                 position_facets(facet_names,
                     plot.facet_options.nrow,
-                    plot.facet_options.ncol)
+                    plot.facet_options.ncol,
+                    plot.facet_options.labels)
             typed_aes_df.facet = [facet_positions[k] for k in typed_aes_df.facet]
         end
 

@@ -128,7 +128,7 @@
     @test p[("a", "b")] == (1,1)
     @test p[("c", "b")] == (2,1)
     @test p[("c", "d")] == (2,2)
-    @test p[("a", "d")] == (1,1)
+    @test p[("a", "d")] == (1,2)
 
     p, b, l = TidierPlots.position_facets([("a", "b"), ("c", "d")], nothing, nothing, :bottomleft)
     x = l[(2,1,Makie.Left())]

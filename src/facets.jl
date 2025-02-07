@@ -89,7 +89,8 @@ function facet_wrap(args...; kwargs...)
         get(d, :nrow, nothing),
         get(d, :ncol, 3),
         free_x,
-        free_y
+        free_y,
+        labels
     )
 end
 

@@ -1,10 +1,13 @@
-
 function get_options(geom_list)
     options = Dict()
+    palette = Dict()
+    legend = Dict()
     for geom in geom_list
         merge!(options, geom.axis_options.opt)
+        merge!(palette, geom.axis_options.palette)
+        merge!(legend, geom.axis_options.legend_options)
     end
-    return options
+    return AxisOptions(options, palette, legend)
 end
 
 function Base.:+(x::GGPlot, y::Union{Geom,Vector{Geom},Aesthetics,AxisOptions,FacetOptions,Attributes}...)::GGPlot
@@ -19,7 +22,13 @@ function Base.:+(x::GGPlot, y::Union{Geom,Vector{Geom},Aesthetics,AxisOptions,Fa
     palette = x.axis_options.palette
     legend_options = x.axis_options.legend_options
 
-    for item in [i for i in y if i isa AxisOptions || i isa Geom]
+    for item in [i for i in y if typeof(i) <:
+        Union{Geom,Vector{Geom},AxisOptions}]
+
+        if item isa Vector{Geom}
+            item = get_options(item)
+        end
+
         o = item isa AxisOptions ? item.opt :
             item.axis_options.opt
         p = item isa AxisOptions ? item.palette :

@@ -132,7 +132,14 @@
 
     p, b, l = TidierPlots.position_facets([("a", "b"), ("c", "d")], nothing, nothing, :bottomleft)
     x = l[(2,1,Makie.Left())]
-
     @test x.kwargs[:text] == "c"
 
+    tl = facet_grid(rows = :x, cols = :y, switch = "x")
+    @test tl.labels == :topleft
+
+    br = facet_grid(rows = :x, cols = :y, switch = "y")
+    @test br.labels == :bottomright
+
+    bl = facet_grid(rows = :x, cols = :y, switch = "both")
+    @test bl.labels == :bottomleft
 end

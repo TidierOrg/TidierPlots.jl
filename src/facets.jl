@@ -23,8 +23,8 @@ function facet_grid(args...; kwargs...)
         Symbol(get(d, :rows, nothing)),
         Symbol(get(d, :cols, nothing)),
         nothing,
-        get(d, :nrow, nothing),
-        get(d, :ncol, 3),
+        nothing,
+        nothing,
         free_x,
         free_y
     )
@@ -118,12 +118,38 @@ function position_facets(names, rows=nothing, cols=3, labels=:all)
     return (plot_positions, box_dict, label_dict)
 end
 
-function position_facets(names::Vector{Tuple}, rows=nothing, cols=nothing, labels=:all)
+function position_facets(names::Vector{Tuple{T,T}}, rows=nothing, cols=nothing, labels=:topright) where {T}
     unique_rows = unique([a[1] for a in names])
     unique_cols = unique([a[2] for a in names])
 
-    nrow = length(unique_rows)
-    ncol = length(unique_cols)
+    rows = length(unique_rows)
+    cols = length(unique_cols)
 
+    # plot_positions is a Dict{Any,Tuple} that matches each of the
+    # names to a position Tuple
 
+    plot_positions = Dict{Any,Tuple}()
+
+    for (ir, r) in enumerate(unique_rows)
+        for (ic, c) in enumerate(unique_cols)
+            push!(plot_positions, (r, c) => (ir, ic))
+        end
+    end
+
+    label_dict = Dict{Tuple,Any}()
+    box_dict = Dict{Tuple,Any}()
+
+    # put labels on top
+    if labels in [:topleft, :topright]
+        label_dict = merge(label_dict, Dict{Tuple,Any}((i, j, Makie.Top()) => Makie.SpecApi.Label(text=name, padding=(8, 10, 8, 10)) for (i, j, name) in zip(repeat([1], cols), 1:cols, unique_cols)))
+        box_dict = merge(box_dict, Dict{Tuple,Any}((i, j, Makie.Top()) => Makie.SpecApi.Box() for (i, j, name) in zip(repeat([1], cols), 1:cols, unique_cols)))
+    end
+
+    #put labels on right
+    if labels in [:bottomright, :topright]
+        label_dict = merge(label_dict, Dict{Tuple,Any}((i, j, Makie.Right()) => Makie.SpecApi.Label(text=name, padding=(8, 10, 8, 10), rotation = 3π/2) for (i, j, name) in zip(1:rows, repeat([length(unique_cols)], rows), unique_rows)))
+        box_dict = merge(box_dict, Dict{Tuple,Any}((i, j, Makie.Right()) => Makie.SpecApi.Box() for (i, j, name) in zip(1:rows, repeat([length(unique_cols)], rows), unique_rows)))
+    end
+
+    return (plot_positions, box_dict, label_dict)
 end

@@ -1,7 +1,8 @@
 function make_color_lookup_manual(args_dict::Dict)
     colors = eltype(args_dict[:values]) == Colorant ?
-             args_dict[:values] :
-             parse.(Colorant, args_dict[:values])
+        args_dict[:values] :
+        parse.(Colorant, args_dict[:values])
+
     function color_lookup_manual(input::Any)
         return [colors[x] for x in levelcode.(CategoricalArray(input))]
     end

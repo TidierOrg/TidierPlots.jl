@@ -1,3 +1,15 @@
+"""
+    facet_grid(;rows, cols, scales = "fixed", switch = "none")
+
+facet_grid() forms a matrix of panels defined by row and column faceting variables. It is most useful when you have two discrete variables, and all combinations of the variables exist in the data. If you have only one variable with many levels, try facet_wrap().
+
+# Arguments
+
+- `rows` (required): Variable to use for the rows of the matrix
+- `cols` (required): Variable to use for the columns of the matrix
+- `scales` (optional): Should the scales be fixed or free? Options: "free", "free_x", "free_y"
+- `switch` (optional): Flip the labels from their default "top and right". Options: "x", "y", "both".
+"""
 function facet_grid(args...; kwargs...)
     if length(args) > 0
         throw(ArgumentError("Use keyword args to specify rows and/or cols in facet_grid"))
@@ -19,7 +31,16 @@ function facet_grid(args...; kwargs...)
         end
     end
 
-    labels = get(d, :labels, :topright)
+    labels = :topright
+    if haskey(d, :switch)
+        if d[:switch] == "x"
+            labels = :topleft
+        elseif d[:switch] == "y"
+            labels = :bottomright
+        elseif d[:switch] == "both"
+            labels = :bottomleft
+        end
+    end
 
     return FacetOptions(
         Symbol(get(d, :rows, nothing)),

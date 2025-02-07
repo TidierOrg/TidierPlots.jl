@@ -31,7 +31,7 @@ function Base.:+(x::GGPlot, y::Union{Geom,Vector{Geom},Aesthetics,AxisOptions,Fa
 
         for (scale, options) in p
             if haskey(palette, scale)
-                merge!(palette[scale], options)
+                palette[scale] = merge(palette[scale], options)
             else
                 palette[scale] = options
             end
@@ -39,7 +39,7 @@ function Base.:+(x::GGPlot, y::Union{Geom,Vector{Geom},Aesthetics,AxisOptions,Fa
 
         for (scale, options) in l
             if haskey(legend_options, scale)
-                merge!(legend_options[scale], options)
+                legend_options[scale] = merge(legend_options[scale], options)
             else
                 legend_options[scale] = options
             end

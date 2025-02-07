@@ -117,4 +117,22 @@
 
     @test plot_images_equal(t1, t2)
 
+    fg = ggplot(penguins) +
+        geom_point(@aes(x = bill_length_mm, y = bill_depth_mm)) +
+        facet_grid(rows = :sex, cols = :species, labels = :topright)
+
+    @test plot_will_render(fg)
+
+    p, b, l = TidierPlots.position_facets([("a", "b"), ("c", "d")])
+
+    @test p[("a", "b")] == (1,1)
+    @test p[("c", "b")] == (2,1)
+    @test p[("c", "d")] == (2,2)
+    @test p[("a", "d")] == (1,1)
+
+    p, b, l = TidierPlots.position_facets([("a", "b"), ("c", "d")], nothing, nothing, :bottomleft)
+    x = l[(2,1,Makie.Left())]
+
+    @test x.kwargs[:text] == "c"
+
 end

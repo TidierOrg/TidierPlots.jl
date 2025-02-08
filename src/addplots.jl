@@ -23,7 +23,7 @@ function Base.:+(x::GGPlot, y::Union{Geom,Vector{Geom},Aesthetics,AxisOptions,Fa
     legend_options = x.axis_options.legend_options
 
     for item in [i for i in y if typeof(i) <:
-        Union{Geom,Vector{Geom},AxisOptions}]
+                 Union{Geom,Vector{Geom},AxisOptions}]
 
         if item isa Vector{Geom}
             item = get_options(item)
@@ -39,11 +39,7 @@ function Base.:+(x::GGPlot, y::Union{Geom,Vector{Geom},Aesthetics,AxisOptions,Fa
         opt = merge(opt, o)
 
         for (scale, options) in p
-            if haskey(palette, scale)
-                palette[scale] = merge(palette[scale], options)
-            else
-                palette[scale] = options
-            end
+            palette[scale] = options
         end
 
         for (scale, options) in l

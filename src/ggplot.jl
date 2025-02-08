@@ -13,24 +13,20 @@ function ggplot(args...; kwargs...)
     end
 
     GGPlot([],
-           aes_dict,
-           plot_data,
-           args_dict,
-           theme_ggplot2(),
-           Dict(),
-           nothing,
-           Dict())
+        aes_dict,
+        plot_data,
+        AxisOptions(args_dict, Dict(), Dict()),
+        theme_ggplot2(),
+        nothing)
 end
 
 function ggplot(data::DataFrame, args...; kwargs...)
     aes_dict, args_dict = extract_aes(args, kwargs)
 
     GGPlot([],
-           aes_dict,
-           data,
-           args_dict,
-           theme_ggplot2(),
-           Dict(),
-           nothing,
-           Dict())
+        aes_dict,
+        data,
+        AxisOptions(args_dict, Dict(), Dict()),
+        theme_ggplot2(),
+        nothing)
 end

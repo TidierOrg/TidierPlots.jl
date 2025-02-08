@@ -1,3 +1,9 @@
+struct AxisOptions
+    opt::Dict{Symbol,Any}
+    palette::Dict
+    legend_options::Dict
+end
+
 struct Geom
     aes::Dict
     args::Dict
@@ -5,7 +11,7 @@ struct Geom
     special_aes::Dict
     data::Union{Nothing,DataFrame}
     visual::Symbol
-    axis_options::Dict
+    axis_options::AxisOptions
     pre_function::Function
     post_function::Function
     grouping_aes::Vector{Symbol}
@@ -19,28 +25,21 @@ struct FacetOptions
     ncol::Union{Integer,Nothing}
     free_x::Bool
     free_y::Bool
+    labels::Symbol
 end
 
 struct GGPlot
     geoms::AbstractArray
     default_aes::Dict
     data::Union{Nothing,DataFrame}
-    axis_options::Dict
+    axis_options::AxisOptions
     theme::Makie.Attributes
-    legend_options::Dict
     facet_options::Union{FacetOptions,Nothing}
-    palette::Dict
 end
 
 struct Aesthetics
     positional::AbstractArray
     named::Dict
-end
-
-struct AxisOptions
-    opt::Dict{Symbol,Any}
-    palette::Dict
-    legend_options::Dict
 end
 
 struct GGPlotGrid

@@ -62,7 +62,7 @@ function as_GridLayout(plot::GGPlot)
 
         # makie does not show strokes by default
         if haskey(aes_dict_makie, :strokecolor) &&
-            !haskey(args_dict, "strokewidth")
+           !haskey(args_dict, "strokewidth")
             args_dict["strokewidth"] = 1
         end
 
@@ -80,8 +80,21 @@ function as_GridLayout(plot::GGPlot)
         end
 
         if !isnothing(plot.facet_options)
-            push!(aes_df_list,
-                DataFrame(facet=plot_data[!, plot.facet_options.wrap]))
+            if !isnothing(plot.facet_options.wrap)
+                # facet_wrap
+                push!(aes_df_list,
+                    DataFrame(facet=plot_data[!, plot.facet_options.wrap]))
+            else
+                # facet_grid
+                rows = isnothing(plot.facet_options.rows) ?
+                       repeat([nothing], nrow(plot_data)) :
+                       plot_data[!, plot.facet_options.rows]
+                cols = isnothing(plot.facet_options.cols) ?
+                       repeat([nothing], nrow(plot_data)) :
+                       plot_data[!, plot.facet_options.cols]
+                push!(aes_df_list,
+                    DataFrame(facet=[(r, c) for (r, c) in zip(rows, cols)]))
+            end
         end
 
         aes_df = hcat(aes_df_list...)
@@ -130,7 +143,7 @@ function as_GridLayout(plot::GGPlot)
 
         # default palettes
 
-        plot_palette = plot.palette
+        plot_palette = plot.axis_options.palette
 
         for palette_aes in intersect([:strokecolor, :color], Symbol.(names(aes_df)))
             if !haskey(plot_palette, palette_aes)
@@ -187,7 +200,8 @@ function as_GridLayout(plot::GGPlot)
             facet_positions, facet_labels, facet_boxes =
                 position_facets(facet_names,
                     plot.facet_options.nrow,
-                    plot.facet_options.ncol)
+                    plot.facet_options.ncol,
+                    plot.facet_options.labels)
             typed_aes_df.facet = [facet_positions[k] for k in typed_aes_df.facet]
         end
 
@@ -231,7 +245,7 @@ function as_GridLayout(plot::GGPlot)
 
                 push!(optional_aes_data, Symbol(a) => data)
 
-                palette_function = get(plot.palette, :color, nothing)
+                palette_function = get(plot.axis_options.palette, :color, nothing)
 
                 isnothing(palette_function) && continue
                 !haskey(_legend_geom_symbols,
@@ -242,10 +256,10 @@ function as_GridLayout(plot::GGPlot)
                 labels_for_this_aes = subset(labels_aes_df,
                     :col_name => ByRow(x -> x == a))
 
-                if haskey(plot.legend_options, :color)
-                    l_type = get(plot.legend_options[:color], :type, "na")
-                    legend_title = get(plot.legend_options[:color], :name, " ")
-                    draw_colorbar = get(plot.legend_options[:color], :guide, :auto)
+                if haskey(plot.axis_options.legend_options, :color)
+                    l_type = get(plot.axis_options.legend_options[:color], :type, "na")
+                    legend_title = get(plot.axis_options.legend_options[:color], :name, " ")
+                    draw_colorbar = get(plot.axis_options.legend_options[:color], :guide, :auto)
                     if draw_colorbar == :auto
                         if l_type in ["continuous", "binned"]
                             draw_colorbar = :colorbar
@@ -261,8 +275,8 @@ function as_GridLayout(plot::GGPlot)
                 if draw_colorbar == :colorbar
 
                     colorbar_kwargs[:colormap] =
-                        plot.legend_options[:color][:type] == "continuous" ? Symbol(plot.legend_options[:color][:palette]) :
-                        cgrad(Symbol(plot.legend_options[:color][:palette]), 5, categorical=true)
+                        plot.axis_options.legend_options[:color][:type] == "continuous" ? Symbol(plot.axis_options.legend_options[:color][:palette]) :
+                        cgrad(Symbol(plot.axis_options.legend_options[:color][:palette]), 5, categorical=true)
 
                     colorbar_lowlim = min(
                         minimum(labels_for_this_aes.original_value), colorbar_lowlim)
@@ -316,7 +330,7 @@ function as_GridLayout(plot::GGPlot)
     end
 
     # rename and correct types on all axis options
-    for (arg, value) in plot.axis_options
+    for (arg, value) in plot.axis_options.opt
         if !(Symbol(arg) in _internal_geom_options)
             ex_type = get(_makie_expected_type, arg, Any)
             converted_value = try_convert(ex_type, value, arg, "ggplot")
@@ -362,7 +376,7 @@ function as_GridLayout(plot::GGPlot)
         l = (1, 2) => Makie.SpecApi.GridLayout(
             Makie.SpecApi.Legend(elems, labels, title))
     else
-        title = get(plot.legend_options[:color], :name, " ")
+        title = get(plot.axis_options.legend_options[:color], :name, " ")
         l = (1, 2) => Makie.SpecApi.GridLayout(
             Makie.SpecApi.Colorbar(; colorbar_kwargs...,
                 limits=(colorbar_lowlim, colorbar_highlim), label=title))

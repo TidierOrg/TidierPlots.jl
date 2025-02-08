@@ -52,7 +52,6 @@ const _ggplot_to_makie = Dict{Symbol,Symbol}(
     :glow => :glowwidth,
     :glowcolour => :glowcolor,
     :errorbar_direction => :direction,
-    :label => :text,
     :palette => :colormap
 );
 

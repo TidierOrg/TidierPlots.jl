@@ -2,76 +2,50 @@
 
 # COV_EXCL_START
 
-function Base.show(io::IO, geom::Geom)
-    if plot_log[]
-        printstyled(io, "$(geom.args["geom_name"])\n", underline=true)
-        if haskey(geom.args, "data")
-            if geom.args["data"] isa DataFrame
-                ref_data = "A DataFrame"
-            else
-                ref_data = geom.args["data"]
-            end
-
-            row_count = nrow(geom.data)
-            col_count = ncol(geom.data)
-            printstyled(io, "data: $ref_data ($row_count rows, $col_count columns)\n", color=:green)
-        else
-            printstyled(io, "data: inherits from plot\n", color=:blue)
-        end
-
-        for aes in geom.required_aes
-            if haskey(geom.aes, aes)
-                colname = geom.aes[aes]
-                printstyled(io, "$aes: ", color=:green)
-                if haskey(geom.args, "data")
-                    if String(colname) in names(DataFrame(geom.data))
-                        printstyled(io, "$colname \n", color=:green)
-                    else
-                        printstyled(io, "$colname \n", color=:red)
-                    end
-                else
-                    printstyled(io, "$colname \n", color=:blue)
-                end
-            else
-                printstyled(io, "$aes: inherits from plot \n", color=:yellow)
-            end
-        end
-
-        for k in keys(geom.aes)
-            if !(k in geom.required_aes)
-                v = geom.aes[k]
-                println("$k: $v")
-            end
-        end
-    end
-end
-
 function Base.show(io::IO, plot::GGPlot)
     if plot_log[]
-        printstyled(io, "ggplot options\n", underline=true)
-
+        log = Pair[]
         if !isnothing(plot.data)
-            row_count = nrow(DataFrame(plot.data))
-            col_count = ncol(DataFrame(plot.data))
-            printstyled(io, "data: A DataFrame ($row_count rows, $col_count columns)\n", color=:blue)
+            push!(log, :data => plot.data)
         end
 
         for (k, v) in plot.default_aes
-            printstyled(io, "$k: $v\n", color=:yellow)
+            push!(log, k => v)
         end
 
-        for k in keys(plot.axis_options)
+        for k in keys(plot.axis_options.opt)
             if k != "data"
-                v = plot.axis_options[k]
-                println("$k: $v")
+                v = plot.axis_options.opt[k]
+                push!(log, k => v)
             end
         end
 
-        println("")
+        geoms = Pair[]
+        for geom in plot.geoms
+            mapping = Pair[]
 
-        for g in plot.geoms
-            println(g)
+            for aes in geom.required_aes
+                if haskey(geom.aes, aes)
+                    push!(mapping, aes => geom.aes[aes])
+                end
+            end
+
+            for k in keys(geom.aes)
+                if !(k in geom.required_aes)
+                    push!(mapping, k => geom.aes[k])
+                end
+            end
+
+            for k in keys(geom.args)
+                if k != "geom_name"
+                    push!(mapping, Symbol(k) => geom.args[k])
+                end
+            end
+            push!(geoms, Symbol(geom.args["geom_name"]) => mapping)
         end
+
+        @info "ggplot" log... geoms...
+
     end
 
     if plot_show[]

@@ -46,14 +46,14 @@ TidierPlots.jl currently supports the top-level function `ggplot()`, plus:
 
 Geoms:
 
-- `geom_point`
-- `geom_errorbar`
-- `geom_path`, `geom_line`, and `geom_step`
-- `geom_bar`, `geom_col`, and `geom_histogram`
-- `geom_boxplot` and `geom_violin`
-- `geom_tile`
-- `geom_density`
-- `geom_text` and `geom_label`
+- Bar-like plots: `geom_bar`, `geom_col`, and `geom_histogram`
+- Scatterplots: `geom_point`
+- Line plots: `geom_path`, `geom_line`, `geom_step`, `geom_hline`, `geom_vline`
+- Errors: `geom_errorbar` and `geom_errorbarh`
+- Distributions: `geom_boxplot`, `geom_density`, `geom_violin`
+- Curve fits: `geom_smooth`
+- 3-variable: `geom_tile`
+- Text: `geom_text` and `geom_label`
 
 Makie Themes:
 
@@ -73,6 +73,7 @@ Additional Elements:
 - `scale_[x|y]_[continuous|log[ |2|10]|logit|pseudolog10|sqrt|reverse]`
 - `labs`
 - `lims`
+- `facet_grid` and `facet_wrap`
 
 ## Display Options for Quarto, Jupyter, and Pluto.jl
 

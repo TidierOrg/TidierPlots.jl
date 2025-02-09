@@ -97,7 +97,6 @@ export geom_errorbar
 export geom_errorbarh
 export geom_violin
 export geom_boxplot
-export geom_contour
 export geom_tile
 export geom_text
 export geom_label

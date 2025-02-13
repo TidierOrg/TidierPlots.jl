@@ -8,17 +8,18 @@ Create a custom scale for any aes.
 
 - `plot`: Optional. GGPlot to apply this scale to
 - `aes`: The aes that the scale is for
-- `function`: Function to apply to the raw data. Should accept one argument (vector of data as it appears in your DataFrame) and return a vector in the format expected by Makie.
+- `f`: Function to apply to the raw data. Should accept one argument (vector of data as it appears in your DataFrame) and return a vector in the format expected by Makie.
 - `legend_options`: Used to generate the guides for the plot
+
 """
-function scale_custom(aes, function, legend_options = Dict())
+function scale_custom(aes, f, legend_options = Dict())
     return AxisOptions(
         Dict(),
-        Dict(Symbol(aes) => function),
+        Dict(Symbol(aes) => f),
         legend_options
     )
 end
 
-function scale_custom(plot::GGPlot, aes, function, legend_options = Dict())
-    return plot + scale_custom(aes, function, legend_options)
+function scale_custom(plot::GGPlot, aes, f, legend_options = Dict())
+    return plot + scale_custom(aes, f, legend_options)
 end

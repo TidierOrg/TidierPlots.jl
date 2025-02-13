@@ -219,20 +219,43 @@ ggplot(penguins) +
 TidierPlots is creating Makie `SpecApi.GridLayout` objects under the hood, so you can easily combine TidierPlots output with Makie output for more flexibility:
 
 ```julia
-using WGLMakie
-import Makie.SpecApi as S
+using CairoMakie
+using Colors
 using TidierPlots
 using DataFrames
 
-r = LinRange(-1, 1, 100)
-cube = [(x .^ 2 + y .^ 2 + z .^ 2) for x = r, y = r, z = r]
-cube_contour = S.Contour(cube, alpha=0.5)
-ax_cube = S.Axis3(; plots=[cube_contour], protrusions = (50, 20, 10, 0))
+f1(x) = sin.(3x) ./ (cos.(x) .+ 2) ./ x
+f2(x) = cos.(x) ./ x
+f3(x) = exp.(-x)
 
-d = DataFrame(r = r, r2 = r .^ 2)
-gg = ggplot(d) + geom_line(aes(x = :r, y = :r2))
+labels = [
+    L"\frac{\sin(3x)}{x(\cos(x) + 2)}",
+    L"\cos(x)/x",
+    L"e^{-x}"
+]
 
-plot(S.GridLayout([TidierPlots.as_GridLayout(gg) ax_cube]))
+gg = ggplot(DataFrame(x = 0:0.05:4π)) +
+    [geom_line(aes(x = :x, y = :x => f)) for f in [f1, f2, f3]] +
+    lims(x = c(-0.5, 12), y = c(-.6, 1.05)) +
+    labs(x = L"x", y = L"f (x)") +
+    TidierPlots.theme(ylabelsize = 22, xlabelsize = 22,
+        xgridstyle = :dash, ygridstyle = :dash,
+        xtickalign = 1, xticksize = 10,
+        ytickalign = 1, yticksize = 10,
+        xlabelpadding = -10)
+
+f, _, pl = plot(TidierPlots.as_GridLayout(gg))
+
+Legend(f[1,1],
+    [LineElement(color = RGB(0/255,114/255,178/255)),
+    LineElement(color = RGB(230/255,159/255,0/255)),
+    LineElement(color = RGB(0/255,158/255,115/255))],
+    labels, tellheight = false, tellwidth = false,
+    margin = (10, 10, 10, 10), halign = :right,
+    valign = :top, backgroundcolor = (:grey90, 0.25))
+
+f
+
 ```
 ![](assets/makie_integration.png)
 

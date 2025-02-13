@@ -63,16 +63,16 @@ Makie Themes:
 - `theme_light()`
 - `theme_minimal()`
 
-Colour Scales:
+Scales:
 
+- `scale_[x|y]_[continuous|log[ |2|10]|logit|pseudolog10|sqrt|reverse]`
 - `scale_color_manual()` - set `values = c(c1, c2, c3, ...)`, accepts anything that can be parsed as a color by Colors.jl (named colors, hex values, etc.)
-- `scale_color_[discrete|continuous|binned]()` - set `palette =` a [ColorSchemes.jl palette](https://juliagraphics.github.io/ColorSchemes.jl/stable/catalogue/) as a string or symbol. Also accepts ColorSchemes.jl color scheme objects.
+- `scale_color_[discrete|continuous|binned]()` - set `palette =` a [ColorSchemes.jl palette](https://juliagraphics.github.io/ColorSchemes.jl/stable/catalogue/) as a string or symbol. Also accepts ColorScheme objects directly.
+- `scale_alpha`, `scale_size`, `scale_shape`, `scale_linewidth`
 
 Additional Elements:
 
-- `scale_[x|y]_[continuous|log[ |2|10]|logit|pseudolog10|sqrt|reverse]`
-- `labs`
-- `lims`
+- `labs` and `lims`
 - `facet_grid` and `facet_wrap`
 
 ## Display Options for Quarto, Jupyter, and Pluto.jl
@@ -257,7 +257,7 @@ Legend(f[1,1],
 f
 
 ```
-![](assets/makie_integration.png)
+![](assets/makie_legend.png)
 
 See the [documentation](https://tidierorg.github.io/TidierPlots.jl/latest) for more information and examples.
 

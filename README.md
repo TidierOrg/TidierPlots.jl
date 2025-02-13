@@ -257,7 +257,7 @@ Legend(f[1,1],
 f
 
 ```
-![](assets/makie_integration.png)
+![](assets/makie_legend.png)
 
 See the [documentation](https://tidierorg.github.io/TidierPlots.jl/latest) for more information and examples.
 

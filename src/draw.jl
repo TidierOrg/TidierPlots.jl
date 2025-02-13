@@ -174,8 +174,28 @@ function as_GridLayout(plot::GGPlot)
 
         # convert all aes columns to the format expected by makie
 
+        # if there is no alpha column, set everything to 1.0
+
+        if !("alpha" in names(aes_df))
+            aes_df.alpha .= 1.0
+        end
+
+        # if there is no color column, set everything to blue
+
+        if !("color" in names(aes_df))
+            aes_df.color .= "default"
+        end
+
         typed_aes_df = convert_aes_df_types(aes_df, plot_palette)
         labels_aes_df = get_unique_labels(aes_df, plot_palette)
+
+        # alpha values need to be tupled with color
+
+        typed_aes_df.color .= [(c, a) for (c, a) in zip(
+            typed_aes_df.color, typed_aes_df.alpha
+        )]
+
+        select!(typed_aes_df, Not(:alpha))
 
         verbose[] && println("Typed DataFrame:")
         verbose[] && @glimpse typed_aes_df

@@ -1,7 +1,7 @@
 function make_color_lookup_manual(args_dict::Dict)
     colors = eltype(args_dict[:values]) == Colorant ?
-        args_dict[:values] :
-        parse.(Colorant, args_dict[:values])
+             args_dict[:values] :
+             parse.(Colorant, args_dict[:values])
 
     function color_lookup_manual(input::Any)
         return [colors[x] for x in levelcode.(CategoricalArray(input))]
@@ -226,3 +226,15 @@ scale_colour_binned = color_scale_template(
     "fill",
     color_scale_to_ggoptions,
     "binned")
+
+scale_alpha_continuous = color_scale_template(
+    "alpha",
+    alpha_scale_to_ggoptions,
+    "continuous"
+)
+
+scale_alpha = color_scale_template(
+    "alpha",
+    alpha_scale_to_ggoptions,
+    "continuous"
+)

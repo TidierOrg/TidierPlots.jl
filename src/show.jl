@@ -45,7 +45,6 @@ function Base.show(io::IO, plot::GGPlot)
         end
 
         @info "ggplot" log... geoms...
-
     end
 
     if plot_show[]

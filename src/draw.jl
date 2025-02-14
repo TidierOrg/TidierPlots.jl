@@ -265,67 +265,21 @@ function as_GridLayout(plot::GGPlot)
 
                 push!(optional_aes_data, Symbol(a) => data)
 
-                palette_function = get(plot.axis_options.palette, :color, nothing)
-
-                isnothing(palette_function) && continue
-                !haskey(_legend_geom_symbols,
-                    geom.args["geom_name"]) && continue
-                !haskey(_legend_geom_elements,
-                    geom.args["geom_name"]) && continue
-
-                labels_for_this_aes = subset(labels_aes_df,
-                    :col_name => ByRow(x -> x == a))
-
-                if haskey(plot.axis_options.legend_options, :color)
-                    l_type = get(plot.axis_options.legend_options[:color], :type, "na")
-                    legend_title = get(plot.axis_options.legend_options[:color], :name, " ")
-                    draw_colorbar = get(plot.axis_options.legend_options[:color], :guide, :auto)
-                    if draw_colorbar == :auto
-                        if l_type in ["continuous", "binned"]
-                            draw_colorbar = :colorbar
-                        elseif l_type in ["discrete", "manual"]
-                            draw_colorbar = :legend
-                        end
-                    end
-                else
-                    draw_colorbar = :none
-                    legend_title = " "
-                end
-
-                if draw_colorbar == :colorbar
-
-                    colorbar_kwargs[:colormap] =
-                        plot.axis_options.legend_options[:color][:type] == "continuous" ? Symbol(plot.axis_options.legend_options[:color][:palette]) :
-                        cgrad(Symbol(plot.axis_options.legend_options[:color][:palette]), 5, categorical=true)
-
-                    colorbar_lowlim = min(
-                        minimum(labels_for_this_aes.original_value), colorbar_lowlim)
-
-                    colorbar_highlim = max(
-                        maximum(labels_for_this_aes.original_value), colorbar_highlim)
-
-                    colorbar = true
-                elseif draw_colorbar == :legend
-                    append!(legend,
-                        sort(DataFrame(
-                                labels=labels_for_this_aes.original_value,
-                                colors=labels_for_this_aes.new_value,
-                                options=get(
-                                    _legend_geom_symbols,
-                                    geom.args["geom_name"],
-                                    Dict(:marker => :circle, :markersize => 12)
-                                ),
-                                element=get(
-                                    _legend_geom_elements,
-                                    geom.args["geom_name"],
-                                    MarkerElement
-                                ),
-                                title=legend_title
-                            ),
-                            :labels)
-                    )
-                end
-
+                colorbar_highlim,
+                colorbar_lowlim,
+                colorbar_kwargs,
+                colorbar,
+                legend = update_legend(
+                    legend,
+                    plot.axis_options,
+                    geom.args["geom_name"],
+                    a,
+                    labels_aes_df,
+                    colorbar_highlim,
+                    colorbar_lowlim,
+                    colorbar_kwargs,
+                    colorbar
+                )
             end
 
             args = Tuple([geom.visual, required_aes_data...])
@@ -381,20 +335,35 @@ function as_GridLayout(plot::GGPlot)
     if nrow(legend) == 0 && !colorbar
         l = nothing
     elseif nrow(legend) != 0
-        labels = String[]
-        elems = Any[]
 
-        title = legend_title
+        labels_list = []
+        elems_list = []
+        titles_list = []
 
-        legend = subset(legend, :colors => ByRow(x -> typeof(x) <: Colorant))
+        for t in unique(legend.title)
 
-        for (k, v) in pairs(groupby(legend, :labels))
-            push!(elems, [l.element(color=l.colors; l.options...) for l in eachrow(v)])
-            push!(labels, string(v.labels[1]))
+            labels = String[]
+            elems = Any[]
+
+            sublegend = subset(legend, :title => ByRow(x -> x == t))
+
+            title = first(sublegend.title)
+
+            for l in eachrow(sublegend)
+                push!(elems, l.element(color=l.colors; l.options...))
+                push!(labels, string(l.labels))
+            end
+
+            push!(labels_list, labels)
+            push!(elems_list, elems)
+            push!(titles_list, title)
+
         end
 
         l = (1, 2) => Makie.SpecApi.GridLayout(
-            Makie.SpecApi.Legend(elems, labels, title))
+            Makie.SpecApi.Legend([e for e in elems_list],
+                [l for l in labels_list],
+                [t for t in titles_list]))
     else
         title = get(plot.axis_options.legend_options[:color], :name, " ")
         l = (1, 2) => Makie.SpecApi.GridLayout(

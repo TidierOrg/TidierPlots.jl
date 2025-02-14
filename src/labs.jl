@@ -9,9 +9,9 @@ function labs(args...; kwargs...)
     )
 
     return AxisOptions(
-        Dict(ggplot_to_makie[k] => v for (k, v) in args_dict),
+        Dict(ggplot_to_makie[k] => v for (k, v) in args_dict if k in keys(ggplot_to_makie)),
         Dict(),
-        Dict()
+        Dict(Symbol(k) => Dict(:name => v) for (k, v) in args_dict if !(k in keys(ggplot_to_makie)))
     )
 end
 
@@ -22,7 +22,7 @@ end
 function lims(args...; kwargs...)
     aes_dict, args_dict = extract_aes(args, kwargs)
 
-    lims_dict = Dict{Symbol, Any}()
+    lims_dict = Dict{Symbol,Any}()
 
     if haskey(args_dict, "x")
         if haskey(args_dict, "y")

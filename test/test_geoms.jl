@@ -366,7 +366,7 @@
                             :Stairs,
                             df.x[perm],
                             df.y[perm])
-                    ]
+                    ]; xlabel="x", ylabel="y"
                 )
             )
         )
@@ -473,29 +473,29 @@
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
                 [Makie.SpecApi.Axis(
-                plots=[
-                    Makie.PlotSpec(
-                        :Density,
-                        penguins.body_mass_g)]
-            )]
+                    plots=[
+                        Makie.PlotSpec(
+                            :Density,
+                            penguins.body_mass_g)]
+                )]; xlabel="body_mass_g"
             )
         )
 
         @test plot_images_equal(t, m)
 
         t1 = ggplot(penguins) +
-            geom_density(aes(
-                x = :bill_length_mm,
-                color = :sex,
-                fill = :species
-            ), strokewidth = 1)
+             geom_density(aes(
+                x=:bill_length_mm,
+                color=:sex,
+                fill=:species
+            ), strokewidth=1)
 
         t2 = ggplot(penguins) +
-            geom_density(aes(
-                x = :bill_length_mm,
-                color = :sex,
-                fill = :species
-            ))
+             geom_density(aes(
+            x=:bill_length_mm,
+            color=:sex,
+            fill=:species
+        ))
 
         @test plot_images_equal(t1, t2)
     end
@@ -538,7 +538,7 @@
                             df_errorbar.cat_numeric,
                             df_errorbar.LowerBound,
                             df_errorbar.UpperBound)
-                    ]
+                    ]; xlabel="cat_numeric", ylabel="MeanValue"
                 )
             )
         )
@@ -568,7 +568,7 @@
                             df_errorbar.cat_numeric,
                             df_errorbar.LowerBound,
                             df_errorbar.UpperBound; direction=:x)
-                    ]
+                    ]; xlabel="cat_numeric", ylabel="MeanValue"
                 )
             )
         )
@@ -599,7 +599,7 @@
                             penguins.bill_length_mm,
                             penguins.bill_depth_mm
                         )
-                    ]
+                    ]; xlabel="bill_length_mm", ylabel="bill_depth_mm"
                 )
             )
         )

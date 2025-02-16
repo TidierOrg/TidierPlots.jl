@@ -1,6 +1,6 @@
 @testset "broadcasting" begin
-    plots = ggplot(penguins, aes(x = :bill_length_mm, y = :bill_depth_mm)) .+
-    [geom_point(), geom_line(), geom_path()]
+    plots = ggplot(penguins, aes(x=:bill_length_mm, y=:bill_depth_mm)) .+
+            [geom_point(), geom_line(), geom_path()]
 
     t = +(plots...)
 
@@ -11,7 +11,7 @@
                     :Scatter,
                     penguins.bill_length_mm,
                     penguins.bill_depth_mm)
-                ]
+            ]; xlabel="bill_length_mm", ylabel="bill_depth_mm"
         )
     )
 
@@ -22,7 +22,7 @@
                     :Lines,
                     penguins.bill_length_mm,
                     penguins.bill_depth_mm)
-                ]
+            ]; xlabel="bill_length_mm", ylabel="bill_depth_mm"
         )
     )
 
@@ -35,7 +35,7 @@
                     :Lines,
                     penguins.bill_length_mm[perm],
                     penguins.bill_depth_mm[perm])
-                ]
+            ]; xlabel="bill_length_mm", ylabel="bill_depth_mm"
         )
     )
 

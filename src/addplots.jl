@@ -51,6 +51,15 @@ function Base.:+(x::GGPlot, y::Union{Geom,Vector{Geom},Aesthetics,AxisOptions,Fa
         end
     end
 
+    aes = merge(x.default_aes, [i.named for i in y if i isa Aesthetics]...)
+
+    if !haskey(opt, :xlabel) && haskey(aes, :x)
+        opt[:xlabel] = string(aes[:x][1])
+    end
+    if !haskey(opt, :ylabel) && haskey(aes, :y)
+        opt[:ylabel] = string(aes[:y][1])
+    end
+
     combined_axis_options = AxisOptions(
         opt,
         palette,
@@ -61,8 +70,7 @@ function Base.:+(x::GGPlot, y::Union{Geom,Vector{Geom},Aesthetics,AxisOptions,Fa
         vcat(x.geoms, # if there are geoms or lists of geoms, append them to the ggplot's geoms
             [i for i in y if i isa Geom],
             [i for i in y if i isa Vector{Geom}]...),
-        merge(x.default_aes, # if there are aes specs, make them the ggplot's defaults
-            [i.named for i in y if i isa Aesthetics]...),
+        aes,
         x.data, # the default data is passed on to the final ggplot
         combined_axis_options,
         theme,

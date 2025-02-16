@@ -183,7 +183,7 @@ function as_GridLayout(plot::GGPlot)
         # if there is no color column, set everything to blue
 
         if !("color" in names(aes_df))
-            aes_df.color .= "default"
+            aes_df.color .= "__tidierplots_default__"
         end
 
         typed_aes_df = convert_aes_df_types(aes_df, plot_palette)
@@ -332,9 +332,17 @@ function as_GridLayout(plot::GGPlot)
     verbose[] && println("Legend dataframe:")
     verbose[] && println(unique(legend))
 
+    # if we don't need a legend or colorbar
     if nrow(legend) == 0 && !colorbar
-        l = nothing
-    elseif nrow(legend) != 0
+        return Makie.SpecApi.GridLayout(
+            [k => Makie.SpecApi.Axis(plots=v; axis_options...) for
+             (k, v) in plot_list]...,
+            facet_labels...,
+            facet_boxes...
+        )
+    end
+
+    if nrow(legend) != 0
 
         labels_list = []
         elems_list = []
@@ -345,7 +353,10 @@ function as_GridLayout(plot::GGPlot)
             labels = String[]
             elems = Any[]
 
-            sublegend = subset(legend, :title => ByRow(x -> x == t))
+            sublegend = subset(
+                subset(legend, :title => ByRow(x -> x == t)),
+                :labels => ByRow(x -> x != "__tidierplots_default__")
+            )
 
             title = first(sublegend.title)
 
@@ -371,23 +382,14 @@ function as_GridLayout(plot::GGPlot)
                 limits=(colorbar_lowlim, colorbar_highlim), label=title))
     end
 
-    if isnothing(l)
-        return Makie.SpecApi.GridLayout(
+    return Makie.SpecApi.GridLayout(
+        (1, 1) => Makie.SpecApi.GridLayout(
             [k => Makie.SpecApi.Axis(plots=v; axis_options...) for
              (k, v) in plot_list]...,
             facet_labels...,
             facet_boxes...
-        )
-    else
-        return Makie.SpecApi.GridLayout(
-            (1, 1) => Makie.SpecApi.GridLayout(
-                [k => Makie.SpecApi.Axis(plots=v; axis_options...) for
-                 (k, v) in plot_list]...,
-                facet_labels...,
-                facet_boxes...
-            ),
-            l)
-    end
+        ),
+        l)
 end
 
 

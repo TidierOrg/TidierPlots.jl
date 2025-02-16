@@ -7,7 +7,7 @@ end
 function reinterpret_bits_as_int_difference_hash(img_resized_gray)
 
     n_rows, n_cols = size(img_resized_gray)
-    n_bits = n_rows * (n_cols-1)
+    n_bits = n_rows * (n_cols - 1)
 
     if n_bits <= 64
         z = zero(UInt64)
@@ -17,10 +17,10 @@ function reinterpret_bits_as_int_difference_hash(img_resized_gray)
         z = zero(BigInt)
     end
 
-    @inbounds  for j in 1:n_cols-1
+    @inbounds for j in 1:n_cols-1
         for i in 1:n_rows
             # R[i,j] = X[i,j+1].val > X[i,j].val
-            z = (z <<1) | (img_resized_gray[i,j+1].val > img_resized_gray[i,j].val)
+            z = (z << 1) | (img_resized_gray[i, j+1].val > img_resized_gray[i, j].val)
         end
     end
     return z
@@ -52,4 +52,10 @@ function plot_will_render(plot)
     temp_path = tempname() * ".png"
     ggsave(plot, temp_path)
     return true
+end
+
+function plot_hash(plot)
+    temp_path = tempname() * ".png"
+    ggsave(temp_path, plot)
+    return difference_hash(load(temp_path))
 end

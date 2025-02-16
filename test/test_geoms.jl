@@ -473,11 +473,11 @@
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
                 [Makie.SpecApi.Axis(
-                    plots=[
-                        Makie.PlotSpec(
-                            :Density,
-                            penguins.body_mass_g)]
-                )]; xlabel="body_mass_g"
+                plots=[
+                    Makie.PlotSpec(
+                        :Density,
+                        penguins.body_mass_g)]; xlabel="body_mass_g"
+            )]
             )
         )
 

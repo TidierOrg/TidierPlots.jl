@@ -85,4 +85,32 @@
         ])
     )
 
+    @test plot_images_equal(t, m)
+
+    t = ggplot(DataFrame(x=[1, 2, 1, 2],
+        y=[2, 3, 1, 4],
+        l=[1, 1, 2, 2])) +
+        geom_line(aes(x=:x, y=:y, group=:l, linewidth=:l))
+
+    m = Makie.plot(
+        Makie.SpecApi.GridLayout([
+            (1, 1) => Makie.SpecApi.Axis(
+                plots=[
+                    Makie.PlotSpec(
+                        :Lines,
+                        [1, 2],
+                        [2, 3];
+                        color=RGBA(0.0, 0.4470588235294118, 0.6980392156862745, 1.0)
+                    ),
+                    Makie.PlotSpec(
+                        :Lines,
+                        [1, 2],
+                        [1, 4];
+                        color=RGBA(0.0, 0.4470588235294118, 0.6980392156862745, 1.0), linewidth=2
+                    )]
+            )
+        ])
+    )
+
+    @test plot_images_equal(t, m)
 end

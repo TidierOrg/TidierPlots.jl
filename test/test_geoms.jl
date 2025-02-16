@@ -645,9 +645,9 @@
                             :Band,
                             x̂,
                             pred.lower,
-                            pred.upper
+                            pred.upper; alpha=0.6
                         )
-                    ]
+                    ]; xlabel="bill_length_mm", ylabel="bill_depth_mm"
                 )
             )
         )

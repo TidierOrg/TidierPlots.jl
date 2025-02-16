@@ -40,6 +40,9 @@
 using TidierPlots
 using DataFrames
 using PalmerPenguins
+using RDatasets
+using CategoricalArrays
+using Makie
 
 penguins = dropmissing(DataFrame(PalmerPenguins.load()));
 
@@ -57,20 +60,20 @@ p + geom_point(@aes(color = sex))
 
 #-
 
-p + geom_point(@aes(shape = sex))
+p + geom_point(@aes(shape = sex)) + scale_shape()
 
 # A "bubblechart"
 
-p + geom_point(@aes(size = body_mass_g))
+p + geom_point(@aes(size = body_mass_g)) + scale_size(range = [5, 15], name = "Body Mass (g)")
 
 # Set aesthetics to a fixed value
 
-p + geom_point(color="red", size=5)
+p + geom_point(size=18, alpha = 0.5)
 
 # Varying alpha is useful for large datasets
 
 diamonds = dataset("ggplot2", "diamonds")
-d = ggplot(diamonds, aes(:Carat, :Price))
+d = ggplot(diamonds, aes(x = :Carat, y = :Price))
 d + geom_point(alpha=0.1)
 
 #-
@@ -84,7 +87,7 @@ d + geom_point(alpha=0.01)
 # All shapes can have both color and fill set. Refer to shapes by their name.
 
 mtcars = dataset("datasets", "mtcars")
-ggplot(mtcars, aes(x=:WT, y=:MPG)) +
+ggplot(mtcars, aes(x=:WT, y=:MPG, fill = :Cyl => CategoricalArray)) +
 geom_point(shape=:circle, strokecolor="black", size=30, stroke=5)
 
 # Create simple compound shapes using multiple geom_point layers, or see the Makie documentation for more advanced shapes.
@@ -92,7 +95,7 @@ geom_point(shape=:circle, strokecolor="black", size=30, stroke=5)
 p = ggplot(mtcars, aes(x=:MPG, y=:WT, shape=:Cyl => CategoricalArray))
 
 p + geom_point(aes(colour=:Cyl => CategoricalArray), size=20) +
-geom_point(size=10)
+geom_point(size=10) + scale_shape()
 
 # -
 
@@ -100,4 +103,4 @@ batsymbol_string = "M96.84 141.998c-4.947-23.457-20.359-32.211-25.862-13.887-11.
 
 batsymbol = BezierPath(batsymbol_string, fit=true, flipy=true)
 
-ggplot(mtcars) + geom_point(aes(x=:MPG, y=:WT), marker=batsymbol, size=20)
+ggplot(mtcars) + geom_point(aes(x=:MPG, y=:WT), shape=batsymbol, size=20)

@@ -62,8 +62,8 @@ end
 
 # aes_col is a Number
 
-function convert_aes_type(aes_col::AbstractVector{T}, ::Type{Colors.Colorant}, col::Symbol) where {T<:Number}
-    verbose[] && println("Converting $col to Colorant")
+function convert_aes_type(aes_col::AbstractVector{T}, ::Type{Colors.RGBA}, col::Symbol) where {T<:Number}
+    verbose[] && println("Converting $col to RGBA")
     return _default_continuous_palette(aes_col)
 end
 
@@ -74,9 +74,9 @@ end
 
 # aes_col is a String
 
-function convert_aes_type(aes_col::AbstractVector{T}, ::Type{Colorant}, col::Symbol) where
+function convert_aes_type(aes_col::AbstractVector{T}, ::Type{Colors.RGBA}, col::Symbol) where
 {T<:AbstractString}
-    verbose[] && println("Converting $col to Colorant")
+    verbose[] && println("Converting $col to RGBA")
     return _default_discrete_palette(aes_col)
 end
 
@@ -88,8 +88,8 @@ end
 
 # aes_col is a CategoricalArray
 
-function convert_aes_type(aes_col::CategoricalArray, ::Type{Colorant}, col::Symbol)
-    verbose[] && println("Converting $col to Colorant")
+function convert_aes_type(aes_col::CategoricalArray, ::Type{Colors.RGBA}, col::Symbol)
+    verbose[] && println("Converting $col to RGBA")
     return _default_discrete_palette(aes_col)
 end
 

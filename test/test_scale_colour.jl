@@ -53,7 +53,7 @@
             geom_point(aes(x=:bill_depth_mm, y=:bill_length_mm, color=:species)) +
             scale_color_manual("red", "white", "blue")
 
-        colours = parse.(Colorant, ["red", "white", "blue"])
+        colours = parse.(Colors.RGBA, ["red", "white", "blue"])
 
         cat_array = CategoricalArray(penguins.species)
 

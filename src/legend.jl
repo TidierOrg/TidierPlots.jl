@@ -59,7 +59,7 @@ function update_legend(legend,
 
         colorbar = true
     elseif draw_colorbar == :legend
-        if Symbol(a) == :size
+        if Symbol(a) == :markersize
             o = labels_for_this_aes.original_value
             n = labels_for_this_aes.new_value
 

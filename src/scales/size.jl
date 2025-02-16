@@ -6,8 +6,9 @@ function size_scale_to_ggoptions(args_dict::Dict)
     r = get(args_dict, :range, [1, 5])
 
     function size_lookup_continuous(input)
-        return r[1] .+ (r[2] - r[1]) .*
-                       ((input .- minimum(input)) ./ maximum(input))
+        return r[1] .+ ((r[2] - r[1]) .*
+                        ((input .- minimum(input)) ./
+                         (maximum(input) .- minimum(input))))
     end
 
     palette[:markersize] = size_lookup_continuous

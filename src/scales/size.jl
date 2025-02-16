@@ -15,7 +15,7 @@ function size_scale_to_ggoptions(args_dict::Dict)
     return AxisOptions(
         Dict(),
         palette,
-        Dict(:markersize => merge(Dict(:guide => :legend_size), args_dict))
+        Dict(:markersize => merge(Dict(:guide => :legend), args_dict))
     )
 end
 

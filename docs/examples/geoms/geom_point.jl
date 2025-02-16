@@ -45,57 +45,60 @@ using CategoricalArrays
 using Makie
 
 penguins = dropmissing(DataFrame(PalmerPenguins.load()));
+diamonds = dataset("ggplot2", "diamonds");
+mtcars = dataset("datasets", "mtcars");
 
 #-
 
-p = ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm))
-
-#-
-
-p + geom_point()
+ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) +
+    geom_point()
 
 # Add aesthetics
 
-p + geom_point(@aes(color = sex))
+ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) +
+    geom_point(@aes(color = sex))
 
 #-
 
-p + geom_point(@aes(shape = sex)) + scale_shape()
+ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) +
+    geom_point(@aes(shape = sex)) + scale_shape()
 
 # A "bubblechart"
 
-p + geom_point(@aes(size = body_mass_g)) + scale_size(range = [5, 15], name = "Body Mass (g)")
+ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) +
+    geom_point(@aes(size = body_mass_g)) +
+    scale_size(range = [5, 15], name = "Body Mass (g)")
 
 # Set aesthetics to a fixed value
 
-p + geom_point(size=18, alpha = 0.5)
+ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) +
+    geom_point(size=18, alpha = 0.5)
 
 # Varying alpha is useful for large datasets
 
-diamonds = dataset("ggplot2", "diamonds")
-d = ggplot(diamonds, aes(x = :Carat, y = :Price))
-d + geom_point(alpha=0.1)
+ggplot(diamonds, aes(x = :Carat, y = :Price)) +
+    geom_point(alpha=0.1)
 
 #-
 
-d + geom_point(alpha=0.05)
+ggplot(diamonds, aes(x = :Carat, y = :Price)) +
+    geom_point(alpha=0.05)
 
 #-
 
-d + geom_point(alpha=0.01)
+ggplot(diamonds, aes(x = :Carat, y = :Price)) +
+    geom_point(alpha=0.01)
 
 # All shapes can have both color and fill set. Refer to shapes by their name.
 
-mtcars = dataset("datasets", "mtcars")
 ggplot(mtcars, aes(x=:WT, y=:MPG, fill = :Cyl => CategoricalArray)) +
-geom_point(shape=:circle, strokecolor="black", size=30, stroke=5)
+    geom_point(shape=:circle, strokecolor="black", size=30, stroke=5)
 
 # Create simple compound shapes using multiple geom_point layers, or see the Makie documentation for more advanced shapes.
 
-p = ggplot(mtcars, aes(x=:MPG, y=:WT, shape=:Cyl => CategoricalArray))
-
-p + geom_point(aes(colour=:Cyl => CategoricalArray), size=20) +
-geom_point(size=10) + scale_shape()
+ggplot(mtcars, aes(x=:MPG, y=:WT, shape=:Cyl => CategoricalArray)) +
+    geom_point(aes(colour=:Cyl => CategoricalArray), size=20) +
+    geom_point(size=10) + scale_shape()
 
 # -
 

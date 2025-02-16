@@ -50,22 +50,22 @@ function geom_smooth(args...; kwargs...)
 
     if get(args_dict, "method", "smooth") == "lm"
         return [build_geom(aes_dict,
-                    args_dict,
-                    ["x", "y"],
-                    :Lines;
-                    post_function = stat_linear),
-                build_geom(aes_dict,
-                    args_dict,
-                    ["x", "lower", "upper"],
-                    :Band,
-                    post_function = stat_linear)]
+                args_dict,
+                ["x", "y"],
+                :Lines;
+                post_function=stat_linear),
+            build_geom(aes_dict,
+                merge(Dict(:alpha => 0.6), args_dict),
+                ["x", "lower", "upper"],
+                :Band,
+                post_function=stat_linear)]
     end
 
     return build_geom(aes_dict,
-                      args_dict,
-                      ["x", "y"],
-                      :Lines,
-                      post_function = stat_loess)
+        args_dict,
+        ["x", "y"],
+        :Lines,
+        post_function=stat_loess)
 end
 
 function stat_loess(
@@ -78,7 +78,7 @@ function stat_loess(
     y = plot_data[!, :y]
     group = first(plot_data[!, :group])
 
-    model = Loess.loess(x, y; span = .75, degree = 2)
+    model = Loess.loess(x, y; span=0.75, degree=2)
     x̂ = range(extrema(x)..., length=200)
     ŷ = Loess.predict(model, x̂)
 
@@ -110,9 +110,9 @@ function stat_linear(
     end
 
     lin_model = GLM.lm(add_intercept_column(x), y)
-    x̂ = range(extrema(x)..., length = 100)
+    x̂ = range(extrema(x)..., length=100)
     pred = DataFrame(
-        GLM.predict(lin_model, add_intercept_column(x̂); interval = :confidence)
+        GLM.predict(lin_model, add_intercept_column(x̂); interval=:confidence)
     )
 
     return_data = DataFrame(

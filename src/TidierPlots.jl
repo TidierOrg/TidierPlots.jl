@@ -32,6 +32,9 @@ using Loess
 # for geom_contour fits
 using KernelDensity
 
+# for size scales
+using Statistics
+
 include("structs.jl")
 
 include("addplots.jl")
@@ -127,6 +130,9 @@ export scale_colour_continuous, scale_colour_discrete, scale_colour_manual, scal
 export scale_color_continuous, scale_color_discrete, scale_color_manual, scale_color_binned
 export scale_fill_continuous, scale_fill_discrete, scale_fill_manual, scale_fill_binned
 export scale_alpha, scale_alpha_continuous
+export scale_size
+export scale_shape
+export scale_linewidth
 
 # default options
 

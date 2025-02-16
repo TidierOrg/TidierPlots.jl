@@ -53,7 +53,7 @@
             geom_point(aes(x=:bill_depth_mm, y=:bill_length_mm, color=:species)) +
             scale_color_manual("red", "white", "blue")
 
-        colours = parse.(Colorant, ["red", "white", "blue"])
+        colours = parse.(Colors.RGBA, ["red", "white", "blue"])
 
         cat_array = CategoricalArray(penguins.species)
 
@@ -85,7 +85,7 @@
             Dict(:values => [:red, :blue, :white])
         )
 
-        @test all(ml([1.2, 1.8]) .== [Colors.RGB(1.0, 0.0, 0.0), Colors.RGB(0.0, 0.0, 1.0)])
+        @test all(ml([1.2, 1.8]) .== [Colors.RGBA(1.0, 0.0, 0.0, 1.0), Colors.RGBA(0.0, 0.0, 1.0, 1.0)])
     end
 
     @testset "continuous" begin
@@ -193,5 +193,5 @@
             :values => [:red, :blue]
         )
     )
-    @test tfill.palette[:fill](1)[1] == Colors.RGB(1.0, 0.0, 0.0)
+    @test tfill.palette[:fill](1)[1] == Colors.RGBA(1.0, 0.0, 0.0, 1.0)
 end

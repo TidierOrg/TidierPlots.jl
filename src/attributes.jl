@@ -143,8 +143,8 @@ const _makie_expected_type = Dict{String,Type}(
     "ymax" => Real,
 
     # Aes
-    "color" => Colorant,
-    "strokecolor" => Colorant,
+    "color" => Colors.RGBA,
+    "strokecolor" => Colors.RGBA,
     "dodge" => Integer,
     "stack" => Integer,
 );

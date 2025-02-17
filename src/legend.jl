@@ -76,6 +76,23 @@ function update_legend(legend,
                     ),
                     :labels), promote=true
             )
+        elseif Symbol(a) == :alpha
+            o = labels_for_this_aes.original_value
+            n = labels_for_this_aes.new_value
+
+            ro = quantile(o, [0, 0.25, 0.5, 0.75, 1])
+            rn = quantile(n, [0, 0.25, 0.5, 0.75, 1])
+
+            append!(legend,
+                sort(DataFrame(
+                        labels=ro,
+                        colors=RGB(0, 0, 0),
+                        options=[Dict(:marker => :circle, :markersize => 12, :alpha => n) for n in rn],
+                        element=MarkerElement,
+                        title=legend_title
+                    ),
+                    :labels), promote=true
+                )
         elseif Symbol(a) == :linewidth
             o = labels_for_this_aes.original_value
             n = labels_for_this_aes.new_value

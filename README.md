@@ -50,7 +50,7 @@ Geoms:
 - Scatterplots: `geom_point`
 - Line plots: `geom_path`, `geom_line`, `geom_step`, `geom_hline`, `geom_vline`
 - Errors: `geom_errorbar` and `geom_errorbarh`
-- Distributions: `geom_boxplot`, `geom_density`, `geom_violin`
+- Distributions: `geom_boxplot`, `geom_density`, `geom_violin`, `geom_raincloud`
 - Curve fits: `geom_smooth`
 - 3-variable: `geom_tile`
 - Text: `geom_text` and `geom_label`
@@ -204,10 +204,10 @@ top + blank + middle + right +
 Add basic support for any Makie plot using `geom_template(name, required_aes, makie_plot)`. It will inherit support for most optional aesthetics and arguments automatically:
 
 ```julia
-geom_raincloud = geom_template("geom_raincloud", ["x", "y"], :RainClouds)
+geom_myraincloud = geom_template("geom_myraincloud", ["x", "y"], :RainClouds)
 
 ggplot(penguins) +
-    geom_raincloud(@aes(x = species, y = bill_depth_mm/10, color = species), size = 4) +
+    geom_myraincloud(@aes(x = species, y = bill_depth_mm/10, color = species), size = 4) +
     scale_y_continuous(labels = "{:.1f} cm") +
     labs(title = "Bill Depth by Species", x = "Species", y = "Bill Depth") +
     theme_minimal()

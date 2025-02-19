@@ -166,7 +166,8 @@ const _internal_geom_options = Symbol[
     :y, :y1, :y2,
     :yintercept,
     :ymax,
-    :ymin
+    :ymin,
+    :group, :facet
 ]
 
 # aesthetics that should not be treated as categorical variables

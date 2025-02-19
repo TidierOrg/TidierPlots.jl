@@ -47,8 +47,8 @@ df = DataFrame(
 
 ggplot(df, @aes(x=x, y=y, text=t, color=t)) + geom_text()
 
-ggplot(df, @aes(x=x, y=y, text=t, color=t)) +
-    geom_text(fontsize=24, align=(:left, :bottom), font=:bold) +
+ggplot(df, @aes(x=x, y=y, color=t)) +
+    geom_text(@aes(text=t), fontsize=24, align=(:left, :bottom), font=:bold) +
     geom_point() +
     lims(x = (0, 3), y = (0, 3))
 ```
@@ -109,8 +109,8 @@ df = DataFrame(
 
 ggplot(df, @aes(x=x, y=y, text=t, color=t)) + geom_label()
 
-ggplot(df, @aes(x=x, y=y, text=t, color=t)) +
-    geom_label(fontsize=24, align=(:left, :bottom), font=:bold) +
+ggplot(df, @aes(x=x, y=y, color=t)) +
+    geom_label(@aes(text=t), fontsize=24, align=(:left, :bottom), font=:bold) +
     geom_point() +
     lims(x = (0, 3), y = (0, 3))
 ```

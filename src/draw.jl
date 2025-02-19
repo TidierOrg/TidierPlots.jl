@@ -176,13 +176,13 @@ function as_GridLayout(plot::GGPlot)
 
         # if there is no alpha column, set everything to 1.0
 
-        if !("alpha" in names(aes_df))
+        if !("alpha" in names(aes_df)) && :color in supported_kwargs
             aes_df.alpha .= 1.0
         end
 
         # if there is no color column, set everything to blue
 
-        if !("color" in names(aes_df))
+        if !("color" in names(aes_df)) && :color in supported_kwargs
             aes_df.color .= "__tidierplots_default__"
         end
 
@@ -191,11 +191,12 @@ function as_GridLayout(plot::GGPlot)
 
         # alpha values need to be tupled with color
 
-        typed_aes_df.color .= [(c, a) for (c, a) in zip(
-            typed_aes_df.color, typed_aes_df.alpha
-        )]
-
-        select!(typed_aes_df, Not(:alpha))
+        if :color in supported_kwargs
+            typed_aes_df.color .= [(c, a) for (c, a) in zip(
+                typed_aes_df.color, typed_aes_df.alpha
+            )]
+            select!(typed_aes_df, Not(:alpha))
+        end
 
         verbose[] && println("Typed DataFrame:")
         verbose[] && @glimpse typed_aes_df
@@ -245,10 +246,9 @@ function as_GridLayout(plot::GGPlot)
                 if String(a) in required_aes
                     continue
                 end
-                if !isnothing(supported_kwargs)
-                    if !(Symbol(a) in supported_kwargs)
-                        continue
-                    end
+
+                if Symbol(a) in _internal_geom_options
+                    continue
                 end
 
                 data = group_aes_df[!, Symbol(a)]

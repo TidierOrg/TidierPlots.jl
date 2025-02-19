@@ -90,15 +90,15 @@
 
         @test plot_will_render(ggplot(df, @aes(x=x, y=y, text=t, color=t)) + geom_text())
 
-        @test plot_will_render(ggplot(df, @aes(x=x, y=y, text=t, color=t)) +
-            geom_text(fontsize=24, align=(:left, :bottom), font=:bold) +
+        @test plot_will_render(ggplot(df, @aes(x=x, y=y, color=t)) +
+            geom_text(@aes(text=t), fontsize=24, align=(:left, :bottom), font=:bold) +
             geom_point() +
             lims(x = (0, 3), y = (0, 3)))
 
         @test plot_will_render(ggplot(df, @aes(x=x, y=y, text=t, color=t)) + geom_label())
 
-        @test plot_will_render(ggplot(df, @aes(x=x, y=y, text=t, color=t)) +
-            geom_label(fontsize=24, align=(:left, :bottom), font=:bold) +
+        @test plot_will_render(ggplot(df, @aes(x=x, y=y, color=t)) +
+            geom_label(@aes(text=t), fontsize=24, align=(:left, :bottom), font=:bold) +
             geom_point() +
             lims(x = (0, 3), y = (0, 3)))
     end

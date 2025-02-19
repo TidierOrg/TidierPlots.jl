@@ -75,6 +75,7 @@ include("geoms/geom_hist.jl")
 include("geoms/geom_path.jl")
 include("geoms/geom_point.jl")
 include("geoms/geom_smooth.jl")
+include("geoms/geom_rainclouds.jl")
 include("geoms/geom_text.jl")
 include("geoms/geom_tile.jl")
 include("geoms/geom_violin.jl")
@@ -112,6 +113,7 @@ export geom_label
 export geom_density
 export geom_hline
 export geom_vline
+export geom_rainclouds
 
 # facetting
 

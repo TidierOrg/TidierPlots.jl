@@ -39,7 +39,8 @@ const _legend_geom_symbols = Dict{String,Dict}(
     "geom_label" => Dict(:marker => :x, :markersize => 12),
     "geom_density" => Dict(:marker => :rect, :markersize => 12),
     "geom_hline" => Dict(:linestyle => nothing),
-    "geom_vline" => Dict(:linestyle => nothing)
+    "geom_vline" => Dict(:linestyle => nothing),
+    "geom_rainclouds" => Dict(:marker => :rect, :markersize => 12)
 );
 
 const _ggplot_to_makie = Dict{Symbol,Symbol}(

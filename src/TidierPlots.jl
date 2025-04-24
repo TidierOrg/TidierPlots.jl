@@ -79,6 +79,7 @@ include("geoms/geom_rainclouds.jl")
 include("geoms/geom_text.jl")
 include("geoms/geom_tile.jl")
 include("geoms/geom_violin.jl")
+include("geoms/geom_density_2d.jl")
 
 # theming
 
@@ -114,6 +115,12 @@ export geom_density
 export geom_hline
 export geom_vline
 export geom_rainclouds
+export geom_contour
+export geom_contour_filled
+export geom_density_2d
+export geom_density_2d_filled
+export geom_density2d
+export geom_density2d_filled
 
 # facetting
 

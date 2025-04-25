@@ -858,12 +858,14 @@
     ae, ar, r, d = TidierPlots.stat_contour(
       Dict{Symbol,Pair}(
         :x => :bill_length_mm => identity,
-        :y => :bill_depth_mm => identity
+        :y => :bill_depth_mm => identity,
+        :group => :species => identity
       ),
       Dict(),
       ["x", "y"],
       @chain penguins begin
         @rename(x = bill_length_mm, y = bill_depth_mm)
+        @mutate(group = 1)
       end
     )
 
@@ -932,11 +934,13 @@
       Dict{Symbol,Pair}(
         :x => :bill_length_mm => identity,
         :y => :bill_depth_mm => identity,
+        :group => :species => identity
       ),
       Dict(),
       ["x", "y"],
       @chain penguins begin
         @rename(x = bill_length_mm, y = bill_depth_mm)
+        @mutate(group = 1)
       end
     )
 

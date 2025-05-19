@@ -964,9 +964,8 @@
   end
 
   @testset "geom_jitter" begin
-    @test true
-      t = ggplot(penguins) +
-        geom_jitter(@aes(x = species, y = bill_length_mm), jitter_width = 0.0, jitter_height = 0.0) 
+    t = ggplot(penguins) +
+      geom_jitter(@aes(x = species, y = bill_length_mm), jitter_width = 0, jitter_height = 0) 
                 
       cat_array = CategoricalArrays.CategoricalArray(penguins.species)
     
@@ -979,9 +978,7 @@
                         penguins.bill_length_mm,
                         )
                   ]; xticks=(unique(levelcode.(cat_array)),
-                  unique(cat_array)),
-                  xlabel = "species",
-                  ylabel = "bill_length_mm"
+                  unique(cat_array))
               )
           )
       )

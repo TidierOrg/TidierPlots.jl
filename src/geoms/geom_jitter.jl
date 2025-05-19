@@ -5,27 +5,18 @@ function jitter_positions(aes_dict::Dict{Symbol,Pair},
                           required_aes::Vector{String},
                           plot_data::DataFrame)
 
-    w = get(args_dict, "jitter_width",  0.4)   # horizontal jitter
-    h = get(args_dict, "jitter_height", 0.4)   # vertical   jitter
+    w = pop!(args_dict, "jitter_width",  10)   # horizontal jitter
+    h = pop!(args_dict, "jitter_height", 10)   # vertical   jitter
 
-    function numericise(df::DataFrame, colname::Symbol)
-        col = df[!, colname]
-        eltype(col) <: Number && return col              
-        mapping = Dict(v => i for (i, v) in enumerate(unique(col)))
-        return Float64.(getindex.(Ref(mapping), col))
-    end
+    # uniform noise
+    n = nrow(plot_data)
+    
+    marker_offset(x) = zip(
+        round.(Int64, (rand(n) .- 0.5) .* 2w), 
+        round.(Int64, (rand(n) .- 0.5) .* 2h)
+    ) |> collect
 
-    # Add uniform noise
-    jitter(col, amt) = col .+ (rand(length(col)) .- 0.5) .* amt
-
-    if :x ∈ keys(aes_dict)
-        xcol = aes_dict[:x][1]
-        plot_data[!, xcol] = jitter(numericise(plot_data, xcol), w)
-    end
-    if :y ∈ keys(aes_dict)
-        ycol = aes_dict[:y][1]
-        plot_data[!, ycol] = jitter(numericise(plot_data, ycol), h)
-    end
+    aes_dict[:marker_offset] = aes_dict[:x][1] => marker_offset
 
     return (aes_dict, args_dict, required_aes, plot_data)
 end

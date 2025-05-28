@@ -34,7 +34,7 @@ For the "stable" version, access the Pkg interface by pressing `]` at the `julia
 For the development version, enter package mode, then:
 
 ```julia
-] add https://github.com/TidierOrg/TidierPlots.jl.git
+add https://github.com/TidierOrg/TidierPlots.jl.git
 ```
 
 TidierPlots will also be installed automatically if you `add Tidier`.

@@ -31,11 +31,10 @@ TidierPlots.jl is a 100% Julia implementation of the R package [ggplot2](https:/
 
 For the "stable" version, access the Pkg interface by pressing `]` at the `julia>` prompt, then type `add TidierPlots`.
 
-For the development version:
+For the development version, enter package mode, then:
 
 ```julia
-using Pkg
-Pkg.add(url="https://github.com/TidierOrg/TidierPlots.jl")
+] add https://github.com/TidierOrg/TidierPlots.jl.git
 ```
 
 TidierPlots will also be installed automatically if you `add Tidier`.

@@ -182,8 +182,12 @@ function as_GridLayout(plot::GGPlot)
 
         # if there is no color column, set everything to blue
 
-        if !("color" in names(aes_df)) && :color in supported_kwargs
-            aes_df.color .= "__tidierplots_default__"
+        if !("color" in names(aes_df)) && :color in supported_kwargs 
+            if !haskey(args_dict_makie, :color)
+                aes_df.color .= "__tidierplots_default__"
+            else
+                aes_df.color .= args_dict_makie[:color]
+            end
         end
 
         typed_aes_df = convert_aes_df_types(aes_df, plot_palette)

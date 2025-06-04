@@ -3,6 +3,9 @@ function make_color_lookup_manual(args_dict::Dict)
              args_dict[:values] :
              parse.(Colors.RGBA, args_dict[:values])
 
+    function color_lookup_manual(input::T) where {T <: Colorant}
+        return input
+    end
     function color_lookup_manual(input::Any)
         return [colors[x] for x in levelcode.(CategoricalArray(input))]
     end

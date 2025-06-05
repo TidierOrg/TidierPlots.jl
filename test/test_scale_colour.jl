@@ -13,7 +13,7 @@
                 MarkerElement(color=colours[2], markersize=12, marker=:circle),
                 MarkerElement(color=colours[3], markersize=12, marker=:circle)],
             ["Adelie", "Chinstrap", "Gentoo"],
-            " ")
+            "color")
 
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
@@ -62,7 +62,7 @@
                 MarkerElement(color=colours[2], markersize=12, marker=:circle),
                 MarkerElement(color=colours[3], markersize=12, marker=:circle)],
             ["Adelie", "Chinstrap", "Gentoo"],
-            " ")
+            "color")
 
         m = Makie.plot(
             Makie.SpecApi.GridLayout(

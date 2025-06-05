@@ -135,9 +135,9 @@ function as_GridLayout(plot::GGPlot)
 
         # after all edits have been made, apply the post_function
 
-        aes_dict, args_dict, required_aes, aes_df =
+        aes_dict, args_dict_makie, required_aes, aes_df =
             geom.post_function(aes_dict,
-                args_dict,
+                args_dict_makie,
                 required_aes,
                 aes_df)
 

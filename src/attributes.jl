@@ -170,6 +170,7 @@ const _internal_geom_options = Symbol[
   :data,
   :geom_name,
   :inherit_aes,
+  :jitter_height, :jitter_width, 
   :lower,
   :method,
   :position,

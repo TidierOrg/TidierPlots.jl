@@ -25,7 +25,7 @@ function boxplot_groups(aes_dict::Dict{Symbol,Pair},
 end
 
 function axis_string_as_cat_array(aes_dict::Dict{Symbol,Pair},
-    args_dict::Dict{Any,Any}, required_aes::Vector{String}, plot_data::DataFrame)
+    args_dict::Dict{T,Any}, required_aes::Vector{String}, plot_data::DataFrame) where {T}
 
     plot_data.x = CategoricalArray(plot_data.x)
 

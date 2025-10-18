@@ -54,6 +54,16 @@ function facet_grid(args...; kwargs...)
     )
 end
 
+"""
+    facet_wrap(;rows, cols, scales = "fixed")
+
+facet_wrap() arrange panel in a matrix with 3 columns and as many rows as needed. It is most useful when you have one discrete variables. If you have two variables with many levels, try facet_grid().
+
+# Arguments
+
+- `rows` (required): Variable to use for the rows of the matrix
+- `scales` (optional): Should the scales be fixed or free? Options: "free", "free_x", "free_y"
+"""
 function facet_wrap(args...; kwargs...)
     d = Dict(kwargs)
 

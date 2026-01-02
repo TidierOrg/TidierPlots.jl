@@ -512,7 +512,7 @@
     @test plot_images_equal(t, m)
 
     # Test handle_histogram with center parameter
-    # df_hist = DataFrame(x = [0.5, 1.5, 2.5, 3.5, 4.5, 5.5])
+     df_hist = DataFrame(x = [0.5, 1.5, 2.5, 3.5, 4.5, 5.5])
     # t_center = ggplot(df_hist, @aes(x = x)) + geom_histogram(binwidth=1, center=0)
     #@test plot_will_render(t_center)
 

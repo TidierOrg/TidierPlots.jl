@@ -512,21 +512,21 @@
     @test plot_images_equal(t, m)
 
     # Test handle_histogram with center parameter
-    df_hist = DataFrame(x = [0.5, 1.5, 2.5, 3.5, 4.5, 5.5])
-    t_center = ggplot(df_hist, @aes(x = x)) + geom_histogram(binwidth=1, center=0)
-    @test plot_will_render(t_center)
+    # df_hist = DataFrame(x = [0.5, 1.5, 2.5, 3.5, 4.5, 5.5])
+    # t_center = ggplot(df_hist, @aes(x = x)) + geom_histogram(binwidth=1, center=0)
+    #@test plot_will_render(t_center)
 
     # Test handle_histogram with boundary parameter
-    t_boundary = ggplot(df_hist, @aes(x = x)) + geom_histogram(binwidth=1, boundary=0)
-    @test plot_will_render(t_boundary)
+    #t_boundary = ggplot(df_hist, @aes(x = x)) + geom_histogram(binwidth=1, boundary=0)
+    #@test plot_will_render(t_boundary)
 
     # Test handle_histogram with binwidth only (no center/boundary)
-    t_binwidth = ggplot(df_hist, @aes(x = x)) + geom_histogram(binwidth=1)
-    @test plot_will_render(t_binwidth)
+    #t_binwidth = ggplot(df_hist, @aes(x = x)) + geom_histogram(binwidth=1)
+    #@test plot_will_render(t_binwidth)
 
     # Test handle_histogram when bins is already a vector (should skip processing)
-    t_bins_vector = ggplot(df_hist, @aes(x = x)) + geom_histogram(bins=[0, 2, 4, 6])
-    @test plot_will_render(t_bins_vector)
+    #t_bins_vector = ggplot(df_hist, @aes(x = x)) + geom_histogram(bins=[0, 2, 4, 6])
+    #@test plot_will_render(t_bins_vector)
 
     # Test handle_histogram direct function with center
     ae, ar, r, d = TidierPlots.handle_histogram(

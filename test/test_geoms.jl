@@ -965,16 +965,16 @@
 
   @testset "geom_jitter" begin
     t = ggplot(penguins) +
-      geom_jitter(@aes(x = species, y = bill_length_mm), jitter_width = 0, jitter_height = 0) 
-                
+      geom_jitter(@aes(x = species, y = bill_length_mm), jitter_width = 0, jitter_height = 0)
+
       cat_array = CategoricalArrays.CategoricalArray(penguins.species)
-    
+
       m = Makie.plot(
           Makie.SpecApi.GridLayout(
               Makie.SpecApi.Axis(
                   plots = [
-                      Makie.PlotSpec(:Scatter, 
-                        levelcode.(cat_array), 
+                      Makie.PlotSpec(:Scatter,
+                        levelcode.(cat_array),
                         penguins.bill_length_mm,
                         )
                   ]; xticks=(unique(levelcode.(cat_array)),
@@ -984,6 +984,166 @@
       )
 
       @test plot_images_equal(t, m)
+  end
+
+  @testset "geom_segment" begin
+    df_segment = DataFrame(
+      x = [1, 2, 3],
+      y = [1, 2, 1],
+      xend = [2, 3, 4],
+      yend = [2, 1, 2]
+    )
+
+    t = ggplot(df_segment, @aes(x = x, y = y, xend = xend, yend = yend)) +
+        geom_segment()
+
+    # Makie's LineSegments expects interleaved points: [start1, end1, start2, end2, ...]
+    x_interleaved = Float64[1, 2, 2, 3, 3, 4]
+    y_interleaved = Float64[1, 2, 2, 1, 1, 2]
+
+    m = Makie.plot(
+      Makie.SpecApi.GridLayout(
+        Makie.SpecApi.Axis(
+          plots=[
+            Makie.PlotSpec(
+              :LineSegments,
+              x_interleaved,
+              y_interleaved)
+          ]
+        )
+      )
+    )
+
+    @test plot_images_equal(t, m)
+
+    # Test alternative syntax with geom receiving plot
+    t2 = geom_segment(ggplot(df_segment), @aes(x = x, y = y, xend = xend, yend = yend))
+
+    @test plot_images_equal(t, t2)
+  end
+
+  @testset "geom_ribbon" begin
+    xs = collect(range(0, 2pi, length=30))
+    df_ribbon = DataFrame(x = xs, ymin = sin.(xs) .- 0.5, ymax = sin.(xs) .+ 0.5)
+
+    t = ggplot(df_ribbon, @aes(x = x, ymin = ymin, ymax = ymax)) + geom_ribbon()
+
+    # Test that plot renders successfully
+    @test plot_will_render(t)
+
+    # Test alternative syntax
+    t2 = geom_ribbon(ggplot(df_ribbon), @aes(x = x, ymin = ymin, ymax = ymax))
+    @test plot_will_render(t2)
+  end
+
+  @testset "geom_area" begin
+    xs = collect(range(0, 2pi, length=30))
+    df_area = DataFrame(x = xs, y = sin.(xs) .+ 1.5)
+
+    t = ggplot(df_area, @aes(x = x, y = y)) + geom_area()
+
+    # Test that plot renders successfully
+    @test plot_will_render(t)
+
+    # Test alternative syntax
+    t2 = geom_area(ggplot(df_area), @aes(x = x, y = y))
+    @test plot_will_render(t2)
+  end
+
+  @testset "geom_linerange" begin
+    df_linerange = DataFrame(
+      x = [1, 2, 3, 4],
+      ymin = [1.0, 2.0, 1.5, 2.5],
+      ymax = [3.0, 4.0, 3.5, 4.5]
+    )
+
+    t = ggplot(df_linerange, @aes(x = x, ymin = ymin, ymax = ymax)) + geom_linerange()
+
+    m = Makie.plot(
+      Makie.SpecApi.GridLayout(
+        Makie.SpecApi.Axis(
+          plots=[
+            Makie.PlotSpec(
+              :Rangebars,
+              df_linerange.x,
+              df_linerange.ymin,
+              df_linerange.ymax;
+              color=:black)
+          ]
+        )
+      )
+    )
+
+    @test plot_images_equal(t, m)
+
+    t2 = geom_linerange(ggplot(df_linerange), @aes(x = x, ymin = ymin, ymax = ymax))
+    @test plot_images_equal(t, t2)
+  end
+
+  @testset "geom_pointrange" begin
+    df_pointrange = DataFrame(
+      x = [1, 2, 3, 4],
+      y = [2.0, 3.0, 2.5, 3.5],
+      ymin = [1.0, 2.0, 1.5, 2.5],
+      ymax = [3.0, 4.0, 3.5, 4.5]
+    )
+
+    t = ggplot(df_pointrange, @aes(x = x, y = y, ymin = ymin, ymax = ymax)) + geom_pointrange()
+
+    # Test that plot renders successfully
+    @test plot_will_render(t)
+
+    # Test alternative syntax
+    t2 = geom_pointrange(ggplot(df_pointrange), @aes(x = x, y = y, ymin = ymin, ymax = ymax))
+    @test plot_will_render(t2)
+  end
+
+  @testset "geom_polygon" begin
+    df_polygon = DataFrame(
+      x = [0.0, 1.0, 0.5],
+      y = [0.0, 0.0, 1.0]
+    )
+
+    t = ggplot(df_polygon, @aes(x = x, y = y)) + geom_polygon()
+
+    # Test that plot renders successfully
+    @test plot_will_render(t)
+
+    # Test alternative syntax
+    t2 = geom_polygon(ggplot(df_polygon), @aes(x = x, y = y))
+    @test plot_will_render(t2)
+  end
+
+  @testset "geom_rect" begin
+    df_rect = DataFrame(
+      xmin = [1.0, 3.0],
+      xmax = [2.0, 4.0],
+      ymin = [1.0, 2.0],
+      ymax = [3.0, 4.0]
+    )
+
+    t = ggplot(df_rect, @aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax)) + geom_rect()
+
+    # First rectangle vertices
+    points1 = [Point2f(1, 1), Point2f(2, 1), Point2f(2, 3), Point2f(1, 3)]
+    # Second rectangle vertices
+    points2 = [Point2f(3, 2), Point2f(4, 2), Point2f(4, 4), Point2f(3, 4)]
+
+    m = Makie.plot(
+      Makie.SpecApi.GridLayout(
+        Makie.SpecApi.Axis(
+          plots=[
+            Makie.PlotSpec(:Poly, points1; color=:black),
+            Makie.PlotSpec(:Poly, points2; color=:black)
+          ]
+        )
+      )
+    )
+
+    @test plot_images_equal(t, m)
+
+    t2 = geom_rect(ggplot(df_rect), @aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax))
+    @test plot_images_equal(t, t2)
   end
 
 end

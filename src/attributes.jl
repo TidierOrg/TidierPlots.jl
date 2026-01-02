@@ -22,7 +22,14 @@ const _legend_geom_elements = Dict{String,DataType}(
   "geom_density_2d" => LineElement,
   "geom_density_2d_filled" => MarkerElement,
   "geom_density2d" => LineElement,
-  "geom_density2d_filled" => MarkerElement
+  "geom_density2d_filled" => MarkerElement,
+  "geom_segment" => LineElement,
+  "geom_area" => MarkerElement,
+  "geom_ribbon" => MarkerElement,
+  "geom_linerange" => LineElement,
+  "geom_pointrange" => MarkerElement,
+  "geom_polygon" => MarkerElement,
+  "geom_rect" => MarkerElement
 );
 
 const _legend_geom_symbols = Dict{String,Dict}(
@@ -50,7 +57,14 @@ const _legend_geom_symbols = Dict{String,Dict}(
   "geom_density_2d" => Dict(:linestyle => nothing),
   "geom_density_2d_filled" => Dict(:marker => :rect, :markersize => 12),
   "geom_density2d" => Dict(:linestyle => nothing),
-  "geom_density2d_filled" => Dict(:marker => :rect, :markersize => 12)
+  "geom_density2d_filled" => Dict(:marker => :rect, :markersize => 12),
+  "geom_segment" => Dict(:linestyle => nothing),
+  "geom_area" => Dict(:marker => :rect, :markersize => 12),
+  "geom_ribbon" => Dict(:marker => :rect, :markersize => 12),
+  "geom_linerange" => Dict(:linestyle => nothing),
+  "geom_pointrange" => Dict(:marker => :circle, :markersize => 12),
+  "geom_polygon" => Dict(:marker => :rect, :markersize => 12),
+  "geom_rect" => Dict(:marker => :rect, :markersize => 12)
 );
 
 const _ggplot_to_makie = Dict{Symbol,Symbol}(
@@ -177,10 +191,12 @@ const _internal_geom_options = Symbol[
   :position,
   :upper,
   :x, :x1, :x2,
+  :xend,
   :xintercept,
   :xmax,
   :xmin,
   :y, :y1, :y2,
+  :yend,
   :yintercept,
   :ymax,
   :ymin,

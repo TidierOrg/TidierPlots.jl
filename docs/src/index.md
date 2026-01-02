@@ -58,24 +58,69 @@ Makie Themes:
 
 Scales:
 
-- `scale_[x|y]_[continuous|log[ |2|10]|logit|pseudolog10|sqrt|reverse]`
-- `scale_color_manual()` - set `values = c(c1, c2, c3, ...)`, accepts anything that can be parsed as a color by Colors.jl (named colors, hex values, etc.)
-- `scale_color_[discrete|continuous|binned]()` - set `palette =` a [ColorSchemes.jl palette](https://juliagraphics.github.io/ColorSchemes.jl/stable/catalogue/) as a string or symbol. Also accepts ColorScheme objects directly.
-- `scale_alpha`, `scale_size`, `scale_shape`, `scale_linewidth`
+- `scale_[x|y]_[continuous|log[ |2|10]|logit|pseudolog10|symlog10|sqrt|reverse]`
+- `scale_color_manual()` / `scale_fill_manual()` - set `values = c(c1, c2, c3, ...)`, accepts anything that can be parsed as a color by Colors.jl (named colors, hex values, etc.)
+- `scale_color_[discrete|continuous|binned]()` / `scale_fill_[discrete|continuous|binned]()` - set `palette =` a [ColorSchemes.jl palette](https://juliagraphics.github.io/ColorSchemes.jl/stable/catalogue/) as a string or symbol. Also accepts ColorScheme objects directly.
+- `scale_alpha`, `scale_alpha_continuous`, `scale_size`, `scale_shape`, `scale_linewidth`
+
+Label Functions:
+
+- `label_number` - format numbers with precision, prefix, suffix, and thousands separators
+- `label_percent` - format numbers as percentages
+- `label_currency` - format numbers as currency
+- `label_bytes` - format numbers as byte sizes (KB, MB, GB, etc.)
+- `label_scientific` - format numbers in scientific notation
+- `label_log` - format numbers as logarithms (e.g., "10^2")
+- `label_ordinal` - format numbers as ordinals (1st, 2nd, 3rd, etc.)
+- `label_date` - format dates
+- `label_pvalue` - format p-values
+- `label_wrap` - wrap long text strings
 
 Additional Elements:
 
 - `labs` and `lims`
 - `facet_grid` and `facet_wrap`
+- `guides` - control legend/colorbar display
+- `ggsave` - save plots to files
+- `draw_ggplot` - render plots to Makie figures
 
 ## Display Options for Quarto, Jupyter, and Pluto.jl
 
 Use the function `TidierPlots_set(option::String, value::Bool)` to control display options. The following options are supported:
 
 - "plot_show" (default true). Enables `ggplot`-like behaviour where plots are displayed when created.
-- "plot_log" (default true). Prints a text summary of the properties of the ggplot
+- "plot_log" (default true). Prints a text summary of the properties of the ggplot.
+- "verbose" (default false). Enables detailed debug output showing data transformations and Makie calls.
 
-You will likely want to disable both of these if you are working in a notebook environment. In [Pluto.jl](https://github.com/fonsp/Pluto.jl), you can get interactive plots (scroll, zoom, labels, etc.) using `WGLMakie` by including `WGLMakie.activate!()` as the first cell after your imports.
+You will likely want to disable both `plot_show` and `plot_log` if you are working in a notebook environment. In [Pluto.jl](https://github.com/fonsp/Pluto.jl), you can get interactive plots (scroll, zoom, labels, etc.) using `WGLMakie` by including `WGLMakie.activate!()` as the first cell after your imports.
+
+## Saving Plots
+
+Use `ggsave` to save plots to files:
+
+```julia
+# Basic usage
+ggsave("myplot.png", plot)
+ggsave(plot, "myplot.png")  # argument order is flexible
+
+# Specify figure dimensions (width and height in pixels)
+ggsave("myplot.png", plot; width=800, height=600)
+
+# Adjust resolution scale (default is 2)
+ggsave("myplot.png", plot; scale=3)
+
+# Combine size and scale
+ggsave("myplot.png", plot; width=800, height=600, scale=2)
+```
+
+Supported file formats include PNG, SVG, PDF, and any other formats supported by Makie's `save` function. Note that when specifying dimensions, both `width` and `height` must be provided together.
+
+You can also use `draw_ggplot` to render a plot with a specific size without saving:
+
+```julia
+draw_ggplot(plot)                    # default size
+draw_ggplot(plot, (800, 600))        # specify (width, height)
+```
 
 ## Differences from ggplot2
 
@@ -106,6 +151,81 @@ With Option 2, functions will be interpreted using `TidierData.jl`:
 # Macro aes equivalents to the above examples
 geom_point(@aes(x = x / 10))
 geom_point(@aes(x = x / y))
+```
+
+## Using Label Functions
+
+Label functions are used with `scale_*_continuous(labels = ...)` to format axis tick labels:
+
+```julia
+# Format as percentages
+scale_y_continuous(labels = label_percent())
+
+# Format as currency
+scale_y_continuous(labels = label_currency(prefix="$"))
+
+# Format with custom precision and suffix
+scale_y_continuous(labels = label_number(precision=1, suffix=" kg"))
+
+# Format large numbers as bytes
+scale_y_continuous(labels = label_bytes())
+
+# Format as scientific notation
+scale_y_continuous(labels = label_scientific())
+
+# Using a format string (shorthand)
+scale_y_continuous(labels = "{:.1f} cm")
+```
+
+## Faceting
+
+### facet_wrap
+
+Split a plot into multiple panels by one variable:
+
+```julia
+ggplot(df) +
+    geom_point(aes(x = :x, y = :y)) +
+    facet_wrap(:category)                       # basic usage
+    facet_wrap(:category, ncol = 2)             # specify columns
+    facet_wrap(:category, nrow = 2)             # specify rows
+    facet_wrap(:category, scales = "free")      # independent axis scales
+    facet_wrap(:category, scales = "free_x")    # free x-axis only
+    facet_wrap(:category, scales = "free_y")    # free y-axis only
+```
+
+### facet_grid
+
+Create a grid of panels by row and column variables:
+
+```julia
+ggplot(df) +
+    geom_point(aes(x = :x, y = :y)) +
+    facet_grid(rows = :row_var, cols = :col_var)
+    facet_grid(rows = :row_var, cols = :col_var, scales = "free")
+    facet_grid(rows = :row_var, cols = :col_var, switch = "both")  # move labels
+```
+
+## Controlling Legends with guides()
+
+Use `guides()` to control whether scales get legends or colorbars:
+
+```julia
+ggplot(df) +
+    geom_point(aes(x = :x, y = :y, color = :z)) +
+    scale_color_continuous() +
+    guides(color = "colorbar")   # force colorbar
+    guides(color = "legend")     # force legend
+```
+
+## The c() Function
+
+TidierPlots provides a `c()` function that mimics R's `c()` for creating vectors, commonly used with `lims()`, `scale_*_manual()`, and `plot_layout()`:
+
+```julia
+lims(x = c(-10, 10), y = c(0, 100))
+scale_color_manual(values = c("red", "blue", "green"))
+plot_layout(widths = c(3, 1), heights = c(1, 2))
 ```
 
 ## Why would I use this instead of ggplot2?

@@ -995,7 +995,7 @@
     )
 
     t = ggplot(df_segment, @aes(x = x, y = y, xend = xend, yend = yend)) +
-        geom_segment()
+        geom_segment() + labs(x = "", y = "")
 
     # Makie's LineSegments expects interleaved points: [start1, end1, start2, end2, ...]
     x_interleaved = Float64[1, 2, 2, 3, 3, 4]
@@ -1008,7 +1008,7 @@
             Makie.PlotSpec(
               :LineSegments,
               x_interleaved,
-              y_interleaved)
+              y_interleaved; color = :black)
           ]
         )
       )
@@ -1017,7 +1017,7 @@
     @test plot_images_equal(t, m)
 
     # Test alternative syntax with geom receiving plot
-    t2 = geom_segment(ggplot(df_segment), @aes(x = x, y = y, xend = xend, yend = yend))
+    t2 = geom_segment(ggplot(df_segment), @aes(x = x, y = y, xend = xend, yend = yend)) + labs(x = "", y = "")
 
     @test plot_images_equal(t, t2)
   end

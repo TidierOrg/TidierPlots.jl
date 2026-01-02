@@ -37,14 +37,16 @@ TidierPlots.jl currently supports the top-level function `ggplot()`, plus:
 
 Geoms:
 
-- `geom_point`
-- `geom_errorbar`
-- `geom_path`, `geom_line`, and `geom_step`
-- `geom_bar`, `geom_col`, and `geom_histogram`
-- `geom_boxplot` and `geom_violin`
-- `geom_tile`
-- `geom_density`
-- `geom_text` and `geom_label`
+- Bar plots: `geom_bar`, `geom_col`, `geom_histogram`
+- Points: `geom_point`, `geom_jitter`
+- Lines: `geom_path`, `geom_line`, `geom_step`, `geom_smooth`
+- Reference lines: `geom_hline`, `geom_vline`, `geom_segment`
+- Errors and ranges: `geom_errorbar`, `geom_errorbarh`, `geom_linerange`, `geom_pointrange`
+- Areas: `geom_area`, `geom_ribbon`
+- Distributions: `geom_boxplot`, `geom_violin`, `geom_density`, `geom_rainclouds`
+- Contours: `geom_contour`, `geom_contour_filled`, `geom_density_2d`, `geom_density_2d_filled`
+- Shapes: `geom_tile`, `geom_rect`, `geom_polygon`
+- Text: `geom_text`, `geom_label`
 
 Makie Themes:
 
@@ -54,16 +56,17 @@ Makie Themes:
 - `theme_light()`
 - `theme_minimal()`
 
-Colour Scales:
+Scales:
 
+- `scale_[x|y]_[continuous|log[ |2|10]|logit|pseudolog10|sqrt|reverse]`
 - `scale_color_manual()` - set `values = c(c1, c2, c3, ...)`, accepts anything that can be parsed as a color by Colors.jl (named colors, hex values, etc.)
-- `scale_color_[discrete|continuous|binned]()` - set `palette =` a [ColorSchemes.jl palette](https://juliagraphics.github.io/ColorSchemes.jl/stable/catalogue/) as a string or symbol. Also accepts ColorSchemes.jl color scheme objects.
+- `scale_color_[discrete|continuous|binned]()` - set `palette =` a [ColorSchemes.jl palette](https://juliagraphics.github.io/ColorSchemes.jl/stable/catalogue/) as a string or symbol. Also accepts ColorScheme objects directly.
+- `scale_alpha`, `scale_size`, `scale_shape`, `scale_linewidth`
 
 Additional Elements:
 
-- `scale_[x|y]_[continuous|log[ |2|10]|logit|pseudolog10|sqrt|reverse]`
-- `labs`
-- `lims`
+- `labs` and `lims`
+- `facet_grid` and `facet_wrap`
 
 ## Display Options for Quarto, Jupyter, and Pluto.jl
 

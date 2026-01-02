@@ -50,7 +50,7 @@ The `+` operator (in `addplots.jl`) chains components together, building up a `G
 | `src/aes.jl` | `aes()` function and `@aes` macro |
 | `src/extract_aes.jl` | Aesthetic extraction from data |
 | `src/attributes.jl` | ggplot→Makie name mappings, type expectations |
-| `src/geoms/` | All geom implementations (geom_point, geom_bar, etc.) |
+| `src/geoms/` | All geom implementations (~30 geoms including point, bar, line, area, ribbon, density, contour, etc.) |
 | `src/scales/` | Scale functions (numeric, colour, alpha, size, shape) |
 
 ### Factory Pattern for Geoms

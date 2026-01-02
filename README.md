@@ -45,14 +45,16 @@ TidierPlots.jl currently supports the top-level function `ggplot()`, plus:
 
 Geoms:
 
-- Bar-like plots: `geom_bar`, `geom_col`, and `geom_histogram`
-- Scatterplots: `geom_point`
-- Line plots: `geom_path`, `geom_line`, `geom_step`, `geom_hline`, `geom_vline`
-- Errors: `geom_errorbar` and `geom_errorbarh`
-- Distributions: `geom_boxplot`, `geom_density`, `geom_violin`, `geom_raincloud`
-- Curve fits: `geom_smooth`
-- 3-variable: `geom_tile`
-- Text: `geom_text` and `geom_label`
+- Bar plots: `geom_bar`, `geom_col`, `geom_histogram`
+- Points: `geom_point`, `geom_jitter`
+- Lines: `geom_path`, `geom_line`, `geom_step`, `geom_smooth`
+- Reference lines: `geom_hline`, `geom_vline`, `geom_segment`
+- Errors and ranges: `geom_errorbar`, `geom_errorbarh`, `geom_linerange`, `geom_pointrange`
+- Areas: `geom_area`, `geom_ribbon`
+- Distributions: `geom_boxplot`, `geom_violin`, `geom_density`, `geom_rainclouds`
+- Contours: `geom_contour`, `geom_contour_filled`, `geom_density_2d`, `geom_density_2d_filled`
+- Shapes: `geom_tile`, `geom_rect`, `geom_polygon`
+- Text: `geom_text`, `geom_label`
 
 Makie Themes:
 

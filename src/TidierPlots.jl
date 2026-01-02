@@ -81,6 +81,13 @@ include("geoms/geom_tile.jl")
 include("geoms/geom_violin.jl")
 include("geoms/geom_density_2d.jl")
 include("geoms/geom_jitter.jl")
+include("geoms/geom_segment.jl")
+include("geoms/geom_area.jl")
+include("geoms/geom_ribbon.jl")
+include("geoms/geom_linerange.jl")
+include("geoms/geom_pointrange.jl")
+include("geoms/geom_polygon.jl")
+include("geoms/geom_rect.jl")
 # theming
 
 @reexport using Makie: theme_black, theme_dark, theme_ggplot2, theme_light, theme_minimal
@@ -122,7 +129,13 @@ export geom_density_2d_filled
 export geom_density2d
 export geom_density2d_filled
 export geom_jitter
-
+export geom_segment
+export geom_area
+export geom_ribbon
+export geom_linerange
+export geom_pointrange
+export geom_polygon
+export geom_rect
 
 # facetting
 

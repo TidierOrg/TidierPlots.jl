@@ -3,17 +3,17 @@ function make_color_lookup_manual(args_dict::Dict)
              args_dict[:values] :
              parse.(Colors.RGBA, args_dict[:values])
 
-    function color_lookup_manual(input::T) where {T <: Colorant}
+    function color_lookup_manual(input::T) where {T <: Union{Colorant,Vector{Colorant}}}
         return input
     end
     function color_lookup_manual(input::Any)
-        return [colors[x] for x in levelcode.(CategoricalArray(input))]
+        return [colors[mod1(x, length(colors))] for x in levelcode.(CategoricalArray(input))]
     end
     function color_lookup_manual(input::CategoricalArray)
-        return [colors[levelcode(x)] for x in input]
+        return [colors[mod1(levelcode(x), length(colors))] for x in input]
     end
     function color_lookup_manual(input::Integer)
-        return [colors[x] for x in input]
+        return [colors[mod1(x, length(colors))] for x in input]
     end
     return color_lookup_manual
 end

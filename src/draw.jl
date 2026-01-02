@@ -18,6 +18,9 @@ function as_GridLayout(plot::GGPlot)
 
     legend_title = " "
 
+    # Track legend options across all geoms for final rendering
+    final_legend_options = copy(plot.axis_options.legend_options)
+
     ymin = Inf
     xmin = Inf
     xmax = -Inf
@@ -143,7 +146,8 @@ function as_GridLayout(plot::GGPlot)
 
         # default palettes
 
-        plot_palette = plot.axis_options.palette
+        plot_palette = copy(plot.axis_options.palette)
+        plot_legend_options = copy(plot.axis_options.legend_options)
 
         for palette_aes in intersect([:strokecolor, :color], Symbol.(names(aes_df)))
             if !haskey(plot_palette, palette_aes)
@@ -153,7 +157,49 @@ function as_GridLayout(plot::GGPlot)
                     plot_palette[palette_aes] = _default_discrete_palette
                 end
             end
+            # Set up default legend_options if not already specified
+            if !haskey(plot_legend_options, palette_aes)
+                # Get the original column name from aes_dict for the legend title
+                aes_key = palette_aes == :color ?
+                    (haskey(aes_dict, :color) ? :color : (haskey(aes_dict, :colour) ? :colour : nothing)) :
+                    (haskey(aes_dict, palette_aes) ? palette_aes : nothing)
+                col_name = if !isnothing(aes_key) && haskey(aes_dict, aes_key)
+                    string(first(aes_dict[aes_key]))  # Get column name from the Pair
+                else
+                    string(palette_aes)
+                end
+
+                if eltype(aes_df[!, palette_aes]) <: Number
+                    plot_legend_options[palette_aes] = Dict(
+                        :type => "continuous",
+                        :guide => :colorbar,
+                        :name => col_name,
+                        :palette => :viridis
+                    )
+                else
+                    plot_legend_options[palette_aes] = Dict(
+                        :type => "discrete",
+                        :guide => :legend,
+                        :name => col_name
+                    )
+                end
+            elseif !haskey(plot_legend_options[palette_aes], :name)
+                # legend_options exists but no name - add the column name
+                aes_key = palette_aes == :color ?
+                    (haskey(aes_dict, :color) ? :color : (haskey(aes_dict, :colour) ? :colour : nothing)) :
+                    (haskey(aes_dict, palette_aes) ? palette_aes : nothing)
+                if !isnothing(aes_key) && haskey(aes_dict, aes_key)
+                    plot_legend_options[palette_aes][:name] = string(first(aes_dict[aes_key]))
+                end
+            end
         end
+
+        # Create local axis options with updated palette and legend_options
+        plot_axis_options = AxisOptions(
+            plot.axis_options.opt,
+            plot_palette,
+            plot_legend_options
+        )
 
         # handle axis ticks when the input variable is a string
 
@@ -180,13 +226,14 @@ function as_GridLayout(plot::GGPlot)
             aes_df.alpha .= 1.0
         end
 
-        # if there is no color column, set everything to blue
+        # if there is no color column, set everything to black
 
-        if !("color" in names(aes_df)) && :color in supported_kwargs 
+        if !("color" in names(aes_df)) && :color in supported_kwargs
             if !haskey(args_dict_makie, :color)
-                aes_df.color .= "__tidierplots_default__"
+                aes_df.color .= RGB(0, 0, 0)
             else
                 aes_df.color .= args_dict_makie[:color]
+                plot_palette[:color] = identity
             end
         end
 
@@ -275,7 +322,7 @@ function as_GridLayout(plot::GGPlot)
                 colorbar,
                 legend = update_legend(
                     legend,
-                    plot.axis_options,
+                    plot_axis_options,
                     geom.args["geom_name"],
                     a,
                     labels_aes_df,
@@ -305,6 +352,9 @@ function as_GridLayout(plot::GGPlot)
                 plot_list[facet_position] = [Makie.PlotSpec(args...; kwargs...)]
             end
         end
+
+        # Merge this geom's legend options into final_legend_options
+        merge!(final_legend_options, plot_legend_options)
     end
 
     # rename and correct types on all axis options
@@ -380,7 +430,8 @@ function as_GridLayout(plot::GGPlot)
                 [l for l in labels_list],
                 [t for t in titles_list]))
     else
-        title = get(plot.axis_options.legend_options[:color], :name, " ")
+        title = haskey(final_legend_options, :color) ?
+            get(final_legend_options[:color], :name, " ") : " "
         l = (1, 2) => Makie.SpecApi.GridLayout(
             Makie.SpecApi.Colorbar(; colorbar_kwargs...,
                 limits=(colorbar_lowlim, colorbar_highlim), label=title))

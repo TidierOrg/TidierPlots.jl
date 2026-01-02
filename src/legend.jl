@@ -5,10 +5,23 @@ function guides(args...; kwargs...)
     return AxisOptions(
         Dict{Symbol,Any}(),
         Dict(),
-        Dict(k => Dict(:guide => Symbol(v)) for (k, v) in Dict(kwargs))
+        Dict(k => Dict{Symbol,Any}(:guide => Symbol(v)) for (k, v) in Dict(kwargs))
     )
 end
 
+"""
+    update_legend(legend, plot_axis_options, geom_name, a, labels_aes_df, 
+                  colorbar_highlim, colorbar_lowlim, colorbar_kwargs, colorbar)
+
+Updates the legend or colorbar for a given aesthetic attribute.
+
+Determines whether to display a colorbar or legend based on the legend options for the aesthetic.
+Handles special cases for different aesthetic types (markersize, alpha, linewidth, marker, color)
+and adds appropriate entries to the legend DataFrame. Automatically selects between colorbar and 
+legend based on scale type (continuous/binned → colorbar, discrete/manual → legend).
+
+Returns a tuple of updated (colorbar_highlim, colorbar_lowlim, colorbar_kwargs, colorbar, legend).
+"""
 function update_legend(legend,
     plot_axis_options,
     geom_name,
@@ -144,6 +157,6 @@ function update_legend(legend,
     end
 
     return (
-        colorbar_highlim, colorbar_lowlim, colorbar_kwargs, colorbar, legend
+        colorbar_highlim, colorbar_lowlim, colorbar_kwargs, colorbar, unique(legend)
     )
 end

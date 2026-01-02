@@ -27,13 +27,11 @@ function handle_segment(aes_dict::Dict{Symbol,Pair},
     end
 
     # Duplicate other columns for the interleaved format
-    new_data = DataFrame()
-    new_data.x = new_x
-    new_data.y = new_y
+    new_data = DataFrame(x = new_x, y = new_y)
 
     # Copy and duplicate other columns (for color, linewidth, etc.)
     for col in names(plot_data)
-        if col in [x_col, y_col, xend_col, yend_col]
+        if col in String.([x_col, y_col, xend_col, yend_col])
             continue
         end
         new_data[!, col] = repeat(plot_data[!, col], inner=2)
@@ -51,6 +49,8 @@ function handle_segment(aes_dict::Dict{Symbol,Pair},
         end
         new_aes_dict[k] = v
     end
+
+    
 
     return (new_aes_dict, args_dict, ["x", "y"], new_data)
 end

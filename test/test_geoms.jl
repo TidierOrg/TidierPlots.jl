@@ -32,13 +32,15 @@
 
     @test plot_images_equal(t3, t4)
 
+    # Note: In geom_point, color maps to strokecolor and fill maps to color
+    # So guides must use the Makie-level names after translation
     t5 = ggplot(penguins) +
          geom_point(
            @aes(x = bill_length_mm,
              y = bill_depth_mm,
              color = sex,
              fill = species),
-           strokewidth=1) + guides(color="none", fill="none")
+           strokewidth=1) + guides(strokecolor="none", color="none")
 
     cat_species = CategoricalArrays.CategoricalArray(penguins.species)
     cat_sex = CategoricalArrays.CategoricalArray(penguins.sex)
@@ -89,8 +91,10 @@
       @ungroup
     end
 
+    # In geom_bar, fill maps to color. Use guides to suppress the legend for comparison
     t = ggplot(penguins) +
-        geom_bar(@aes(x = species, fill = sex), position="dodge")
+        geom_bar(@aes(x = species, fill = sex), position="dodge") +
+        guides(color="none")
 
     cat_sex = TidierPlots._default_discrete_palette(levelcode.(CategoricalArray(penguins_count_by_sex.sex)))
     cat_spec = levelcode.(CategoricalArray(penguins_count_by_sex.species))

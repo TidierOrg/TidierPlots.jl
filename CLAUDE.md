@@ -123,11 +123,61 @@ TidierPlots_set("verbose", true)     # Enable debug output
 - Strings → RGBA (via discrete palette)
 - CategoricalArrays → proper encoding
 
+### Legend System (src/legend.jl, src/draw.jl)
+
+Legends are created during `as_GridLayout()` rendering:
+
+1. **Legend options flow**: `scale_*()` or `guides()` → `AxisOptions.legend_options` → `update_legend()` → Makie Legend/Colorbar
+2. **Default legends**: When no explicit scale is specified, `draw.jl` creates default `legend_options` based on data type (discrete→legend, continuous→colorbar)
+3. **Legend title**: Comes from `:name` in `legend_options`, defaults to the column name from aes mapping
+
+Key structures in `legend_options`:
+```julia
+legend_options[:color] = Dict(
+    :guide => :legend,      # :legend, :colorbar, :none, or :auto
+    :type => "discrete",    # "discrete", "continuous", "binned", "manual"
+    :name => "species",     # Legend title
+    :palette => :Set1       # ColorScheme (optional)
+)
+```
+
+**Important**: `guides()` uses Makie-level aesthetic names. Some geoms remap aesthetics:
+- `geom_point`: `fill` → `:color`, `color` → `:strokecolor`
+- `geom_bar`, `geom_hist`, etc.: `fill` → `:color`
+
+So `guides(color="none")` hides the fill legend (not the outline) for these geoms.
+
+### Aesthetic Remapping in Geoms
+
+Some geoms have `special_aes` that remap ggplot aesthetics to Makie terms:
+```julia
+# In geom_bar.jl
+special_aes = Dict(:fill => :color)
+```
+
+And `pre_function` handlers like `handle_point_color_and_fill()` in `geom_point.jl` can transform aesthetics before rendering. This affects which `guides()` names to use.
+
 ## Testing
 
 Tests use the Palmer Penguins dataset (`test/penguins.parq`). Image comparison testing uses `difference_hash.jl` for visual regression tests.
 
 Test files are organized by feature: `test_geoms.jl`, `test_scales.jl`, `test_facets.jl`, etc.
+
+### Testing Tips
+
+- Use `TidierPlots_set("verbose", true)` to see legend DataFrame and Makie call details
+- `plot_images_equal()` uses perceptual hashing - small visual changes can cause test failures
+- When modifying legend/scale behavior, check `test_scale_colour.jl` and `test_geoms.jl` for affected tests
+
+## Known Quirks
+
+1. **guides() vs aesthetic names**: After geom-specific remapping (e.g., `fill` → `color`), `guides()` must use the Makie-level names. This can be confusing for users expecting ggplot2 behavior.
+
+2. **Dict types in AxisOptions**: The `legend_options` Dict values must be `Dict{Symbol,Any}` to allow mixed value types (symbols, strings, etc.). Using inferred types can cause errors.
+
+3. **Palette vs legend_options**: `AxisOptions.palette` holds the color lookup functions, while `AxisOptions.legend_options` holds display configuration. Both are needed for legends to work correctly.
+
+4. **update_legend called per group**: In `draw.jl`, `update_legend()` is called inside the group loop. The `unique(legend)` call deduplicates entries, but any logic that modifies state must account for multiple calls.
 
 ## Dependencies
 

@@ -176,15 +176,13 @@ function as_GridLayout(plot::GGPlot)
 
         # if there is no alpha column, set everything to 1.0
 
-        println("Before: $plot_palette")
-
         if !("alpha" in names(aes_df)) && :color in supported_kwargs
             aes_df.alpha .= 1.0
         end
 
         # if there is no color column, set everything to black
 
-        if !("color" in names(aes_df)) && :color in supported_kwargs 
+        if !("color" in names(aes_df)) && :color in supported_kwargs
             if !haskey(args_dict_makie, :color)
                 aes_df.color .= RGB(0, 0, 0)
             else
@@ -192,8 +190,6 @@ function as_GridLayout(plot::GGPlot)
                 plot_palette[:color] = identity
             end
         end
-
-        println("After: $plot_palette")
 
         typed_aes_df = convert_aes_df_types(aes_df, plot_palette)
         labels_aes_df = get_unique_labels(aes_df, plot_palette)

@@ -1,27 +1,60 @@
 """
 Color and fill work slightly strangely in geom_point in ggplot2. Replicates behaviour.
+
+In ggplot2:
+- fill = interior color of the point
+- color/colour = border (stroke) color of the point
+
+In Makie Scatter:
+- color = interior color
+- strokecolor = border color
+
+This function translates between the two conventions for both:
+- aes_dict: aesthetics mapped to data columns
+- args_dict: static values passed as arguments
 """
 function handle_point_color_and_fill(aes_dict::Dict{Symbol,Pair},
     args_dict::Dict{Any,Any}, required_aes::Vector{String}, plot_data::DataFrame)
 
-    has_color = haskey(aes_dict, :color) || haskey(aes_dict, :colour)
-    has_fill = haskey(aes_dict, :fill)
+    # Check for color/fill in aes_dict (mapped to data columns)
+    has_aes_color = haskey(aes_dict, :color) || haskey(aes_dict, :colour)
+    has_aes_fill = haskey(aes_dict, :fill)
 
-    colorname = !has_color ? nothing :
-                haskey(aes_dict, :color) ? :color : :colour
+    # Check for color/fill in args_dict (static values)
+    has_arg_color = haskey(args_dict, "color") || haskey(args_dict, "colour")
+    has_arg_fill = haskey(args_dict, "fill")
 
-    if !has_fill
-        return (aes_dict, args_dict, required_aes, plot_data)
-    else
-        if !has_color
+    # Handle aes_dict (mapped aesthetics)
+    if has_aes_fill
+        colorname = !has_aes_color ? nothing :
+                    haskey(aes_dict, :color) ? :color : :colour
+
+        if !has_aes_color
             aes_dict[:color] = aes_dict[:fill]
         else
             aes_dict[:strokecolor] = aes_dict[colorname]
             aes_dict[colorname] = aes_dict[:fill]
         end
+        delete!(aes_dict, :fill)
     end
 
-    delete!(aes_dict, :fill)
+    # Handle args_dict (static values)
+    if has_arg_fill
+        arg_colorname = !has_arg_color ? nothing :
+                        haskey(args_dict, "color") ? "color" : "colour"
+
+        fill_value = args_dict["fill"]
+
+        if !has_arg_color
+            # fill only: use fill as interior color
+            args_dict["color"] = fill_value
+        else
+            # both fill and color: fill is interior, color becomes stroke
+            args_dict["strokecolor"] = args_dict[arg_colorname]
+            args_dict[arg_colorname] = fill_value
+        end
+        delete!(args_dict, "fill")
+    end
 
     return (aes_dict, args_dict, required_aes, plot_data)
 end

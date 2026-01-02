@@ -150,7 +150,12 @@ ggplot(df) +
     geom_col(@aes(x = species, y = mean_bill_length_mm, color = sex))
 ```
 """
-geom_col = geom_template("geom_col", ["x", "y"], :BarPlot; pre_function=handle_position)
+geom_col = geom_template("geom_col", ["x", "y"], :BarPlot;      pre_function=handle_position,
+    special_aes=Dict(
+        :fill => :color,
+        :color => :strokecolor,
+        :colour => :strokecolor
+    ))
 
 """
     geom_bar(aes(...), ...)

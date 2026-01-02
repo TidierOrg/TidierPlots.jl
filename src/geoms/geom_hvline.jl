@@ -48,7 +48,20 @@ function geom_hline(args...; kwargs...)
     args_dict["geom_name"] = "geom_hline"
 
     if haskey(args_dict, "yintercept")
-        args_dict["data"] = DataFrame(Numeric = args_dict["yintercept"])
+        yint_values = args_dict["yintercept"]
+        # Convert Date/DateTime to numeric values
+        if yint_values isa Dates.Date
+            yint_values = Float64(Dates.value(yint_values))
+        elseif yint_values isa Dates.DateTime
+            yint_values = Float64(Dates.value(yint_values))
+        elseif yint_values isa AbstractVector && length(yint_values) > 0
+            if yint_values[1] isa Dates.Date
+                yint_values = Float64.(Dates.value.(yint_values))
+            elseif yint_values[1] isa Dates.DateTime
+                yint_values = Float64.(Dates.value.(yint_values))
+            end
+        end
+        args_dict["data"] = DataFrame(Numeric = yint_values)
         aes_dict[:yintercept] = :Numeric => identity
     end
 
@@ -107,7 +120,20 @@ function geom_vline(args...; kwargs...)
     args_dict["geom_name"] = "geom_vline"
 
     if haskey(args_dict, "xintercept")
-        args_dict["data"] = DataFrame(Numeric = args_dict["xintercept"])
+        xint_values = args_dict["xintercept"]
+        # Convert Date/DateTime to numeric values
+        if xint_values isa Dates.Date
+            xint_values = Float64(Dates.value(xint_values))
+        elseif xint_values isa Dates.DateTime
+            xint_values = Float64(Dates.value(xint_values))
+        elseif xint_values isa AbstractVector && length(xint_values) > 0
+            if xint_values[1] isa Dates.Date
+                xint_values = Float64.(Dates.value.(xint_values))
+            elseif xint_values[1] isa Dates.DateTime
+                xint_values = Float64.(Dates.value.(xint_values))
+            end
+        end
+        args_dict["data"] = DataFrame(Numeric = xint_values)
         aes_dict[:xintercept] = :Numeric => identity
     end
 

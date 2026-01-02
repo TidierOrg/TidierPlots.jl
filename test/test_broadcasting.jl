@@ -10,7 +10,7 @@
                 Makie.PlotSpec(
                     :Scatter,
                     penguins.bill_length_mm,
-                    penguins.bill_depth_mm)
+                    penguins.bill_depth_mm, color = :black)
             ]; xlabel="bill_length_mm", ylabel="bill_depth_mm"
         )
     )
@@ -21,7 +21,7 @@
                 Makie.PlotSpec(
                     :Lines,
                     penguins.bill_length_mm,
-                    penguins.bill_depth_mm)
+                    penguins.bill_depth_mm, color = :black)
             ]; xlabel="bill_length_mm", ylabel="bill_depth_mm"
         )
     )
@@ -34,7 +34,7 @@
                 Makie.PlotSpec(
                     :Lines,
                     penguins.bill_length_mm[perm],
-                    penguins.bill_depth_mm[perm])
+                    penguins.bill_depth_mm[perm], color = :black)
             ]; xlabel="bill_length_mm", ylabel="bill_depth_mm"
         )
     )

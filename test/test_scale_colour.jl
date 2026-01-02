@@ -13,7 +13,7 @@
                 MarkerElement(color=colours[2], markersize=12, marker=:circle),
                 MarkerElement(color=colours[3], markersize=12, marker=:circle)],
             ["Adelie", "Chinstrap", "Gentoo"],
-            "color")
+            "species")  # Legend title is now the column name
 
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
@@ -62,7 +62,7 @@
                 MarkerElement(color=colours[2], markersize=12, marker=:circle),
                 MarkerElement(color=colours[3], markersize=12, marker=:circle)],
             ["Adelie", "Chinstrap", "Gentoo"],
-            "color")
+            "species")  # Legend title is now the column name
 
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
@@ -98,7 +98,7 @@
 
         l = Makie.SpecApi.Colorbar(; colormap=:Purples_5,
             limits=(minimum(penguins.bill_depth_mm),
-                maximum(penguins.bill_depth_mm)), label=" ")
+                maximum(penguins.bill_depth_mm)), label="bill_depth_mm")  # Colorbar label is now the column name
 
         m = Makie.plot(
             Makie.SpecApi.GridLayout(
@@ -130,14 +130,22 @@
             0.34901960784313724,
             0.6392156862745098)
 
+        # Test that default continuous color shows a colorbar
         gg1 = ggplot(DataFrame(x=[1.0, 2.2], y=[1.1, 2.3])) +
               geom_point(aes(x=:x, y=:y, color=:x))
 
+        # gg1 now shows a colorbar by default, so it should NOT equal gg2 with guides(none)
         gg2 = ggplot(DataFrame(x=[1.0, 2.2], y=[1.1, 2.3])) +
               geom_point(aes(x=:x, y=:y, color=:x)) + scale_colour_continuous(palette=:viridis) +
               guides(color="none")
 
-        @test plot_images_equal(gg1, gg2)
+        @test !plot_images_equal(gg1, gg2)  # They should NOT be equal now
+
+        # Test that explicit guides(none) hides the colorbar
+        gg3 = ggplot(DataFrame(x=[1.0, 2.2], y=[1.1, 2.3])) +
+              geom_point(aes(x=:x, y=:y, color=:x)) + guides(color="none")
+
+        @test plot_images_equal(gg2, gg3)  # Both should have no colorbar
     end
 
     @testset "binned" begin
@@ -152,7 +160,7 @@
         l = Makie.SpecApi.Colorbar(;
             colormap=cgrad(:Purples_5, 5, categorical=true),
             limits=(minimum(penguins.bill_depth_mm),
-                maximum(penguins.bill_depth_mm)), label=" ")
+                maximum(penguins.bill_depth_mm)), label="bill_depth_mm")  # Colorbar label is now the column name
 
         m = Makie.plot(
             Makie.SpecApi.GridLayout(

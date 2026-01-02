@@ -57,6 +57,48 @@
     )))
 
     @test plot_images_equal(t5, m2)
+
+    # Test handle_point_color_and_fill with static fill only (no color arg)
+    t_fill_only = ggplot(penguins) +
+        geom_point(@aes(x = bill_length_mm, y = bill_depth_mm), fill=:red)
+    @test plot_will_render(t_fill_only)
+
+    # Test handle_point_color_and_fill with both static fill and color args
+    t_fill_and_color = ggplot(penguins) +
+        geom_point(@aes(x = bill_length_mm, y = bill_depth_mm), fill=:red, color=:blue)
+    @test plot_will_render(t_fill_and_color)
+
+    # Test direct handle_point_color_and_fill function with fill arg only
+    ae1, ar1, r1, d1 = TidierPlots.handle_point_color_and_fill(
+      Dict{Symbol,Pair}(:x => :x => identity, :y => :y => identity),
+      Dict{Any,Any}("fill" => :red),
+      ["x", "y"],
+      DataFrame(x=[1,2,3], y=[1,2,3])
+    )
+    @test haskey(ar1, "color")
+    @test ar1["color"] == :red
+    @test !haskey(ar1, "fill")
+
+    # Test direct handle_point_color_and_fill function with both fill and color args
+    ae2, ar2, r2, d2 = TidierPlots.handle_point_color_and_fill(
+      Dict{Symbol,Pair}(:x => :x => identity, :y => :y => identity),
+      Dict{Any,Any}("fill" => :red, "color" => :blue),
+      ["x", "y"],
+      DataFrame(x=[1,2,3], y=[1,2,3])
+    )
+    @test ar2["color"] == :red  # fill becomes color
+    @test ar2["strokecolor"] == :blue  # color becomes strokecolor
+    @test !haskey(ar2, "fill")
+
+    # Test with "colour" spelling instead of "color"
+    ae3, ar3, r3, d3 = TidierPlots.handle_point_color_and_fill(
+      Dict{Symbol,Pair}(:x => :x => identity, :y => :y => identity),
+      Dict{Any,Any}("fill" => :green, "colour" => :orange),
+      ["x", "y"],
+      DataFrame(x=[1,2,3], y=[1,2,3])
+    )
+    @test ar3["colour"] == :green  # fill becomes colour
+    @test ar3["strokecolor"] == :orange  # colour becomes strokecolor
   end
 
 
@@ -468,6 +510,75 @@
     )
 
     @test plot_images_equal(t, m)
+
+    # Test handle_histogram with center parameter
+    df_hist = DataFrame(x = [0.5, 1.5, 2.5, 3.5, 4.5, 5.5])
+    t_center = ggplot(df_hist, @aes(x = x)) + geom_histogram(binwidth=1, center=0)
+    @test plot_will_render(t_center)
+
+    # Test handle_histogram with boundary parameter
+    t_boundary = ggplot(df_hist, @aes(x = x)) + geom_histogram(binwidth=1, boundary=0)
+    @test plot_will_render(t_boundary)
+
+    # Test handle_histogram with binwidth only (no center/boundary)
+    t_binwidth = ggplot(df_hist, @aes(x = x)) + geom_histogram(binwidth=1)
+    @test plot_will_render(t_binwidth)
+
+    # Test handle_histogram when bins is already a vector (should skip processing)
+    t_bins_vector = ggplot(df_hist, @aes(x = x)) + geom_histogram(bins=[0, 2, 4, 6])
+    @test plot_will_render(t_bins_vector)
+
+    # Test handle_histogram direct function with center
+    ae, ar, r, d = TidierPlots.handle_histogram(
+      Dict{Symbol,Pair}(:x => :x => identity),
+      Dict{Any,Any}("center" => 0, "binwidth" => 1),
+      ["x"],
+      df_hist
+    )
+    @test haskey(ar, "bins")
+    @test ar["bins"] isa AbstractVector
+    @test !haskey(ar, "center")
+    @test !haskey(ar, "binwidth")
+
+    # Test handle_histogram direct function with boundary
+    ae2, ar2, r2, d2 = TidierPlots.handle_histogram(
+      Dict{Symbol,Pair}(:x => :x => identity),
+      Dict{Any,Any}("boundary" => 0, "binwidth" => 1),
+      ["x"],
+      df_hist
+    )
+    @test haskey(ar2, "bins")
+    @test ar2["bins"] isa AbstractVector
+    @test !haskey(ar2, "boundary")
+
+    # Test handle_histogram with center but no explicit binwidth (uses bins count)
+    ae3, ar3, r3, d3 = TidierPlots.handle_histogram(
+      Dict{Symbol,Pair}(:x => :x => identity),
+      Dict{Any,Any}("center" => 0, "bins" => 5),
+      ["x"],
+      df_hist
+    )
+    @test haskey(ar3, "bins")
+    @test ar3["bins"] isa AbstractVector
+
+    # Test handle_histogram when bins is already a vector (early return)
+    ae4, ar4, r4, d4 = TidierPlots.handle_histogram(
+      Dict{Symbol,Pair}(:x => :x => identity),
+      Dict{Any,Any}("center" => 0, "bins" => [0.0, 1.0, 2.0]),
+      ["x"],
+      df_hist
+    )
+    @test ar4["bins"] == [0.0, 1.0, 2.0]  # Should remain unchanged
+
+    # Test binwidth only (no center or boundary)
+    ae5, ar5, r5, d5 = TidierPlots.handle_histogram(
+      Dict{Symbol,Pair}(:x => :x => identity),
+      Dict{Any,Any}("binwidth" => 2),
+      ["x"],
+      df_hist
+    )
+    @test haskey(ar5, "bins")
+    @test !haskey(ar5, "binwidth")
   end
 
   @testset "geom_density" begin
@@ -706,6 +817,30 @@
     t2 = geom_hline(ggplot(penguins), yintercept=yint)
 
     @test plot_images_equal(t, t2)
+
+    # Test with Date yintercept
+    date_val = Dates.Date(2024, 1, 15)
+    t_date = ggplot() + geom_hline(yintercept=date_val)
+    @test plot_will_render(t_date)
+
+    # Test with DateTime yintercept
+    datetime_val = Dates.DateTime(2024, 1, 15, 12, 30, 0)
+    t_datetime = ggplot() + geom_hline(yintercept=datetime_val)
+    @test plot_will_render(t_datetime)
+
+    # Test with vector of Date values
+    date_vec = [Dates.Date(2024, 1, 1), Dates.Date(2024, 6, 1), Dates.Date(2024, 12, 1)]
+    t_date_vec = ggplot() + geom_hline(yintercept=date_vec)
+    @test plot_will_render(t_date_vec)
+
+    # Test with vector of DateTime values
+    datetime_vec = [Dates.DateTime(2024, 1, 1), Dates.DateTime(2024, 6, 1)]
+    t_datetime_vec = ggplot() + geom_hline(yintercept=datetime_vec)
+    @test plot_will_render(t_datetime_vec)
+
+    # Test with multiple numeric yintercepts
+    t_multi = ggplot() + geom_hline(yintercept=[1.0, 2.0, 3.0])
+    @test plot_will_render(t_multi)
   end
 
   @testset "geom_vline" begin
@@ -732,6 +867,30 @@
     t2 = geom_vline(ggplot(penguins), xintercept=xint)
 
     @test plot_images_equal(t, t2)
+
+    # Test with Date xintercept
+    date_val = Dates.Date(2024, 1, 15)
+    t_date = ggplot() + geom_vline(xintercept=date_val)
+    @test plot_will_render(t_date)
+
+    # Test with DateTime xintercept
+    datetime_val = Dates.DateTime(2024, 1, 15, 12, 30, 0)
+    t_datetime = ggplot() + geom_vline(xintercept=datetime_val)
+    @test plot_will_render(t_datetime)
+
+    # Test with vector of Date values
+    date_vec = [Dates.Date(2024, 1, 1), Dates.Date(2024, 6, 1), Dates.Date(2024, 12, 1)]
+    t_date_vec = ggplot() + geom_vline(xintercept=date_vec)
+    @test plot_will_render(t_date_vec)
+
+    # Test with vector of DateTime values
+    datetime_vec = [Dates.DateTime(2024, 1, 1), Dates.DateTime(2024, 6, 1)]
+    t_datetime_vec = ggplot() + geom_vline(xintercept=datetime_vec)
+    @test plot_will_render(t_datetime_vec)
+
+    # Test with multiple numeric xintercepts
+    t_multi = ggplot() + geom_vline(xintercept=[1.0, 2.0, 3.0])
+    @test plot_will_render(t_multi)
   end
 
   @testset "geom_rainclouds" begin

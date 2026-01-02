@@ -169,6 +169,7 @@ const _makie_expected_type = Dict{String,Type}(
 const _internal_geom_options = Symbol[
   :data,
   :geom_name,
+  :imageticks,
   :inherit_aes,
   :jitter_height, :jitter_width, 
   :lower,

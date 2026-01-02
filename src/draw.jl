@@ -143,7 +143,7 @@ function as_GridLayout(plot::GGPlot)
 
         # default palettes
 
-        plot_palette = plot.axis_options.palette
+        plot_palette = copy(plot.axis_options.palette)
 
         for palette_aes in intersect([:strokecolor, :color], Symbol.(names(aes_df)))
             if !haskey(plot_palette, palette_aes)
@@ -176,19 +176,24 @@ function as_GridLayout(plot::GGPlot)
 
         # if there is no alpha column, set everything to 1.0
 
+        println("Before: $plot_palette")
+
         if !("alpha" in names(aes_df)) && :color in supported_kwargs
             aes_df.alpha .= 1.0
         end
 
-        # if there is no color column, set everything to blue
+        # if there is no color column, set everything to black
 
         if !("color" in names(aes_df)) && :color in supported_kwargs 
             if !haskey(args_dict_makie, :color)
-                aes_df.color .= "__tidierplots_default__"
+                aes_df.color .= RGB(0, 0, 0)
             else
                 aes_df.color .= args_dict_makie[:color]
+                plot_palette[:color] = identity
             end
         end
+
+        println("After: $plot_palette")
 
         typed_aes_df = convert_aes_df_types(aes_df, plot_palette)
         labels_aes_df = get_unique_labels(aes_df, plot_palette)

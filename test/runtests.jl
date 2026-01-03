@@ -1,81 +1,93 @@
-using TidierPlots
-using Test
-using DataFrames
-using Makie
-using TidierData
-using Images
-using Parquet2
-using CategoricalArrays
-using GLM
-using Loess
-using KernelDensity
-using Colors
-using ColorSchemes
-using Format
-using Dates
-using Random
+using Test, TestItems, TestItemRunner
 
-# functions to compare two images using a difference hash
-# essentially copied from ImageHashes.jl, but package is out of date
+@run_package_tests verbose=true
 
-include("difference_hash.jl")
+@testsnippet TidierPlotsSetup begin
 
-# load the penguins dataset
+    using DataFrames
+    using Makie
+    using TidierData
+    using Images
+    using Parquet2
+    using CategoricalArrays
+    using GLM
+    using Loess
+    using KernelDensity
+    using Colors
+    using ColorSchemes
+    using Format
+    using Dates
+    using Random
 
-penguins = DataFrame(Parquet2.readfile(joinpath(@__DIR__, "penguins.parq")))
+    # functions to compare two images using a difference hash
+    # essentially copied from ImageHashes.jl, but package is out of date
 
-# configure TidierPlots to not show the plot and not output logs
+    include("difference_hash.jl")
 
-TidierPlots_set("plot_show", false)
-TidierPlots_set("plot_log", false)
-TidierPlots_set("plot_pluto", false)
-TidierPlots_set("verbose", false)
+    # load the penguins dataset
 
-# configure Makie to use the ggplot2 theme
+    penguins = DataFrame(Parquet2.readfile(joinpath(@__DIR__, "penguins.parq")))
 
-set_theme!(theme_ggplot2())
+    # configure TidierPlots to not show the plot and not output logs
+
+    TidierPlots_set("plot_show", false)
+    TidierPlots_set("plot_log", false)
+    TidierPlots_set("plot_pluto", false)
+    TidierPlots_set("verbose", false)
+
+    # configure Makie to use the ggplot2 theme
+
+    set_theme!(theme_ggplot2())
+
+end
 
 # see files for tests
-@testset "TidierPlots" verbose = true begin
-    @test_throws ArgumentError TidierPlots_set("na", true)
-    @info "Testing aes specifications..."
-    include("test_aes.jl")
-    @info "Testing aes operations..."
-    include("test_aes_ops.jl")
-    @info "Testing broadcasting..."
-    include("test_broadcasting.jl")
-    @info "Testing conversions..."
+
+@testitem "Conversions" setup=[TidierPlotsSetup] begin
     include("test_conversions.jl")
-    @info "Testing data specification..."
+end
+@testitem "Data specification" setup=[TidierPlotsSetup] begin
     include("test_data.jl")
-    @info "Testing aes extraction..."
+end
+@testitem "Aes extraction" setup=[TidierPlotsSetup] begin
     include("test_extract_aes.jl")
-    @info "Testing facets..."
-    include("test_facets.jl")
-    @info "Testing geoms..."
+end
+@testitem "Geoms" setup=[TidierPlotsSetup] begin
     include("test_geoms.jl")
-    @info "Testing geom options..."
+end
+@testitem "Geom options" setup=[TidierPlotsSetup] begin
     include("test_geom_options.jl")
-    @info "Testing ggsave..."
+end
+@testitem "GGsave" setup=[TidierPlotsSetup] begin
     include("test_ggsave.jl")
-    @info "Testing labs..."
+end
+@testitem "labs" setup=[TidierPlotsSetup] begin
     include("test_labs.jl")
-    @info "Testing labelling functions..."
+end
+@testitem "Labelling functions" setup=[TidierPlotsSetup] begin
     include("test_label_functions.jl")
-    @info "Testing legends..."
+end
+@testitem "Legends" setup=[TidierPlotsSetup] begin
     include("test_legend.jl")
-    @info "Testing plot limits..."
+end
+@testitem "Plot limits" setup=[TidierPlotsSetup] begin
     include("test_lims.jl")
-    @info "Testing patchwork..."
+end
+@testitem "Patchwork" setup=[TidierPlotsSetup] begin
     include("test_patchwork.jl")
-    @info "Testing color scales..."
+end
+@testitem "Color scales" setup=[TidierPlotsSetup] begin
     include("test_scale_colour.jl")
-    @info "Testing non-color scales..."
+end
+@testitem "Non-color scales" setup=[TidierPlotsSetup] begin
     include("test_scales.jl")
-    @info "Testing themes..."
+end
+@testitem "Themes" setup=[TidierPlotsSetup] begin
     include("test_themes.jl")
-    @info "Testing documentation..."
+end
+@testitem "Documentation" setup=[TidierPlotsSetup] begin
     include("test_docs_will_render.jl")
-    @info "Testing issue regressions..."
+end
+@testitem "Issue regressions" setup=[TidierPlotsSetup] begin
     include("test_issue_reg.jl")
 end

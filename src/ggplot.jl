@@ -32,6 +32,7 @@ function ggplot(data::DataFrame, args...; kwargs...)
 end
 
 @testitem "data" begin
+    using DataFrames
     @test_throws ArgumentError ggplot(data=["not", "a", "DataFrame"])
     @test_throws ArgumentError geom_point((data = ["not", "a", "DataFrame"]),
         aes(x=:x, y=:y))
@@ -45,7 +46,7 @@ end
     @test all(gg1.data.a .== gg2.data.a)
 end
 
-@testitem "inherit aes" begin
+@testitem "inherit aes" setup = [TidierPlotsSetup] begin
     t = ggplot(penguins, aes(color = :species)) +
         geom_point(aes(x = :bill_length_mm, y = :bill_depth_mm), inherit_aes = false)
 
@@ -66,5 +67,6 @@ end
 end
 
 @testitem "unsupported options" begin
+    using DataFrames
     @test_throws ArgumentError draw_ggplot(ggplot(DataFrame(x = [1,2], y = [1,2])) + geom_point(aes(x = :x, y = :y), unsuparg = 1))
 end

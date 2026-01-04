@@ -157,7 +157,9 @@ geom_col = geom_template("geom_col", ["x", "y"], :BarPlot;      pre_function=han
         :colour => :strokecolor
     ))
 
-@testitem "geom_col" begin
+@testitem "geom_col" setup = [TidierPlotsSetup] begin
+    using TidierData
+
     penguins_count = @chain penguins begin
       groupby(:species)
       @summarize(count = n())
@@ -246,7 +248,9 @@ geom_bar = geom_template("geom_bar", String[], :BarPlot;
         :colour => :strokecolor
     ))
 
-@testitem "geom_bar" begin
+@testitem "geom_bar" setup = [TidierPlotsSetup] begin
+    using TidierData
+
     t = ggplot(penguins) +
         geom_bar(@aes(x = species))
 

@@ -453,6 +453,7 @@ end
 end
 
 @testitem "label_date" begin
+    using Dates
     lf = label_date()
     @test lf(Date("10-12-67", DateFormat("d-m-y"))) == "12/10/67"
     @test lf(Date("10-1-67", DateFormat("d-m-y"))) == "1/10/67"
@@ -534,7 +535,7 @@ end
     @test lf(t1) == "this\nis\na\nlong\nlabel"
 end
 
-@testitem "scale_x/y_continuous" begin
+@testitem "scale_x/y_continuous" setup = [TidierPlotsSetup] begin
     t = ggplot(penguins) +
         geom_point(aes(x = :bill_depth_mm, y = :body_mass_g)) +
         scale_y_continuous(labels=label_currency()) +

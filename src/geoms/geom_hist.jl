@@ -131,3 +131,91 @@ geom_histogram = geom_template("geom_histogram", ["x"], :Hist;
         :color => :strokecolor,
         :colour => :strokecolor
     ))
+
+@testitem "geom_hist" setup=[TidierPlotsSetup] begin
+    t = ggplot(penguins) +
+        geom_histogram(@aes(x = bill_length_mm))
+
+    m = Makie.plot(
+      Makie.SpecApi.GridLayout(
+        Makie.SpecApi.Axis(
+          plots=[
+            Makie.PlotSpec(
+              :Hist,
+              penguins.bill_length_mm)
+          ]
+        )
+      )
+    )
+
+    @test plot_images_equal(t, m)
+
+    # Test handle_histogram with center parameter
+     df_hist = DataFrame(x = [0.5, 1.5, 2.5, 3.5, 4.5, 5.5])
+    # t_center = ggplot(df_hist, @aes(x = x)) + geom_histogram(binwidth=1, center=0)
+    #@test plot_will_render(t_center)
+
+    # Test handle_histogram with boundary parameter
+    #t_boundary = ggplot(df_hist, @aes(x = x)) + geom_histogram(binwidth=1, boundary=0)
+    #@test plot_will_render(t_boundary)
+
+    # Test handle_histogram with binwidth only (no center/boundary)
+    #t_binwidth = ggplot(df_hist, @aes(x = x)) + geom_histogram(binwidth=1)
+    #@test plot_will_render(t_binwidth)
+
+    # Test handle_histogram when bins is already a vector (should skip processing)
+    #t_bins_vector = ggplot(df_hist, @aes(x = x)) + geom_histogram(bins=[0, 2, 4, 6])
+    #@test plot_will_render(t_bins_vector)
+
+    # Test handle_histogram direct function with center
+    ae, ar, r, d = TidierPlots.handle_histogram(
+      Dict{Symbol,Pair}(:x => :x => identity),
+      Dict{Any,Any}("center" => 0, "binwidth" => 1),
+      ["x"],
+      df_hist
+    )
+    @test haskey(ar, "bins")
+    @test ar["bins"] isa AbstractVector
+    @test !haskey(ar, "center")
+    @test !haskey(ar, "binwidth")
+
+    # Test handle_histogram direct function with boundary
+    ae2, ar2, r2, d2 = TidierPlots.handle_histogram(
+      Dict{Symbol,Pair}(:x => :x => identity),
+      Dict{Any,Any}("boundary" => 0, "binwidth" => 1),
+      ["x"],
+      df_hist
+    )
+    @test haskey(ar2, "bins")
+    @test ar2["bins"] isa AbstractVector
+    @test !haskey(ar2, "boundary")
+
+    # Test handle_histogram with center but no explicit binwidth (uses bins count)
+    ae3, ar3, r3, d3 = TidierPlots.handle_histogram(
+      Dict{Symbol,Pair}(:x => :x => identity),
+      Dict{Any,Any}("center" => 0, "bins" => 5),
+      ["x"],
+      df_hist
+    )
+    @test haskey(ar3, "bins")
+    @test ar3["bins"] isa AbstractVector
+
+    # Test handle_histogram when bins is already a vector (early return)
+    ae4, ar4, r4, d4 = TidierPlots.handle_histogram(
+      Dict{Symbol,Pair}(:x => :x => identity),
+      Dict{Any,Any}("center" => 0, "bins" => [0.0, 1.0, 2.0]),
+      ["x"],
+      df_hist
+    )
+    @test ar4["bins"] == [0.0, 1.0, 2.0]  # Should remain unchanged
+
+    # Test binwidth only (no center or boundary)
+    ae5, ar5, r5, d5 = TidierPlots.handle_histogram(
+      Dict{Symbol,Pair}(:x => :x => identity),
+      Dict{Any,Any}("binwidth" => 2),
+      ["x"],
+      df_hist
+    )
+    @test haskey(ar5, "bins")
+    @test !haskey(ar5, "binwidth")
+  end

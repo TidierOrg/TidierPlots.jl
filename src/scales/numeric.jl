@@ -79,7 +79,7 @@ scale_y_pseudolog10 = scale_template("y", continuous_scale_to_ggoptions; trans=M
 scale_x_symlog10 = scale_template("x", continuous_scale_to_ggoptions; trans=Makie.Symlog10)
 scale_y_symlog10 = scale_template("y", continuous_scale_to_ggoptions; trans=Makie.Symlog10)
 
-@testitem "scale_x/y_continuous" begin
+@testitem "scale_x/y_continuous" setup = [TidierPlotsSetup] begin
     t = ggplot(penguins, @aes(x = body_mass_g, y = bill_length_mm)) +
         geom_point() +
         scale_x_continuous(

@@ -44,3 +44,37 @@ geom_density = geom_template("geom_density", ["x"], :Density;
         :color => :strokecolor,
         :colour => :strokecolor
     ))
+
+@testitem "geom_density" setup = [TidierPlotsSetup] begin
+    t = ggplot(penguins, @aes(x = body_mass_g)) +
+        geom_density()
+
+    m = Makie.plot(
+      Makie.SpecApi.GridLayout(
+        [Makie.SpecApi.Axis(
+        plots=[
+          Makie.PlotSpec(
+            :Density,
+            penguins.body_mass_g)]; xlabel="body_mass_g"
+      )]
+      )
+    )
+
+    @test plot_images_equal(t, m)
+
+    t1 = ggplot(penguins) +
+         geom_density(aes(
+        x=:bill_length_mm,
+        color=:sex,
+        fill=:species
+      ), strokewidth=1)
+
+    t2 = ggplot(penguins) +
+         geom_density(aes(
+      x=:bill_length_mm,
+      color=:sex,
+      fill=:species
+    ))
+
+    @test plot_images_equal(t1, t2)
+  end

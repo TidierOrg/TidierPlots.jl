@@ -98,7 +98,7 @@ function convert_aes_type(aes_col::CategoricalArray, ::Type{Integer}, col::Symbo
     return levelcode.(aes_col)
 end
 
-@testitem "conversions" begin
+@testitem "Conversions" setup=[TidierPlotsSetup] begin
     using CategoricalArrays
     int_array = [1, 2, 3]
     num_array = [1.0, 2.0, 3.0]

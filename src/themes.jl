@@ -13,3 +13,8 @@ end
 function theme(args...; kwargs...)
     return AxisOptions(Dict(kwargs), Dict(), Dict())
 end
+
+@testitem "themes" begin
+    invis = TidierPlots.theme(background = :transparent)
+    @test invis.opt[:background] == :transparent
+end

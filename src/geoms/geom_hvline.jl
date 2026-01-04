@@ -70,6 +70,56 @@ function geom_hline(args...; kwargs...)
         :HLines) # function for visual layer
 end
 
+@testitem "geom_hline" setup = [TidierPlotsSetup] begin
+    yint = 2.5
+
+    t = ggplot(penguins) +
+        geom_hline(yintercept=yint)
+
+    m = Makie.plot(
+      Makie.SpecApi.GridLayout(
+        Makie.SpecApi.Axis(
+          plots=[
+            Makie.PlotSpec(
+              :HLines,
+              yint
+            )
+          ]
+        )
+      )
+    )
+
+    @test plot_images_equal(t, m)
+
+    t2 = geom_hline(ggplot(penguins), yintercept=yint)
+
+    @test plot_images_equal(t, t2)
+
+    # Test with Date yintercept
+    date_val = Dates.Date(2024, 1, 15)
+    t_date = ggplot() + geom_hline(yintercept=date_val)
+    @test plot_will_render(t_date)
+
+    # Test with DateTime yintercept
+    datetime_val = Dates.DateTime(2024, 1, 15, 12, 30, 0)
+    t_datetime = ggplot() + geom_hline(yintercept=datetime_val)
+    @test plot_will_render(t_datetime)
+
+    # Test with vector of Date values
+    date_vec = [Dates.Date(2024, 1, 1), Dates.Date(2024, 6, 1), Dates.Date(2024, 12, 1)]
+    t_date_vec = ggplot() + geom_hline(yintercept=date_vec)
+    @test plot_will_render(t_date_vec)
+
+    # Test with vector of DateTime values
+    datetime_vec = [Dates.DateTime(2024, 1, 1), Dates.DateTime(2024, 6, 1)]
+    t_datetime_vec = ggplot() + geom_hline(yintercept=datetime_vec)
+    @test plot_will_render(t_datetime_vec)
+
+    # Test with multiple numeric yintercepts
+    t_multi = ggplot() + geom_hline(yintercept=[1.0, 2.0, 3.0])
+    @test plot_will_render(t_multi)
+  end
+
 """
     geom_vline(aes(...), ...)
     geom_vline(plot::GGPlot, aes(...), ...)
@@ -149,3 +199,54 @@ end
 function geom_vline(plot::GGPlot, args...; kwargs...)
     return plot + geom_vline(args...; kwargs...)
 end
+
+
+  @testitem "geom_vline" setup = [TidierPlotsSetup] begin
+    xint = 2.5
+
+    t = ggplot() +
+        geom_vline(xintercept=xint)
+
+    m = Makie.plot(
+      Makie.SpecApi.GridLayout(
+        Makie.SpecApi.Axis(
+          plots=[
+            Makie.PlotSpec(
+              :VLines,
+              xint
+            )
+          ]
+        )
+      )
+    )
+
+    @test plot_images_equal(t, m)
+
+    t2 = geom_vline(ggplot(penguins), xintercept=xint)
+
+    @test plot_images_equal(t, t2)
+
+    # Test with Date xintercept
+    date_val = Dates.Date(2024, 1, 15)
+    t_date = ggplot() + geom_vline(xintercept=date_val)
+    @test plot_will_render(t_date)
+
+    # Test with DateTime xintercept
+    datetime_val = Dates.DateTime(2024, 1, 15, 12, 30, 0)
+    t_datetime = ggplot() + geom_vline(xintercept=datetime_val)
+    @test plot_will_render(t_datetime)
+
+    # Test with vector of Date values
+    date_vec = [Dates.Date(2024, 1, 1), Dates.Date(2024, 6, 1), Dates.Date(2024, 12, 1)]
+    t_date_vec = ggplot() + geom_vline(xintercept=date_vec)
+    @test plot_will_render(t_date_vec)
+
+    # Test with vector of DateTime values
+    datetime_vec = [Dates.DateTime(2024, 1, 1), Dates.DateTime(2024, 6, 1)]
+    t_datetime_vec = ggplot() + geom_vline(xintercept=datetime_vec)
+    @test plot_will_render(t_datetime_vec)
+
+    # Test with multiple numeric xintercepts
+    t_multi = ggplot() + geom_vline(xintercept=[1.0, 2.0, 3.0])
+    @test plot_will_render(t_multi)
+  end

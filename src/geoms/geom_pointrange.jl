@@ -61,3 +61,21 @@ end
 function geom_pointrange(plot::GGPlot, args...; kwargs...)
     return plot + geom_pointrange(args...; kwargs...)
 end
+
+@testitem "geom_pointrange" setup = [TidierPlotsSetup] begin
+    df_pointrange = DataFrame(
+      x = [1, 2, 3, 4],
+      y = [2.0, 3.0, 2.5, 3.5],
+      ymin = [1.0, 2.0, 1.5, 2.5],
+      ymax = [3.0, 4.0, 3.5, 4.5]
+    )
+
+    t = ggplot(df_pointrange, @aes(x = x, y = y, ymin = ymin, ymax = ymax)) + geom_pointrange()
+
+    # Test that plot renders successfully
+    @test plot_will_render(t)
+
+    # Test alternative syntax
+    t2 = geom_pointrange(ggplot(df_pointrange), @aes(x = x, y = y, ymin = ymin, ymax = ymax))
+    @test plot_will_render(t2)
+end

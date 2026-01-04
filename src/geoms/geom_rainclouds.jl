@@ -59,3 +59,31 @@ geom_rainclouds = geom_template("geom_rainclouds", ["x", "y"], :RainClouds,
         :fill => :color,
         :colour => :color
     ))
+
+@testitem "geom_rainclouds" setup = [TidierPlotsSetup] begin
+    t = ggplot(penguins) +
+        geom_rainclouds(@aes(x = species, y = bill_length_mm))
+
+    cat_array = CategoricalArrays.CategoricalArray(penguins.species)
+
+    m = Makie.plot(
+      Makie.SpecApi.GridLayout(
+        Makie.SpecApi.Axis(
+          plots=[
+            Makie.PlotSpec(
+              :RainClouds,
+              levelcode.(cat_array),
+              penguins.bill_length_mm)
+          ]; xticks=(unique(levelcode.(cat_array)),
+            unique(cat_array))
+        )
+      )
+    )
+
+    @test plot_images_equal(t, m)
+
+    t2 = geom_rainclouds(ggplot(penguins),
+      @aes(x = species, y = bill_length_mm))
+
+    @test plot_images_equal(t, t2)
+  end

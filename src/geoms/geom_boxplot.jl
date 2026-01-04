@@ -85,3 +85,53 @@ geom_boxplot = geom_template("geom_boxplot", ["x", "y"], :BoxPlot;
         :color => :strokecolor,
         :colour => :strokecolor
     ))
+
+ @testitem "geom_boxplot" setup=[TidierPlotsSetup] begin
+    t = ggplot(penguins) +
+        geom_boxplot(@aes(x = species, y = bill_length_mm))
+
+    cat_array = CategoricalArrays.CategoricalArray(penguins.species)
+
+    m = Makie.plot(
+      Makie.SpecApi.GridLayout(
+        Makie.SpecApi.Axis(
+          plots=[
+            Makie.PlotSpec(
+              :BoxPlot,
+              levelcode.(cat_array),
+              penguins.bill_length_mm)
+          ]; xticks=(unique(levelcode.(cat_array)),
+            unique(cat_array))
+        )
+      )
+    )
+
+    @test plot_images_equal(t, m)
+
+    ae, ar, r, d = TidierPlots.boxplot_groups(
+      Dict{Symbol,Pair}(
+        :x => :b => identity,
+        :y => :c => identity,
+        :color => :a => identity
+      ),
+      Dict(),
+      ["x"],
+      DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"])
+    )
+
+    @test ae[:dodge] == (:a => identity)
+    @test ar["orientation"] == :horizontal
+
+    @test_throws ArgumentError TidierPlots.boxplot_groups(
+      Dict{Symbol,Pair}(
+        :x => :b => identity,
+        :y => :c => identity,
+        :color => :a => identity,
+        :fill => :d => identity
+      ),
+      Dict(),
+      ["x"],
+      DataFrame(a=["a", "b"], b=[1, 2], c=["c", "d"], d=["e", "f"])
+    )
+
+  end

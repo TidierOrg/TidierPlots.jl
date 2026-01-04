@@ -115,3 +115,104 @@ p + geom_point(aes(colour = :sex))
 """
 geom_point = geom_template("geom_point", ["x", "y"], :Scatter;
     pre_function=handle_point_color_and_fill)
+
+@testitem "geom_point" setup=[TidierPlotsSetup] begin
+    t = ggplot(penguins) +
+        geom_point(@aes(x = bill_length_mm, y = bill_depth_mm))
+
+    t2 = ggplot() +
+         geom_point(penguins, @aes(x = bill_length_mm, y = bill_depth_mm))
+
+    m = Makie.plot(
+      Makie.SpecApi.GridLayout(
+        Makie.SpecApi.Axis(
+          plots=[
+            Makie.PlotSpec(
+              :Scatter,
+              penguins.bill_length_mm,
+              penguins.bill_depth_mm)
+          ]
+        )
+      )
+    )
+
+    @test plot_images_equal(t, m)
+    @test plot_images_equal(t2, m)
+
+    t3 = ggplot() +
+         geom_point(penguins,
+      @aes(x = bill_length_mm, y = bill_depth_mm, color = sex))
+    t4 = ggplot() +
+         geom_point(penguins,
+      @aes(x = bill_length_mm, y = bill_depth_mm, fill = sex))
+
+    @test plot_images_equal(t3, t4)
+
+    # Note: In geom_point, color maps to strokecolor and fill maps to color
+    # So guides must use the Makie-level names after translation
+    t5 = ggplot(penguins) +
+         geom_point(
+           @aes(x = bill_length_mm,
+             y = bill_depth_mm,
+             color = sex,
+             fill = species),
+           strokewidth=1) + guides(strokecolor="none", color="none")
+
+    cat_species = CategoricalArrays.CategoricalArray(penguins.species)
+    cat_sex = CategoricalArrays.CategoricalArray(penguins.sex)
+
+    m2 = Makie.plot(Makie.SpecApi.GridLayout(Makie.SpecApi.Axis(
+      plots=[Makie.PlotSpec(
+        :Scatter,
+        penguins.bill_length_mm,
+        penguins.bill_depth_mm;
+        color=TidierPlots._default_discrete_palette(cat_species),
+        strokecolor=TidierPlots._default_discrete_palette(cat_sex),
+        strokewidth=1)
+      ]
+    )))
+
+    @test plot_images_equal(t5, m2)
+
+    # Test handle_point_color_and_fill with static fill only (no color arg)
+    t_fill_only = ggplot(penguins) +
+        geom_point(@aes(x = bill_length_mm, y = bill_depth_mm), fill=:red)
+    @test plot_will_render(t_fill_only)
+
+    # Test handle_point_color_and_fill with both static fill and color args
+    t_fill_and_color = ggplot(penguins) +
+        geom_point(@aes(x = bill_length_mm, y = bill_depth_mm), fill=:red, color=:blue)
+    @test plot_will_render(t_fill_and_color)
+
+    # Test direct handle_point_color_and_fill function with fill arg only
+    ae1, ar1, r1, d1 = TidierPlots.handle_point_color_and_fill(
+      Dict{Symbol,Pair}(:x => :x => identity, :y => :y => identity),
+      Dict{Any,Any}("fill" => :red),
+      ["x", "y"],
+      DataFrame(x=[1,2,3], y=[1,2,3])
+    )
+    @test haskey(ar1, "color")
+    @test ar1["color"] == :red
+    @test !haskey(ar1, "fill")
+
+    # Test direct handle_point_color_and_fill function with both fill and color args
+    ae2, ar2, r2, d2 = TidierPlots.handle_point_color_and_fill(
+      Dict{Symbol,Pair}(:x => :x => identity, :y => :y => identity),
+      Dict{Any,Any}("fill" => :red, "color" => :blue),
+      ["x", "y"],
+      DataFrame(x=[1,2,3], y=[1,2,3])
+    )
+    @test ar2["color"] == :red  # fill becomes color
+    @test ar2["strokecolor"] == :blue  # color becomes strokecolor
+    @test !haskey(ar2, "fill")
+
+    # Test with "colour" spelling instead of "color"
+    ae3, ar3, r3, d3 = TidierPlots.handle_point_color_and_fill(
+      Dict{Symbol,Pair}(:x => :x => identity, :y => :y => identity),
+      Dict{Any,Any}("fill" => :green, "colour" => :orange),
+      ["x", "y"],
+      DataFrame(x=[1,2,3], y=[1,2,3])
+    )
+    @test ar3["colour"] == :green  # fill becomes colour
+    @test ar3["strokecolor"] == :orange  # colour becomes strokecolor
+  end

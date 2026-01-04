@@ -61,3 +61,17 @@ geom_area = geom_template("geom_area", ["x", "y"], :Band;
     pre_function = handle_area,
     special_aes = Dict(:fill => :color),
     grouping_aes = [:color, :colour, :fill])
+
+@testitem "geom_area" setup = [TidierPlotsSetup] begin
+    xs = collect(range(0, 2pi, length=30))
+    df_area = DataFrame(x = xs, y = sin.(xs) .+ 1.5)
+
+    t = ggplot(df_area, @aes(x = x, y = y)) + geom_area()
+
+    # Test that plot renders successfully
+    @test plot_will_render(t)
+
+    # Test alternative syntax
+    t2 = geom_area(ggplot(df_area), @aes(x = x, y = y))
+    @test plot_will_render(t2)
+end

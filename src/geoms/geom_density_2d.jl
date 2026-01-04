@@ -161,3 +161,208 @@ ggplot(penguins, @aes(x=bill_length_mm, y=bill_depth_mm)) +
 # See also [`geom_contour`](@ref) and [`geom_density_2d`](@ref) for similar geoms.
 """
 geom_density_2d_filled, geom_density2d_filled, geom_contour_filled
+
+ @testitem "geom_contour" setup = [TidierPlotsSetup] begin
+    t = ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) +
+        geom_contour()
+    ae, ar, r, d = TidierPlots.stat_contour(
+      Dict{Symbol,Pair}(
+        :x => :bill_length_mm => identity,
+        :y => :bill_depth_mm => identity
+      ),
+      Dict(),
+      ["x", "y"],
+      @chain penguins begin
+        @rename(x = bill_length_mm, y = bill_depth_mm)
+        @mutate(group = 1)
+      end
+    )
+
+    m = Makie.plot(
+      Makie.SpecApi.GridLayout(
+        Makie.SpecApi.Axis(
+          plots=[
+            Makie.PlotSpec(
+              :Contour,
+              d.x,
+              d.y,
+              d.z;
+            )
+          ]; xlabel="bill_length_mm", ylabel="bill_depth_mm"
+        )
+      )
+    )
+    @test plot_images_equal(t, m)
+  end
+
+  @testitem "geom_contour_filled" setup = [TidierPlotsSetup] begin
+    t = ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) +
+        geom_contour_filled()
+    ae, ar, r, d = TidierPlots.stat_contour(
+      Dict{Symbol,Pair}(
+        :x => :bill_length_mm => identity,
+        :y => :bill_depth_mm => identity
+      ),
+      Dict(),
+      ["x", "y"],
+      @chain penguins begin
+        @rename(x = bill_length_mm, y = bill_depth_mm)
+        @mutate(group = 1)
+      end
+    )
+
+    m = Makie.plot(
+      Makie.SpecApi.GridLayout(
+        Makie.SpecApi.Axis(
+          plots=[
+            Makie.PlotSpec(
+              :Contourf,
+              d.x,
+              d.y,
+              d.z;
+              levels=10)
+          ]; xlabel="bill_length_mm", ylabel="bill_depth_mm"
+        )
+      )
+    )
+    @test plot_images_equal(t, m)
+  end
+
+
+  @testitem "geom_density_2d" setup = [TidierPlotsSetup] begin
+    ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) +
+    geom_density2d(breaks=10)
+    @test_throws ArgumentError TidierPlots.stat_contour(
+      Dict{Symbol,Pair}(
+        :x => :bill_length_mm => identity
+      ),
+      Dict(),
+      ["x"],
+      @chain penguins begin
+        @rename(x = bill_length_mm)
+      end
+    )
+
+    @test_warn "Equal x and y aesthetics detected. This may not be intended." TidierPlots.stat_contour(
+      Dict{Symbol,Pair}(
+        :x => :bill_length_mm => identity,
+        :y => :bill_length_mm => identity
+      ),
+      Dict(),
+      ["x", "y"],
+      @chain penguins begin
+        @mutate(x = bill_length_mm, y = bill_length_mm, group = 1)
+      end
+    )
+
+
+    t = ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) +
+        geom_density_2d(breaks=10)
+
+    ae, ar, r, d = TidierPlots.stat_contour(
+      Dict{Symbol,Pair}(
+        :x => :bill_length_mm => identity,
+        :y => :bill_depth_mm => identity,
+        :group => :species => identity
+      ),
+      Dict(),
+      ["x", "y"],
+      @chain penguins begin
+        @rename(x = bill_length_mm, y = bill_depth_mm)
+        @mutate(group = 1)
+      end
+    )
+
+    m = Makie.plot(
+      Makie.SpecApi.GridLayout(
+        Makie.SpecApi.Axis(
+          plots=[
+            Makie.PlotSpec(
+              :Contour,
+              d.x,
+              d.y,
+              d.z;
+              levels=10)
+          ]; xlabel="bill_length_mm", ylabel="bill_depth_mm"
+        )
+      )
+    )
+
+    @test plot_images_equal(t, m)
+
+
+    t2 = ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm, group = species)) +
+         geom_density_2d()
+
+    ae2, ar2, r2, d2 = TidierPlots.stat_contour(
+      Dict{Symbol,Pair}(
+        :x => :bill_length_mm => identity,
+        :y => :bill_depth_mm => identity,
+        :group => :species => identity
+      ),
+      Dict(),
+      ["x", "y"],
+      @chain penguins begin
+        @rename(x = bill_length_mm, y = bill_depth_mm, group = species)
+      end
+    )
+
+    m2 = Makie.plot(
+      Makie.SpecApi.GridLayout(
+        Makie.SpecApi.Axis(
+          plots=[
+            Makie.PlotSpec(
+              :Contour,
+              d2.x[d2.group.==g],
+              d2.y[d2.group.==g],
+              d2.z[d2.group.==g],
+            ) for g in unique(d2.group)
+          ]; xlabel="bill_length_mm", ylabel="bill_depth_mm"
+        )
+      )
+    )
+
+    @test plot_images_equal(t2, m2)
+
+  end
+
+
+  @testitem "geom_density_2d_filled" setup = [TidierPlotsSetup] begin
+    ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) +
+    geom_density2d_filled()
+
+    t = ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) +
+        geom_density_2d_filled()
+
+    ae, ar, r, d = TidierPlots.stat_contour(
+      Dict{Symbol,Pair}(
+        :x => :bill_length_mm => identity,
+        :y => :bill_depth_mm => identity,
+        :group => :species => identity
+      ),
+      Dict(),
+      ["x", "y"],
+      @chain penguins begin
+        @rename(x = bill_length_mm, y = bill_depth_mm)
+        @mutate(group = 1)
+      end
+    )
+
+    m = Makie.plot(
+      Makie.SpecApi.GridLayout(
+        Makie.SpecApi.Axis(
+          plots=[
+            Makie.PlotSpec(
+              :Contourf,
+              d.x,
+              d.y,
+              d.z)
+          ]; xlabel="bill_length_mm", ylabel="bill_depth_mm"
+        )
+      )
+    )
+
+
+    @test plot_images_equal(t, m)
+
+  end

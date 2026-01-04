@@ -49,6 +49,27 @@ geom_line = geom_template("geom_line", ["x", "y"], :Lines;
     grouping_aes = [:color, :colour]
 )
 
+@testitem "geom_line" setup=[TidierPlotsSetup] begin
+    t = ggplot(penguins) +
+        geom_line(@aes(x = bill_length_mm, y = bill_depth_mm))
+
+    perm = sortperm(penguins.bill_length_mm)
+
+    m = Makie.plot(
+      Makie.SpecApi.GridLayout(
+        Makie.SpecApi.Axis(
+          plots=[
+            Makie.PlotSpec(
+              :Lines,
+              penguins.bill_length_mm[perm],
+              penguins.bill_depth_mm[perm])
+          ]
+        )
+      )
+    )
+
+    @test plot_images_equal(t, m)
+  end
 
 """
     geom_step(aes(...), ...)
@@ -93,6 +114,29 @@ geom_step = geom_template("geom_step", ["x", "y"], :Stairs;
     grouping_aes = [:color, :colour]
 )
 
+@testitem "geom_step" setup=[TidierPlotsSetup] begin
+    xs = collect(rand(30) * 2pi)
+    df = DataFrame(x=xs, y=sin.(xs))
+
+    perm = sortperm(df.x)
+
+    t = ggplot(df, @aes(x = x, y = y)) + geom_step()
+
+    m = Makie.plot(
+      Makie.SpecApi.GridLayout(
+        Makie.SpecApi.Axis(
+          plots=[
+            Makie.PlotSpec(
+              :Stairs,
+              df.x[perm],
+              df.y[perm])
+          ]; xlabel="x", ylabel="y"
+        )
+      )
+    )
+
+    @test plot_images_equal(t, m)
+  end
 
 """
     geom_path(aes(...), ...)
@@ -132,3 +176,23 @@ ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) +
 """
 geom_path = geom_template("geom_path", ["x", "y"], :Lines;
     grouping_aes = [:color, :colour])
+
+    @testitem "geom_path" setup=[TidierPlotsSetup] begin
+    t = ggplot(penguins) +
+        geom_path(@aes(x = bill_length_mm, y = bill_depth_mm))
+
+    m = Makie.plot(
+      Makie.SpecApi.GridLayout(
+        Makie.SpecApi.Axis(
+          plots=[
+            Makie.PlotSpec(
+              :Lines,
+              penguins.bill_length_mm,
+              penguins.bill_depth_mm)
+          ]
+        )
+      )
+    )
+
+    @test plot_images_equal(t, m)
+  end

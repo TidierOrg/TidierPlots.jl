@@ -35,6 +35,9 @@ using KernelDensity
 # for size scales
 using Statistics
 
+# for tests
+using TestItems
+
 include("structs.jl")
 
 include("addplots.jl")
@@ -164,5 +167,9 @@ const plot_log = Ref{Bool}(true)
 const plot_show = Ref{Bool}(true)
 const plot_pluto = Ref{Bool}(true)
 const verbose = Ref{Bool}(false)
+
+@testitem "TidierPlots options" begin
+    @test_throws ArgumentError TidierPlots_set("na", true)
+end
 
 end

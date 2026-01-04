@@ -116,3 +116,25 @@ ggplot(df, @aes(x=x, y=y, color=t)) +
 ```
 """
 geom_label = geom_template("geom_label", ["x", "y"], :Text)
+
+@testitem "geom_text" setup = [TidierPlotsSetup] begin
+    t = ggplot(penguins) +
+        geom_text(aes(x=:bill_length_mm, y=:bill_depth_mm, text=:species))
+
+    m = Makie.plot(
+      Makie.SpecApi.GridLayout(
+        Makie.SpecApi.Axis(
+          plots=[
+            Makie.PlotSpec(
+              :Text,
+              penguins.bill_length_mm,
+              penguins.bill_depth_mm;
+              text=String.(penguins.species))
+          ]
+        )
+      )
+    )
+
+    @test plot_images_equal(t, m)
+
+  end

@@ -75,3 +75,19 @@ geom_polygon = geom_template("geom_polygon", ["x", "y"], :Poly;
     pre_function = handle_polygon,
     special_aes = Dict(:fill => :color),
     grouping_aes = [:color, :colour, :fill, :group])
+
+@testitem "geom_polygon" setup = [TidierPlotsSetup] begin
+    df_polygon = DataFrame(
+      x = [0.0, 1.0, 0.5],
+      y = [0.0, 0.0, 1.0]
+    )
+
+    t = ggplot(df_polygon, @aes(x = x, y = y)) + geom_polygon()
+
+    # Test that plot renders successfully
+    @test plot_will_render(t)
+
+    # Test alternative syntax
+    t2 = geom_polygon(ggplot(df_polygon), @aes(x = x, y = y))
+    @test plot_will_render(t2)
+end

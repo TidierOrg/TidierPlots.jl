@@ -103,3 +103,39 @@ ggplot(df, @aes(x = x, y = y, xend = xend, yend = yend)) +
 geom_segment = geom_template("geom_segment", ["x", "y", "xend", "yend"], :LineSegments;
     pre_function = handle_segment,
     grouping_aes = [:color, :colour])
+
+ @testitem "geom_segment" setup=[TidierPlotsSetup] begin
+    df_segment = DataFrame(
+      x = [1, 2, 3],
+      y = [1, 2, 1],
+      xend = [2, 3, 4],
+      yend = [2, 1, 2]
+    )
+
+    t = ggplot(df_segment, @aes(x = x, y = y, xend = xend, yend = yend)) +
+        geom_segment() + labs(x = "", y = "")
+
+    # Makie's LineSegments expects interleaved points: [start1, end1, start2, end2, ...]
+    x_interleaved = Float64[1, 2, 2, 3, 3, 4]
+    y_interleaved = Float64[1, 2, 2, 1, 1, 2]
+
+    m = Makie.plot(
+      Makie.SpecApi.GridLayout(
+        Makie.SpecApi.Axis(
+          plots=[
+            Makie.PlotSpec(
+              :LineSegments,
+              x_interleaved,
+              y_interleaved; color = :black)
+          ]
+        )
+      )
+    )
+
+    @test plot_images_equal(t, m)
+
+    # Test alternative syntax with geom receiving plot
+    t2 = geom_segment(ggplot(df_segment), @aes(x = x, y = y, xend = xend, yend = yend)) + labs(x = "", y = "")
+
+    @test plot_images_equal(t, t2)
+  end

@@ -38,3 +38,26 @@ geom_jitter = geom_template(
     :Scatter;
     pre_function = jitter_positions ∘ handle_point_color_and_fill
 )
+
+@testitem "geom_jitter" setup = [TidierPlotsSetup] begin
+    t = ggplot(penguins) +
+      geom_jitter(@aes(x = species, y = bill_length_mm), jitter_width = 0, jitter_height = 0)
+
+      cat_array = CategoricalArrays.CategoricalArray(penguins.species)
+
+      m = Makie.plot(
+          Makie.SpecApi.GridLayout(
+              Makie.SpecApi.Axis(
+                  plots = [
+                      Makie.PlotSpec(:Scatter,
+                        levelcode.(cat_array),
+                        penguins.bill_length_mm,
+                        )
+                  ]; xticks=(unique(levelcode.(cat_array)),
+                  unique(cat_array))
+              )
+          )
+      )
+
+      @test plot_images_equal(t, m)
+  end

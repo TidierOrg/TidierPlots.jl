@@ -51,3 +51,26 @@ geom_violin = geom_template("geom_violin", ["x", "y"], :Violin;
     ),
     grouping_aes=[:strokecolor, :color]
 )
+
+@testitem "geom_violin" setup = [TidierPlotsSetup] begin
+    t = ggplot(penguins) +
+        geom_violin(@aes(x = species, y = bill_length_mm))
+
+    cat_array = CategoricalArrays.CategoricalArray(penguins.species)
+
+    m = Makie.plot(
+      Makie.SpecApi.GridLayout(
+        Makie.SpecApi.Axis(
+          plots=[
+            Makie.PlotSpec(
+              :Violin,
+              levelcode.(cat_array),
+              penguins.bill_length_mm)
+          ]; xticks=(unique(levelcode.(cat_array)),
+            unique(cat_array))
+        )
+      )
+    )
+
+    @test plot_images_equal(t, m)
+  end

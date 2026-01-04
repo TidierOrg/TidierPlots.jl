@@ -4,7 +4,8 @@ using TidierPlots
 makedocs(
     modules=[TidierPlots],
     clean=true,
-    doctest=false,
+    doctest=true,
+    warnonly=true,
     sitename="TidierPlots.jl",
     authors="Randall Boyes et al.",
     checkdocs=:all,

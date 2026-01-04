@@ -59,3 +59,17 @@ geom_ribbon = geom_template("geom_ribbon", ["x", "ymin", "ymax"], :Band;
     pre_function = handle_ribbon,
     special_aes = Dict(:fill => :color),
     grouping_aes = [:color, :colour, :fill])
+
+@testitem "geom_ribbon" setup = [TidierPlotsSetup] begin
+    xs = collect(range(0, 2pi, length=30))
+    df_ribbon = DataFrame(x = xs, ymin = sin.(xs) .- 0.5, ymax = sin.(xs) .+ 0.5)
+
+    t = ggplot(df_ribbon, @aes(x = x, ymin = ymin, ymax = ymax)) + geom_ribbon()
+
+    # Test that plot renders successfully
+    @test plot_will_render(t)
+
+    # Test alternative syntax
+    t2 = geom_ribbon(ggplot(df_ribbon), @aes(x = x, ymin = ymin, ymax = ymax))
+    @test plot_will_render(t2)
+end

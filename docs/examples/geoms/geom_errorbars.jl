@@ -71,19 +71,19 @@ ggplot(df, @aes(x = species, ymin = lower, ymax = upper)) +
 # Add whisker caps to make the endpoints more visible:
 
 ggplot(df, @aes(x = species, ymin = lower, ymax = upper)) +
-    geom_errorbar(linewidth = 2, width = 20)
+    geom_errorbar(linewidth = 2, whiskerwidth = 20)
 
 # Combine error bars with points to show both the central value and uncertainty:
 
 ggplot(df, @aes(x = species, y = mean_bill, ymin = lower, ymax = upper)) +
-    geom_errorbar(linewidth = 1, width = 15) +
+    geom_errorbar(linewidth = 1, whiskerwidth = 15) +
     geom_point(size = 15)
 
 # Combine with bar charts:
 
 ggplot(df, @aes(x = species, y = mean_bill, ymin = lower, ymax = upper)) +
     geom_col(alpha = 0.5) +
-    geom_errorbar(linewidth = 2, width = 20)
+    geom_errorbar(linewidth = 2, whiskerwidth = 20)
 
 # Create horizontal error bars using geom_errorbarh:
 
@@ -106,28 +106,6 @@ end
 ggplot(df_h, @aes(y = species, xmin = lower, xmax = upper)) +
     geom_errorbarh(linewidth = 2)
 
-# Colored error bars by group:
-
-df_grouped = @chain penguins begin
-    @group_by(species)
-    @summarize(
-        mean_bill = mean(bill_length_mm),
-        sd_bill = std(bill_length_mm),
-        n = n()
-    )
-    @mutate(
-        se_bill = sd_bill / sqrt(n)
-    )
-    @mutate(
-        lower = mean_bill - 1.96 * se_bill,
-        upper = mean_bill + 1.96 * se_bill
-    )
-end
-
-ggplot(df_grouped, @aes(x = species, y = mean_bill, ymin = lower, ymax = upper, color = sex, dodge = sex)) +
-    geom_errorbar(linewidth = 2, width = 10) +
-    geom_point(size = 10)
-
 # Example with custom error bar data:
 
 df_custom = DataFrame(
@@ -139,5 +117,5 @@ df_custom = DataFrame(
 )
 
 ggplot(df_custom, @aes(x = trt, y = resp, ymin = lower, ymax = upper, color = group)) +
-    geom_errorbar(width = 20, linewidth = 2) +
+    geom_errorbar(whiskerwidth = 20, linewidth = 2) +
     geom_point(size = 15)

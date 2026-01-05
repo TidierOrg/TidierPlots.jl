@@ -45,13 +45,17 @@ using Statistics
 
 penguins = dropmissing(DataFrame(PalmerPenguins.load()));
 
-# First, create a summary dataset with means and standard errors:
+# First, create a summary dataset with means and standard deviations:
 
 df = @chain penguins begin
     @group_by(species)
     @summarize(
         mean_bill = mean(bill_length_mm),
-        se_bill = std(bill_length_mm) / sqrt(n())
+        sd_bill = std(bill_length_mm),
+        n = n()
+    )
+    @mutate(
+        se_bill = sd_bill / sqrt(n)
     )
     @mutate(
         lower = mean_bill - 1.96 * se_bill,
@@ -87,7 +91,11 @@ df_h = @chain penguins begin
     @group_by(species)
     @summarize(
         mean_bill = mean(bill_length_mm),
-        se_bill = std(bill_length_mm) / sqrt(n())
+        sd_bill = std(bill_length_mm),
+        n = n()
+    )
+    @mutate(
+        se_bill = sd_bill / sqrt(n)
     )
     @mutate(
         lower = mean_bill - 1.96 * se_bill,
@@ -101,10 +109,14 @@ ggplot(df_h, @aes(y = species, xmin = lower, xmax = upper)) +
 # Colored error bars by group:
 
 df_grouped = @chain penguins begin
-    @group_by(species, sex)
+    @group_by(species)
     @summarize(
         mean_bill = mean(bill_length_mm),
-        se_bill = std(bill_length_mm) / sqrt(n())
+        sd_bill = std(bill_length_mm),
+        n = n()
+    )
+    @mutate(
+        se_bill = sd_bill / sqrt(n)
     )
     @mutate(
         lower = mean_bill - 1.96 * se_bill,

@@ -79,19 +79,19 @@ ggplot(penguins, @aes(x = species, y = bill_length_mm, fill = sex, dodge = sex))
 # Add stroke color and adjust transparency:
 
 ggplot(penguins, @aes(x = species, y = bill_length_mm)) +
-    geom_violin(color = :steelblue, strokecolor = :black, strokewidth = 2, alpha = 0.7)
+    geom_violin(color = :steelblue, strokecolor = :black, strokewidth = 2)
 
 # Different fill colors:
 
 ggplot(penguins, @aes(x = species, y = bill_length_mm, fill = species)) +
-    geom_violin(alpha = 0.8, strokecolor = :black, strokewidth = 1)
+    geom_violin(strokecolor = :black, strokewidth = 1)
 
 # ## Combining with Other Geoms
 
 # Combine violin with boxplot for more information:
 
 ggplot(penguins, @aes(x = species, y = bill_length_mm)) +
-    geom_violin(alpha = 0.5) +
+    geom_violin() +
     geom_boxplot(width = 0.2, alpha = 0.8)
 
 # Add individual data points:
@@ -103,7 +103,7 @@ ggplot(penguins, @aes(x = species, y = bill_length_mm)) +
 # Use jittered points for better visibility:
 
 ggplot(penguins, @aes(x = species, y = bill_length_mm)) +
-    geom_violin(alpha = 0.5, strokecolor = :black) +
+    geom_violin(strokecolor = :black) +
     geom_jitter(alpha = 0.3, width = 0.1)
 
 # ## Comparing Multiple Variables
@@ -111,13 +111,13 @@ ggplot(penguins, @aes(x = species, y = bill_length_mm)) +
 # Compare distributions across different measurements:
 
 ggplot(penguins, @aes(x = species, y = flipper_length_mm)) +
-    geom_violin(alpha = 0.7) +
+    geom_violin() +
     labs(title = "Flipper Length by Species")
 
 #-
 
 ggplot(penguins, @aes(x = species, y = body_mass_g)) +
-    geom_violin(alpha = 0.7) +
+    geom_violin() +
     labs(title = "Body Mass by Species")
 
 # ## Using with Facets
@@ -125,7 +125,7 @@ ggplot(penguins, @aes(x = species, y = body_mass_g)) +
 # Use faceting to compare distributions across multiple categorical variables:
 
 ggplot(penguins, @aes(x = species, y = bill_length_mm)) +
-    geom_violin(alpha = 0.7) +
+    geom_violin() +
     facet_wrap(:sex)
 
 # ## Violin vs Density Comparison
@@ -133,9 +133,9 @@ ggplot(penguins, @aes(x = species, y = bill_length_mm)) +
 # Violin plots are essentially mirrored density plots. Compare:
 
 ggplot(penguins, @aes(x = bill_length_mm, fill = species)) +
-    geom_density(alpha = 0.5)
+    geom_density()
 
 # The violin plot shows the same information but in a compact, comparative format:
 
 ggplot(penguins, @aes(x = species, y = bill_length_mm, fill = species)) +
-    geom_violin(alpha = 0.7)
+    geom_violin()

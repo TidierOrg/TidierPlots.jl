@@ -65,7 +65,7 @@ ggplot(economics, @aes(x = Date, y = Unemploy)) +
 
 # Use the `color` aesthetic to draw multiple lines for different groups:
 
-economics_long = @pivot_longer(economics, POP:Unemploy)
+economics_long = @pivot_longer(economics, Pop:Unemploy)
 
 ggplot(economics_long, @aes(x = Date, y = value, color = variable)) +
     geom_line()

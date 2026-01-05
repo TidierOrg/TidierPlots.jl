@@ -84,10 +84,11 @@ ggplot(df_mandelbrot, @aes(x = x, y = y, z = z)) +
 
 # Heatmaps are commonly used to visualize correlation matrices:
 
-using PalmerPenguins
-using Statistics
 
-penguins = dropmissing(DataFrame(PalmerPenguins.load()));
+using Statistics
+using Parquet2
+
+penguins = DataFrame(Parquet2.readfile(joinpath("..", "test", "penguins.parq")))
 
 # Select numeric columns and compute correlation
 numeric_cols = [:bill_length_mm, :bill_depth_mm, :flipper_length_mm, :body_mass_g]

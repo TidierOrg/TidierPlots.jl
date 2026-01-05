@@ -88,8 +88,9 @@ ggplot(df, @aes(x = x, y = y)) +
 
 # `geom_path()` connects points in the order they appear in the data. This is useful for trajectories or paths through 2D space:
 
-using PalmerPenguins
-penguins = dropmissing(DataFrame(PalmerPenguins.load()));
+using Parquet2
+
+penguins = DataFrame(Parquet2.readfile(joinpath("..", "test", "penguins.parq")))
 
 ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) +
     geom_path(alpha = 0.3)

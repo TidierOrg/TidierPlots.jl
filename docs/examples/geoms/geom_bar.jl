@@ -38,9 +38,9 @@
 
 using TidierPlots
 using DataFrames
-using PalmerPenguins
+using Parquet2
 
-penguins = dropmissing(DataFrame(PalmerPenguins.load()));
+penguins = DataFrame(Parquet2.readfile(joinpath("..", "test", "penguins.parq")))
 
 # For basic counting, provide only an x aesthetic. The height of each bar will represent the count of observations in each category.
 

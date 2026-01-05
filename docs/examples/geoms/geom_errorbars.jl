@@ -40,10 +40,10 @@
 using TidierPlots
 using TidierData
 using DataFrames
-using PalmerPenguins
 using Statistics
+using Parquet2
 
-penguins = dropmissing(DataFrame(PalmerPenguins.load()));
+penguins = DataFrame(Parquet2.readfile(joinpath("..", "test", "penguins.parq")))
 
 # First, create a summary dataset with means and standard deviations:
 

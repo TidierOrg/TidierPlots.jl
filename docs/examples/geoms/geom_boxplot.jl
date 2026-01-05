@@ -48,9 +48,9 @@
 
 using TidierPlots
 using DataFrames
-using PalmerPenguins
+using Parquet2
 
-penguins = dropmissing(DataFrame(PalmerPenguins.load()));
+penguins = DataFrame(Parquet2.readfile(joinpath("..", "test", "penguins.parq")))
 
 # Create a basic boxplot showing the distribution of bill length for each species:
 

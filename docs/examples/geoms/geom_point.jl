@@ -41,12 +41,12 @@
 
 using TidierPlots
 using DataFrames
-using PalmerPenguins
 using RDatasets
 using CategoricalArrays
 using Makie
+using Parquet2
 
-penguins = dropmissing(DataFrame(PalmerPenguins.load()));
+penguins = DataFrame(Parquet2.readfile(joinpath("..", "test", "penguins.parq")))
 diamonds = dataset("ggplot2", "diamonds");
 mtcars = dataset("datasets", "mtcars");
 

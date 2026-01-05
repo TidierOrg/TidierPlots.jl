@@ -36,10 +36,9 @@
 
 using TidierPlots
 using DataFrames
-using PalmerPenguins
+using Parquet2
 
-penguins = dropmissing(DataFrame(PalmerPenguins.load()));
-
+penguins = DataFrame(Parquet2.readfile(joinpath("..", "test", "penguins.parq")))
 # ## Basic LOESS Smoothing
 
 # The default method is LOESS (locally estimated scatterplot smoothing), which creates a flexible smooth line that follows the data:

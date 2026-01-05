@@ -69,7 +69,7 @@ ggplot(penguins, @aes(x = species, y = bill_length_mm, fill = sex)) +
 
 # You can also use `dodge` explicitly to group boxes:
 
-ggplot(penguins, @aes(x = species, y = bill_length_mm, fill = sex, dodge = sex)) +
+ggplot(penguins, @aes(x = species, y = bill_length_mm, dodge = sex)) +
     geom_boxplot()
 
 # Add notches to compare medians. Non-overlapping notches suggest the medians are significantly different:

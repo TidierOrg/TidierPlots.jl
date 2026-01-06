@@ -66,11 +66,6 @@ ggplot(penguins, @aes(x = bill_length_mm)) +
 ggplot(penguins, @aes(x = bill_length_mm)) +
     geom_histogram(bins = 50)
 
-# Use `binwidth` to set a specific bin width:
-
-ggplot(penguins, @aes(x = bill_length_mm)) +
-    geom_histogram(binwidth = 2)
-
 # Show probability instead of counts:
 
 ggplot(penguins, @aes(x = bill_length_mm)) +

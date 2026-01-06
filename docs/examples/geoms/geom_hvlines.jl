@@ -53,16 +53,16 @@ ggplot() +
 
 # Add a horizontal line to an existing plot:
 
-ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) +
-    geom_point() +
+ggplot(penguins) +
+    geom_point(@aes(x = bill_length_mm, y = bill_depth_mm)) +
     geom_hline(yintercept = 17, color = :red, linewidth = 2)
 
 # Add the mean as a reference line:
 
-mean_depth = mean(penguins.bill_depth_mm)
+mean_depth = sum(penguins.bill_depth_mm)/nrow(penguins)
 
-ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) +
-    geom_point() +
+ggplot(penguins) +
+    geom_point(@aes(x = bill_length_mm, y = bill_depth_mm)) +
     geom_hline(yintercept = mean_depth, color = :blue, linewidth = 2, linestyle = :dash)
 
 # Add multiple horizontal lines:
@@ -85,8 +85,8 @@ ggplot() +
 
 # Add a vertical line to highlight a specific x-value:
 
-ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) +
-    geom_point() +
+ggplot(penguins) +
+    geom_point(@aes(x = bill_length_mm, y = bill_depth_mm)) +
     geom_vline(xintercept = 45, color = :red, linewidth = 2, linestyle = :dash)
 
 # Add multiple vertical lines:
@@ -104,15 +104,15 @@ ggplot(df, @aes(xintercept = x)) +
 
 # Use both horizontal and vertical lines together to create reference grids or mark important points:
 
-ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) +
-    geom_point(alpha = 0.5) +
-    geom_hline(yintercept = mean(penguins.bill_depth_mm), color = :blue, linestyle = :dash) +
-    geom_vline(xintercept = mean(penguins.bill_length_mm), color = :red, linestyle = :dash)
+ggplot(penguins) +
+    geom_point(@aes(x = bill_length_mm, y = bill_depth_mm), alpha = 0.5) +
+    geom_hline(yintercept = sum(penguins.bill_depth_mm)/nrow(penguins), color = :blue, linestyle = :dash) +
+    geom_vline(xintercept = sum(penguins.bill_length_mm)/nrow(penguins), color = :red, linestyle = :dash)
 
 # Different line styles:
 
-ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) +
-    geom_point(alpha = 0.3) +
+ggplot(penguins) +
+    geom_point(@aes(x = bill_length_mm, y = bill_depth_mm), alpha = 0.3) +
     geom_hline(yintercept = 15, linestyle = :solid, color = :black) +
     geom_hline(yintercept = 17, linestyle = :dash, color = :red) +
     geom_hline(yintercept = 19, linestyle = :dot, color = :blue) +

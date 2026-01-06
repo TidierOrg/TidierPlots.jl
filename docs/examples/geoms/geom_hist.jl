@@ -71,33 +71,17 @@ ggplot(penguins, @aes(x = bill_length_mm)) +
 ggplot(penguins, @aes(x = bill_length_mm)) +
     geom_histogram(normalization = :probability, bins = 20)
 
-# For discrete/integer data, use `center` to align bars with tick marks. This centers a bin on the specified value:
-
-df_discrete = DataFrame(counts = rand(1:10, 100))
-
-ggplot(df_discrete, @aes(x = counts)) +
-    geom_histogram(binwidth = 1, center = 0)
-
-# Use `boundary` instead if you want bin edges at specific values:
-
-ggplot(df_discrete, @aes(x = counts)) +
-    geom_histogram(binwidth = 1, boundary = 0.5)
-
 # Customize appearance with colors and stroke:
 
 ggplot(penguins, @aes(x = bill_length_mm)) +
-    geom_histogram(bins = 25, color = :steelblue, strokecolor = :black, strokewidth = 1)
+    geom_histogram(bins = 25, fill = :steelblue, strokecolor = :black, strokewidth = 1)
 
-# Use the `color` aesthetic to create stacked or grouped histograms by a categorical variable:
-
-ggplot(penguins, @aes(x = bill_length_mm, color = species)) +
-    geom_histogram(bins = 20, alpha = 0.7)
 
 # Combine histogram with density for comparison (use normalization = :pdf to make them comparable):
 
 ggplot(penguins, @aes(x = bill_length_mm)) +
     geom_histogram(normalization = :pdf, bins = 20, alpha = 0.5) +
-    geom_density(strokecolor = :red, stroke = 2)
+    geom_density(strokecolor = :red, stroke = 2, alpha = .2)
 
 # Use faceting to compare distributions across groups:
 

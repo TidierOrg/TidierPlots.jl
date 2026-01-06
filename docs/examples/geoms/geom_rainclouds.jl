@@ -59,8 +59,3 @@ geom_rainclouds(@aes(x = bill_depth_mm, y = species))
 
 ggplot(penguins) +
 geom_rainclouds(@aes(x = bill_depth_mm, y = species, color = species))
-
-# Change the violin plot into a histogram:
-
-ggplot(penguins) +
-geom_rainclouds(@aes(x = bill_depth_mm, y = species, color = species), clouds=hist)

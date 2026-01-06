@@ -4,7 +4,7 @@
     for (path, dirs, files) in walkdir("../docs/examples")  
         for file in files
             if endswith(file, ".jl")
-                include(joinpath(path, file))
+                evalfile(joinpath(path, file))
                 @test true
             end
         end

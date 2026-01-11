@@ -44,7 +44,7 @@
 
 using TidierPlots
 using TidierData
-using DataFrame
+using DataFrames
 
 penguins = penguins_data()
 

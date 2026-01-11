@@ -1,8 +1,7 @@
 using TidierPlots
 using DataFrames
-using Parquet2
 
-penguins = DataFrame(Parquet2.readfile(joinpath("..", "test", "penguins.parq")))
+penguins = penguins_data()
 
 # ## `ggplot()`
 # `ggplot()` is the starting point of any plot. It sets up the initial plot with default settings that can be later customized with geoms, scales, theme settings and other specifications. `ggplot` usually used with a data source as an argument, and optionally, a set of aesthetics specified by @aes(). The data source is typically a DataFrame.

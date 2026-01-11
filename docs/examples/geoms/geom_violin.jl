@@ -2,6 +2,10 @@
 
 # A violin plot is a compact display of a continuous distribution. It is a mirrored density plot displayed in the same way as a boxplot. Violin plots are useful for comparing distributions across groups, as they show more detail about the shape of the distribution than boxplots while still being compact.
 
+# ## Note on apppropriate use
+
+# The violin plot is somewhat controversial and there is usually a better way to display your data. For a discussion of this topic, see [this video](https://www.youtube.com/watch?v=_0QMKFzW9fw) by Angela Collier. 
+
 # ## Arguments
 
 # - `plot::GGPlot` (optional): a plot object to add this geom to. This is typically used to facilitate creating your ggplot as part of a @chain.
@@ -83,26 +87,6 @@ ggplot(penguins, @aes(x = species, y = bill_length_mm)) +
 
 ggplot(penguins, @aes(x = species, y = bill_length_mm, fill = species)) +
     geom_violin(strokecolor = :black, strokewidth = 1)
-
-# ## Combining with Other Geoms
-
-# Combine violin with boxplot for more information:
-
-ggplot(penguins, @aes(x = species, y = bill_length_mm)) +
-    geom_violin() +
-    geom_boxplot(width = 0.2, alpha = 0.8)
-
-# Add individual data points:
-
-ggplot(penguins, @aes(x = species, y = bill_length_mm)) +
-    geom_violin(alpha = 0.5) +
-    geom_point(alpha = 0.3)
-
-# Use jittered points for better visibility:
-
-ggplot(penguins, @aes(x = species, y = bill_length_mm)) +
-    geom_violin(strokecolor = :black) +
-    geom_jitter(alpha = 0.3, width = 0.1)
 
 # ## Comparing Multiple Variables
 

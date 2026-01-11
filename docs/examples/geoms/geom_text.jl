@@ -89,21 +89,23 @@ ggplot(df, @aes(x = x, y = y, text = t)) +
 
 # Control where the text appears relative to the point:
 
-ggplot(df, @aes(x = x, y = y, text = t)) +
+ggplot(df, @aes(x = x, y = y)) +
     geom_point(size = 15) +
-    geom_text(fontsize = 20, align = (:center, :bottom)) +
+    geom_text(@aes(text = t), fontsize = 20, align = (:center, :bottom)) +
     lims(x = (0.5, 2.5), y = (0.5, 2.5))
 
 # Different alignment options:
 
-ggplot(df, @aes(x = x, y = y, text = t)) +
+ggplot(df, @aes(x = x, y = y)) +
     geom_point(size = 15) +
-    geom_text(fontsize = 20, align = (:left, :center)) +
+    geom_text(@aes(text = t), fontsize = 20, align = (:left, :center)) +
     lims(x = (0.5, 2.5), y = (0.5, 2.5))
 
 # ## Labeling Real Data
 
 # Label species on a scatterplot (using summarized data):
+
+import Statistics: mean
 
 species_centroids = @chain penguins begin
     @group_by(species)

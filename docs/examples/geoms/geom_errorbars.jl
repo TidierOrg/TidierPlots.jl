@@ -41,9 +41,8 @@ using TidierPlots
 using TidierData
 using DataFrames
 using Statistics
-using Parquet2
 
-penguins = DataFrame(Parquet2.readfile(joinpath("penguins.parq")))
+penguins = penguins_data()
 
 # First, create a summary dataset with means and standard deviations:
 

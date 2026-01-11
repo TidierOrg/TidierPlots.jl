@@ -38,9 +38,8 @@
 
 using TidierPlots
 using DataFrames
-using Parquet2
 
-penguins = DataFrame(Parquet2.readfile(joinpath("penguins.parq")))
+penguins = penguins_data()
 
 # For basic counting, provide only an x aesthetic. The height of each bar will represent the count of observations in each category.
 

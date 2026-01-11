@@ -24,3 +24,8 @@ function accepted_options_by_type(type::Symbol)
     lowercase_type = Symbol(lowercase(string(type)))
     return Makie.attribute_names(Plot{getfield(Makie, lowercase_type)})
 end
+
+function penguins_data()
+    project_path(parts...) = normpath(joinpath(@__DIR__, "..", parts...))
+    mydata = DataFrame(Parquet2.readfile(project_path("data/penguins.parq")))
+end

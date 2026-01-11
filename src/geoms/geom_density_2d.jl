@@ -106,6 +106,8 @@ Represent data as a 2D density contour using 2D kernel density estimation.
 # Examples
 
 ```julia
+penguins = penguins_data()
+
 ggplot(penguins, @aes(x=bill_length_mm, y=bill_depth_mm)) +
     geom_density_2d()
 
@@ -152,6 +154,8 @@ Represent data as a filled 2D density contour using 2D kernel density estimation
 # Examples
 
 ```julia
+penguins = penguins_data()
+
 ggplot(penguins, @aes(x=bill_length_mm, y=bill_depth_mm)) +
     geom_density_2d_filled()
 

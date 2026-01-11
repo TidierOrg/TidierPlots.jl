@@ -44,10 +44,9 @@
 
 using TidierPlots
 using TidierData
-using DataFrames
-using Parquet2
+using DataFrame
 
-penguins = DataFrame(Parquet2.readfile(joinpath("penguins.parq")))
+penguins = penguins_data()
 
 # First, we create a summarized dataset with mean bill length by species and sex:
 

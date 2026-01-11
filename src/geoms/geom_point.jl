@@ -106,6 +106,8 @@ The biggest potential problem with a scatterplot is overplotting: whenever you h
 # Examples
 
 ```julia
+penguins = penguins_data()
+
 p = ggplot(penguins, @aes(bill_length_mm, bill_depth_mm))
 p + geom_point()
 

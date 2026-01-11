@@ -33,6 +33,8 @@ Represents data as a violin plot.
 # Examples
 
 ```julia
+penguins = penguins_data()
+
 ggplot(penguins, @aes(x=species, y=bill_length_mm)) +
     geom_violin()
 

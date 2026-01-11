@@ -31,6 +31,8 @@ Represent data as a smooth density curve.
 # Examples
 
 ```julia
+penguins = penguins_data()
+
 ggplot(penguins, @aes(x=bill_length_mm)) + geom_density()
 
 ggplot(penguins, @aes(x=bill_length_mm)) +

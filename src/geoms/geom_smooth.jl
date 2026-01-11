@@ -36,6 +36,8 @@ df = DataFrame(x = xs, y = ys)
 
 ggplot(df, @aes(x = x, y = y)) + geom_smooth() + geom_point()
 
+penguins = penguins_data()
+
 ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) +
     geom_smooth(color=:red, linewidth=10, alpha=0.5)
 ```

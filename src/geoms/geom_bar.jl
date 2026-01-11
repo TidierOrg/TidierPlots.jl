@@ -227,6 +227,7 @@ grouping variable to `dodge` within the aesthetic.
 # Examples
 
 ```julia
+penguins = penguins_data()
 # vertical bar plot
 ggplot(penguins) + geom_bar(@aes(x = species))
 
@@ -237,7 +238,7 @@ ggplot(penguins) + geom_bar(@aes(y = species))
 ggplot(penguins, @aes(x = species, fill=sex)) + geom_bar()
 
 # dodged
-ggplot(penguins, @aes(x = species, fill=sex, dodge = sex)) + geom_bar()
+ggplot(penguins, @aes(x = species, dodge = sex)) + geom_bar()
 ```
 """
 geom_bar = geom_template("geom_bar", String[], :BarPlot;

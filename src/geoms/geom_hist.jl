@@ -32,6 +32,8 @@ Represents data as a histogram.
 # Examples
 
 ```julia
+penguins = penguins_data()
+
 ggplot(penguins, @aes(x = bill_length_mm)) +
     geom_histogram()
 

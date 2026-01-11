@@ -40,9 +40,8 @@
 using TidierPlots
 using TidierData
 using DataFrames
-using Parquet2
 
-penguins = DataFrame(Parquet2.readfile(joinpath("penguins.parq")))
+penguins = penguins_data()
 
 # ## Horizontal Lines
 

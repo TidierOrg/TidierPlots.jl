@@ -161,6 +161,11 @@ export scale_size
 export scale_shape
 export scale_linewidth
 
+# example data
+
+using Parquet2
+export penguins_data
+
 # default options
 
 const plot_log = Ref{Bool}(true)

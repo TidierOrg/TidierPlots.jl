@@ -36,9 +36,9 @@
 
 using TidierPlots
 using DataFrames
-using Parquet2
 
-penguins = DataFrame(Parquet2.readfile(joinpath("penguins.parq")))
+penguins = penguins_data()
+
 # ## Basic LOESS Smoothing
 
 # The default method is LOESS (locally estimated scatterplot smoothing), which creates a flexible smooth line that follows the data:

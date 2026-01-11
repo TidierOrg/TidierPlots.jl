@@ -26,7 +26,7 @@ using Test, TestItems, TestItemRunner
 
     # load the penguins dataset
 
-    penguins = DataFrame(Parquet2.readfile(joinpath(@__DIR__, "penguins.parq")))
+    penguins = penguins_data()
 
     # configure TidierPlots to not show the plot and not output logs
 

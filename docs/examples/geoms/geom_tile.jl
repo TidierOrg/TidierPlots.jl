@@ -88,7 +88,7 @@ ggplot(df_mandelbrot, @aes(x = x, y = y, z = z)) +
 using Statistics
 using Parquet2
 
-penguins = DataFrame(Parquet2.readfile(joinpath("..", "test", "penguins.parq")))
+penguins = DataFrame(Parquet2.readfile(joinpath("penguins.parq")))
 
 # Select numeric columns and compute correlation
 numeric_cols = [:bill_length_mm, :bill_depth_mm, :flipper_length_mm, :body_mass_g]

@@ -49,7 +49,7 @@ using TidierData
 using DataFrames
 using Parquet2
 
-penguins = DataFrame(Parquet2.readfile(joinpath("..", "test", "penguins.parq")))
+penguins = DataFrame(Parquet2.readfile(joinpath("penguins.parq")))
 
 # ## Basic Text Labels
 

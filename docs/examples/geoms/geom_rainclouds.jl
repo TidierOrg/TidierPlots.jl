@@ -45,7 +45,7 @@ using TidierPlots
 using DataFrames
 using Parquet2
 
-penguins = DataFrame(Parquet2.readfile(joinpath("..", "test", "penguins.parq")))
+penguins = DataFrame(Parquet2.readfile(joinpath("penguins.parq")))
 
 ggplot(penguins) +
 geom_rainclouds(@aes(x = species, y = bill_depth_mm))

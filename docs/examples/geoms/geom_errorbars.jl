@@ -43,7 +43,7 @@ using DataFrames
 using Statistics
 using Parquet2
 
-penguins = DataFrame(Parquet2.readfile(joinpath("..", "test", "penguins.parq")))
+penguins = DataFrame(Parquet2.readfile(joinpath("penguins.parq")))
 
 # First, create a summary dataset with means and standard deviations:
 

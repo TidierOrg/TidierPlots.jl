@@ -90,7 +90,7 @@ ggplot(df, @aes(x = x, y = y)) +
 
 using Parquet2
 
-penguins = DataFrame(Parquet2.readfile(joinpath("..", "test", "penguins.parq")))
+penguins = DataFrame(Parquet2.readfile(joinpath("penguins.parq")))
 
 ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) +
     geom_path(alpha = 0.3)

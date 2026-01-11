@@ -46,7 +46,7 @@ using CategoricalArrays
 using Makie
 using Parquet2
 
-penguins = DataFrame(Parquet2.readfile(joinpath("..", "test", "penguins.parq")))
+penguins = DataFrame(Parquet2.readfile(joinpath("penguins.parq")))
 diamonds = dataset("ggplot2", "diamonds");
 mtcars = dataset("datasets", "mtcars");
 

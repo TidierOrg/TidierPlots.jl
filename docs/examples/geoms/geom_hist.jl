@@ -49,7 +49,7 @@ using TidierPlots
 using DataFrames
 using Parquet2
 
-penguins = DataFrame(Parquet2.readfile(joinpath("..", "test", "penguins.parq")))
+penguins = DataFrame(Parquet2.readfile(joinpath("penguins.parq")))
 
 # Create a basic histogram of bill length:
 

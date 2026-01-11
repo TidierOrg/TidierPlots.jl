@@ -46,7 +46,7 @@ using TidierPlots
 using DataFrames
 using Parquet2
 
-penguins = DataFrame(Parquet2.readfile(joinpath("..", "test", "penguins.parq")))
+penguins = DataFrame(Parquet2.readfile(joinpath("penguins.parq")))
 # ## Basic Violin Plot
 
 # Create a basic violin plot showing the distribution of bill length for each species:

@@ -99,17 +99,8 @@ ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm, color = species)) +
 
 ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) +
     geom_point(alpha = 0.2) +
-    geom_smooth(color = :blue, linewidth = 2) +
-    geom_smooth(method = "lm", color = :red, linewidth = 2, linestyle = :dash)
-
-# ## Using with Facets
-
-# Smooth lines work well with faceting to show trends in subgroups:
-
-ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) +
-    geom_point(alpha = 0.3) +
-    geom_smooth(method = "lm") +
-    facet_wrap(:species)
+    geom_smooth(color = :blue) +
+    geom_smooth(method = "lm", color = :red)
 
 # ## Handling Noisy Data
 

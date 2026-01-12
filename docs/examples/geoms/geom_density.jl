@@ -42,7 +42,7 @@
 using TidierPlots
 using DataFrames
 
-penguins = penguins_data()
+penguins = penguins_data();
 
 # Create a basic density plot showing the distribution of bill length:
 

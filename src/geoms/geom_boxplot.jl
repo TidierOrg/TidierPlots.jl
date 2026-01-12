@@ -67,7 +67,7 @@ Compactly displays the distribution of continuous data.
 # Examples
 
 ```julia
-penguins = penguins_data()
+penguins = penguins_data();
 ggplot(penguins, @aes(x=species, y=bill_length_mm)) +
     geom_boxplot()
 

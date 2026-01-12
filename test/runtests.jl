@@ -26,7 +26,7 @@ using Test, TestItems, TestItemRunner
 
     # load the penguins dataset
 
-    penguins = penguins_data()
+    penguins = penguins_data();
 
     # configure TidierPlots to not show the plot and not output logs
 

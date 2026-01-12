@@ -37,7 +37,7 @@
 using TidierPlots
 using DataFrames
 
-penguins = penguins_data()
+penguins = penguins_data();
 
 # ## Basic LOESS Smoothing
 

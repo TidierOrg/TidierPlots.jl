@@ -49,7 +49,7 @@
 using TidierPlots
 using DataFrames
 
-penguins = penguins_data()
+penguins = penguins_data();
 
 # Create a basic boxplot showing the distribution of bill length for each species:
 

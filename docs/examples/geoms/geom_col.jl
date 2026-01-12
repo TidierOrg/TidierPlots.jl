@@ -46,7 +46,7 @@ using TidierPlots
 using TidierData
 using DataFrames
 
-penguins = penguins_data()
+penguins = penguins_data();
 
 # First, we create a summarized dataset with mean bill length by species and sex:
 

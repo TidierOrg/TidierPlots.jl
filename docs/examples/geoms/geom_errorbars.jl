@@ -42,7 +42,7 @@ using TidierData
 using DataFrames
 using Statistics
 
-penguins = penguins_data()
+penguins = penguins_data();
 
 # First, create a summary dataset with means and standard deviations:
 

@@ -46,7 +46,7 @@
 # Examples
 
 ```julia
-penguins = penguins_data()
+penguins = penguins_data();
 
 ggplot(penguins) +
     geom_rainclouds(@aes(x = species, y = bill_depth_mm/10, color = species), size = 5) +

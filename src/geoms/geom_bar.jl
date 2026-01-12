@@ -227,7 +227,7 @@ grouping variable to `dodge` within the aesthetic.
 # Examples
 
 ```julia
-penguins = penguins_data()
+penguins = penguins_data();
 # vertical bar plot
 ggplot(penguins) + geom_bar(@aes(x = species))
 

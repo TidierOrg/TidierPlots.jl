@@ -48,7 +48,7 @@
 using TidierPlots
 using DataFrames
 
-penguins = penguins_data()
+penguins = penguins_data();
 
 # Create a basic histogram of bill length:
 

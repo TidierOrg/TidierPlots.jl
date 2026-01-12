@@ -44,7 +44,7 @@
 using TidierPlots
 using DataFrames
 
-penguins = penguins_data()
+penguins = penguins_data();
 
 ggplot(penguins) +
 geom_rainclouds(@aes(x = species, y = bill_depth_mm))

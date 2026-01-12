@@ -41,7 +41,7 @@ using TidierPlots
 using TidierData
 using DataFrames
 
-penguins = penguins_data()
+penguins = penguins_data();
 
 # ## Horizontal Lines
 

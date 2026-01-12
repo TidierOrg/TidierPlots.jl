@@ -39,7 +39,7 @@
 using TidierPlots
 using DataFrames
 
-penguins = penguins_data()
+penguins = penguins_data();
 
 # For basic counting, provide only an x aesthetic. The height of each bar will represent the count of observations in each category.
 

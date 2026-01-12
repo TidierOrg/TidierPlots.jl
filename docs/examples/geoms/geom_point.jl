@@ -45,7 +45,7 @@ using RDatasets
 using CategoricalArrays
 using Makie
 
-penguins = penguins_data()
+penguins = penguins_data();
 diamonds = dataset("ggplot2", "diamonds");
 mtcars = dataset("datasets", "mtcars");
 

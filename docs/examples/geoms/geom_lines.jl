@@ -88,7 +88,7 @@ ggplot(df, @aes(x = x, y = y)) +
 
 # `geom_path()` connects points in the order they appear in the data. This is useful for trajectories or paths through 2D space:
 
-penguins = penguins_data()
+penguins = penguins_data();
 
 ggplot(penguins, @aes(x = bill_length_mm, y = bill_depth_mm)) +
     geom_path(alpha = 0.3)

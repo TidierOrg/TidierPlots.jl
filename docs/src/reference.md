@@ -1,3 +1,5 @@
+# Reference
+
 ## Index
 ```@index
 Modules = [TidierPlots]

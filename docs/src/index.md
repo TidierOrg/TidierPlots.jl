@@ -1,3 +1,4 @@
+# TidierPlots.jl
 
 ## What is TidierPlots.jl?
 TidierPlots.jl is a 100% Julia implementation of the R package [ggplot2](https://ggplot2.tidyverse.org/) powered by [Makie.jl](https://github.com/MakieOrg/Makie.jl).
@@ -22,11 +23,10 @@ TidierPlots.jl is a 100% Julia implementation of the R package [ggplot2](https:/
 
 For the "stable" version, access the Pkg interface by pressing `]` at the `julia>` prompt, then type `add TidierPlots`.
 
-For the development version:
+For the development version, enter package mode, then:
 
 ```julia
-using Pkg
-Pkg.add(url="https://github.com/TidierOrg/TidierPlots.jl")
+add https://github.com/TidierOrg/TidierPlots.jl.git
 ```
 
 TidierPlots will also be installed automatically if you `add Tidier`.
@@ -58,69 +58,24 @@ Makie Themes:
 
 Scales:
 
-- `scale_[x|y]_[continuous|log[ |2|10]|logit|pseudolog10|symlog10|sqrt|reverse]`
-- `scale_color_manual()` / `scale_fill_manual()` - set `values = c(c1, c2, c3, ...)`, accepts anything that can be parsed as a color by Colors.jl (named colors, hex values, etc.)
-- `scale_color_[discrete|continuous|binned]()` / `scale_fill_[discrete|continuous|binned]()` - set `palette =` a [ColorSchemes.jl palette](https://juliagraphics.github.io/ColorSchemes.jl/stable/catalogue/) as a string or symbol. Also accepts ColorScheme objects directly.
-- `scale_alpha`, `scale_alpha_continuous`, `scale_size`, `scale_shape`, `scale_linewidth`
-
-Label Functions:
-
-- `label_number` - format numbers with precision, prefix, suffix, and thousands separators
-- `label_percent` - format numbers as percentages
-- `label_currency` - format numbers as currency
-- `label_bytes` - format numbers as byte sizes (KB, MB, GB, etc.)
-- `label_scientific` - format numbers in scientific notation
-- `label_log` - format numbers as logarithms (e.g., "10^2")
-- `label_ordinal` - format numbers as ordinals (1st, 2nd, 3rd, etc.)
-- `label_date` - format dates
-- `label_pvalue` - format p-values
-- `label_wrap` - wrap long text strings
+- `scale_[x|y]_[continuous|log[ |2|10]|logit|pseudolog10|sqrt|reverse]`
+- `scale_color_manual()` - set `values = c(c1, c2, c3, ...)`, accepts anything that can be parsed as a color by Colors.jl (named colors, hex values, etc.)
+- `scale_color_[discrete|continuous|binned]()` - set `palette =` a [ColorSchemes.jl palette](https://juliagraphics.github.io/ColorSchemes.jl/stable/catalogue/) as a string or symbol. Also accepts ColorScheme objects directly.
+- `scale_alpha`, `scale_size`, `scale_shape`, `scale_linewidth`
 
 Additional Elements:
 
 - `labs` and `lims`
 - `facet_grid` and `facet_wrap`
-- `guides` - control legend/colorbar display
-- `ggsave` - save plots to files
-- `draw_ggplot` - render plots to Makie figures
 
 ## Display Options for Quarto, Jupyter, and Pluto.jl
 
 Use the function `TidierPlots_set(option::String, value::Bool)` to control display options. The following options are supported:
 
 - "plot_show" (default true). Enables `ggplot`-like behaviour where plots are displayed when created.
-- "plot_log" (default true). Prints a text summary of the properties of the ggplot.
-- "verbose" (default false). Enables detailed debug output showing data transformations and Makie calls.
+- "plot_log" (default true). Prints a text summary of the properties of the ggplot
 
-You will likely want to disable both `plot_show` and `plot_log` if you are working in a notebook environment. In [Pluto.jl](https://github.com/fonsp/Pluto.jl), you can get interactive plots (scroll, zoom, labels, etc.) using `WGLMakie` by including `WGLMakie.activate!()` as the first cell after your imports.
-
-## Saving Plots
-
-Use `ggsave` to save plots to files:
-
-```julia
-# Basic usage
-ggsave("myplot.png", plot)
-ggsave(plot, "myplot.png")  # argument order is flexible
-
-# Specify figure dimensions (width and height in pixels)
-ggsave("myplot.png", plot; width=800, height=600)
-
-# Adjust resolution scale (default is 2)
-ggsave("myplot.png", plot; scale=3)
-
-# Combine size and scale
-ggsave("myplot.png", plot; width=800, height=600, scale=2)
-```
-
-Supported file formats include PNG, SVG, PDF, and any other formats supported by Makie's `save` function. Note that when specifying dimensions, both `width` and `height` must be provided together.
-
-You can also use `draw_ggplot` to render a plot with a specific size without saving:
-
-```julia
-draw_ggplot(plot)                    # default size
-draw_ggplot(plot, (800, 600))        # specify (width, height)
-```
+You will likely want to disable both of these if you are working in a notebook environment. In [Pluto.jl](https://github.com/fonsp/Pluto.jl), you can get interactive plots (scroll, zoom, labels, etc.) using `WGLMakie` by including `WGLMakie.activate!()` as the first cell after your imports.
 
 ## Differences from ggplot2
 
@@ -153,207 +108,9 @@ geom_point(@aes(x = x / 10))
 geom_point(@aes(x = x / y))
 ```
 
-## Using Label Functions
-
-Label functions are used with `scale_*_continuous(labels = ...)` to format axis tick labels:
-
-```julia
-# Format as percentages
-scale_y_continuous(labels = label_percent())
-
-# Format as currency
-scale_y_continuous(labels = label_currency(prefix="$"))
-
-# Format with custom precision and suffix
-scale_y_continuous(labels = label_number(precision=1, suffix=" kg"))
-
-# Format large numbers as bytes
-scale_y_continuous(labels = label_bytes())
-
-# Format as scientific notation
-scale_y_continuous(labels = label_scientific())
-
-# Using a format string (shorthand)
-scale_y_continuous(labels = "{:.1f} cm")
-```
-
-## Faceting
-
-### facet_wrap
-
-Split a plot into multiple panels by one variable:
-
-```julia
-ggplot(df) +
-    geom_point(aes(x = :x, y = :y)) +
-    facet_wrap(:category)                       # basic usage
-    facet_wrap(:category, ncol = 2)             # specify columns
-    facet_wrap(:category, nrow = 2)             # specify rows
-    facet_wrap(:category, scales = "free")      # independent axis scales
-    facet_wrap(:category, scales = "free_x")    # free x-axis only
-    facet_wrap(:category, scales = "free_y")    # free y-axis only
-```
-
-### facet_grid
-
-Create a grid of panels by row and column variables:
-
-```julia
-ggplot(df) +
-    geom_point(aes(x = :x, y = :y)) +
-    facet_grid(rows = :row_var, cols = :col_var)
-    facet_grid(rows = :row_var, cols = :col_var, scales = "free")
-    facet_grid(rows = :row_var, cols = :col_var, switch = "both")  # move labels
-```
-
-## Controlling Legends with guides()
-
-Use `guides()` to control whether scales get legends or colorbars:
-
-```julia
-ggplot(df) +
-    geom_point(aes(x = :x, y = :y, color = :z)) +
-    scale_color_continuous() +
-    guides(color = "colorbar")   # force colorbar
-    guides(color = "legend")     # force legend
-```
-
-## The c() Function
-
-TidierPlots provides a `c()` function that mimics R's `c()` for creating vectors, commonly used with `lims()`, `scale_*_manual()`, and `plot_layout()`:
-
-```julia
-lims(x = c(-10, 10), y = c(0, 100))
-scale_color_manual(values = c("red", "blue", "green"))
-plot_layout(widths = c(3, 1), heights = c(1, 2))
-```
-
 ## Why would I use this instead of ggplot2?
 
 **Right now, you probably wouldn't.** This package is still early in development, and is not ready for production use. However, there are a couple of advantages already and the list will hopefully get longer over time.
-
-### Flexible access to Makie options
-
-Access to all axis and plot options from `Makie` lets you use Makie's extensive capabilities for plot customization (example adapted from [beautiful.makie.org](https://beautiful.makie.org/examples/2d/scatters/bubble_plot_logxy)):
-
-```julia
-using Random, DataFrames
-using TidierPlots
-import Makie.IntervalsBetween, Makie.Attributes
-
-Random.seed!(123)
-
-xs = 10 .^ (range(-1, stop=1, length=100))
-
-df = DataFrame(x = xs,
-    y = xs .^ 2 .+ abs.(2 * randn(length(xs))),
-    size = (xs .^ 2/3)[end:-1:1] .+ 6)
-
-beautiful_makie_theme = Attributes(
-    fonts=(;regular="CMU Serif"),
-)
-
-ggplot(df) +
-    geom_point(aes(x = :x, y = :y, size = :size, color = :x), alpha = 0.8) +
-    scale_x_log10() +
-    scale_y_log10() +
-    labs(x = "x", y = "y") +
-    lims(y = c(.1, 100)) +
-    scale_color_continuous(palette = "Hiroshige", name = "") +
-    theme(
-        xminorticksvisible=true,
-        xminorgridvisible=true,
-        yminorticksvisible=true,
-        yminorgridvisible=true,
-        xminorticks=IntervalsBetween(9),
-        yminorticks=IntervalsBetween(9),
-        backgroundcolor = :transparent,
-        xgridstyle=:dash,
-        ygridstyle=:dash
-    ) + beautiful_makie_theme
-```
-![](assets/beautiful_makie.png)
-
-### Built-in Support for Plot Layouts
-
-Combine plots with a `{patchwork}`-inspired syntax to create complex layouts (adapted from [beautiful.makie.org](https://beautiful.makie.org/examples/2d/histogram/hists_on_the_sides)):
-
-```julia
-Random.seed!(123)
-n = 200
-df = DataFrame(x = randn(n) / 2, y = randn(n))
-
-top = ggplot(df) +
-    geom_histogram(aes(x = :x), fill = :orangered, strokewidth = 0.5) +
-    lims(x = c(-4, 4)) +
-    theme(xticklabelsvisible = false, xgridvisible = false) +
-    beautiful_makie_theme
-
-right = ggplot(df) +
-    geom_histogram(aes(x = :y), fill = :dodgerblue,
-        direction = :x, strokewidth = 0.5) +
-    lims(y = c(-3, 3)) +
-    theme(yticklabelsvisible = false, ygridvisible = false) +
-    beautiful_makie_theme
-
-middle = ggplot(df) + geom_point(aes(x = :x, y = :y), size = 10) +
-    lims(x = c(-4, 4), y = c(-3, 3)) + labs(x = "x", y = "y") +
-    beautiful_makie_theme
-
-blank = ggplot() +
-    theme(xticklabelsvisible = false, xgridvisible = false, yticklabelsvisible = false,
-        ygridvisible = false, xtickcolor = :transparent, ytickcolor = :transparent,
-        bottomspinevisible = false, topspinevisible = false, rightspinevisible = false,
-        leftspinevisible = false) + beautiful_makie_theme
-
-top + blank + middle + right +
-    plot_layout(ncol = 2, nrow = 2, widths = c(3, 1), heights = c(1, 2))
-```
-
-![](assets/patchwork.png)
-
-### Easy Extensions with Makie
-
-Add basic support for any Makie plot using `geom_template(name, required_aes, makie_plot)`. It will inherit support for most optional aesthetics and arguments automatically:
-
-```julia
-geom_raincloud = geom_template("geom_raincloud", ["x", "y"], :RainClouds)
-
-ggplot(penguins) +
-    geom_raincloud(@aes(x = species, y = bill_depth_mm/10, color = species), size = 4) +
-    scale_y_continuous(labels = "{:.1f} cm") +
-    labs(title = "Bill Depth by Species", x = "Species", y = "Bill Depth") +
-    theme_minimal()
-```
-![](assets/raincloud.png)
-
-### Mix Makie Plots and TidierPlots
-
-TidierPlots is creating Makie `SpecApi.GridLayout` objects under the hood, so you can easily combine TidierPlots output with Makie output for more flexibility:
-
-```julia
-using WGLMakie
-import Makie.SpecApi as S
-using TidierPlots
-using DataFrames
-
-r = LinRange(-1, 1, 100)
-cube = [(x .^ 2 + y .^ 2 + z .^ 2) for x = r, y = r, z = r]
-cube_contour = S.Contour(cube, alpha=0.5)
-ax_cube = S.Axis3(; plots=[cube_contour], protrusions = (50, 20, 10, 0))
-
-d = DataFrame(r = r, r2 = r .^ 2)
-gg = ggplot(d) + geom_line(aes(x = :r, y = :r2))
-
-plot(S.GridLayout([TidierPlots.as_GridLayout(gg) ax_cube]))
-```
-![](assets/makie_integration.png)
-
-See the [documentation](https://tidierorg.github.io/TidierPlots.jl/latest) for more information and examples.
-
-# What's New
-
-See [NEWS.md](https://github.com/TidierOrg/TidierPlots.jl/blob/main/NEWS.md) for the latest updates.
 
 # What's Missing
 
